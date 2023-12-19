@@ -1,15 +1,19 @@
 <script>
+    import MaskedImage from "./lib/MaskedImage.svelte";
     import SvgDefines from "./lib/SvgDefines.svelte";
+    import Data from "./lib/Tabs/Data.svelte";
 </script>
 
+<header>
+    <h1>header</h1>
+</header>
 <main>
-    <div class="img-main">
-        <svg class="ref-svg" height="100%" width="100%">
-            <mask id="meta-mask">
-                <use xlink:href="#masking-path" filter="url(#round)"></use>
-            </mask>
-        </svg>
-    </div>
+    <!-- <section class="main"> -->
+        <MaskedImage mask="#masking-path">
+            <!-- <img src="https://i.imgur.com/7JQsjw1.png" alt="" /> -->
+        </MaskedImage>
+    <!-- </section> -->
+    <Data />
 </main>
 
 <SvgDefines />
@@ -19,58 +23,46 @@
 
     main {
         /*   max-width: 30rem; */
-        width: 100%;
+        /* width: 100%;
         max-width: 80rem;
-        height: 100%;
+        height: 100%; */
 
         position: relative;
-        display: flex;
+        /* display: flex; */
+        flex:1;
 
-        /*   resize: both;
-  overflow: auto; */
+
 
         padding: 2rem;
-        /*   border-radius: 4.5rem; */
-        border-radius: 1rem;
-        border: 1px solid #1f1f37;
-
-        background: linear-gradient(
-                0deg,
-                rgba(9, 9, 10, 0) 0%,
-                rgba(9, 9, 10, 0) 100%
-            ),
-            url(https://i.imgur.com/2kGyIF8.png), no-repeat;
-
-        backdrop-filter: blur(24px);
     }
 
-    svg {
-        position: absolute;
-        z-index: -1;
-        inset: 0;
+    main {
+
+        /* min-block-size: 100vb; */
+
+        display: grid;
+        grid-template-columns: 5fr 2fr 5fr;
+        grid-template-rows: repeat(8, 1fr);
     }
 
-    symbol#masking-path {
-        fill: transparent;
+    section.main {
+        grid-column: span 2;
+        grid-row: span 6;
+
+        background-color: color-mix(in lab, red 20%, transparent);
     }
 
-    .img-main {
-        height: 20rem;
-        width: 10rem;
+    img {
 
-        max-width: 50rem;
+        grid-column: span 2;
+        grid-row: span 6;
 
-        position: relative;
+        inline-size: unset;
+        block-size: unset;
 
-        flex: 1;
+        object-fit: cover;
 
-        background-image: url(https://i.imgur.com/7JQsjw1.png);
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-
-        mask-image: url(#meta-mask);
-        mask-repeat: no-repeat;
-        webkit-mask-repeat: no-repeat;
+        place-self: stretch;
+        
     }
 </style>
