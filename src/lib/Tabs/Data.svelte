@@ -1,14 +1,29 @@
+<script>
+    import Stat from "../Stat.svelte";
+
+</script>
 <section id="data">
-    <h1>
+    <!-- <h1>
         eyo
         <span>data</span>
-    </h1>
+    </h1> -->
+    <ul>
+        <Stat name="users">
+            <p>15.6k</p>
+        </Stat>
+        <Stat name="users">
+            <p>15.6k</p>
+        </Stat>
+        <Stat name="users">
+            <p>15.6k</p>
+        </Stat>
+    </ul>
 </section>
 
 <style>
     section {
         grid-column: 1/2;
-        grid-row: 7/13;
+        grid-row: -1/-3;
 
         border-radius: var(--border-rad);
 
@@ -20,13 +35,18 @@
         justify-content: center;
     }
 
-    h1 {
-        font-family: "Manrope";
-        /* font-size: 5rem; */
-        font-weight: 800;
+    ul {
+        flex:1;
+        display: flex;
+        /* gap: 1.5em; */
+        justify-content: space-evenly;
+    }
+
+    p {
+        line-height: 1;
     }
 
     span {
-        color: #976bff;
+        color: var(--clr-primary);
     }
 </style>

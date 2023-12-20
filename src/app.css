@@ -21,8 +21,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
+    --clr-primary: salmon;
+    --clr-secondary: orange;
+    --clr-bg: black;
+    --clr-text: white;
+
     --border-rad: 2.5rem;
     --card-padding: 2rem;
+
+    --masking-path: url("#masking-path");
 }
 
 body {
@@ -95,8 +102,14 @@ body::before {
     /* backdrop-filter: blur(24px); */
 }
 
-main > section {
-    /* margin: 2rem; */
+.mask {
+    -webkit-mask-image: var(--masking-path);
+    mask-image: var(--masking-path);
+
+    mask-repeat: no-repeat;
+    mask-size: 100%;
+    -webkit-mask-clip: content-box;
+    mask-clip: content-box;
 }
 
 @media (prefers-color-scheme: light) {

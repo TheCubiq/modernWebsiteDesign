@@ -22,8 +22,8 @@
 <style>
 
     section {
-        grid-column: span 2;
-        grid-row: span 6;
+        grid-column: 1/3;
+        grid-row: 1/7;
 
         
         background-image: url("https://i.imgur.com/7JQsjw1.png");
@@ -53,8 +53,8 @@
 
     article {
         background: white;
-        height: 50%;
-        width: 60%;
+        /* height: 50%;
+        width: 60%; */
 
         color: black;
 
@@ -65,9 +65,10 @@
 
 
         padding-inline: calc(var(--card-padding) * 1.3);
-        padding-inline-end: 20%;
+        /* padding-inline-end: 20%; */
+        padding-block: 1.5em;
 
-        overflow: clip;
+        /* overflow: clip; */
 
     }
     
@@ -75,15 +76,6 @@
         text-align: start;
     }
 
-    .mask {
-        -webkit-mask-image: url("#masking-path");
-        mask-image: url("#masking-path");
-
-        mask-repeat: no-repeat;
-        mask-size: 100%;
-        -webkit-mask-clip: content-box;
-        mask-clip: content-box;
-    }
 
     h1 {
         font-family: "Bento";
