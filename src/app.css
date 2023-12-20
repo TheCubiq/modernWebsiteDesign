@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Bento';
+  src: url('/src/assets/fonts/bento/Bento.woff2') format('woff2'),
+      url('/src/assets/fonts/bento/Bento.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -26,7 +34,7 @@ body {
   place-items: center;
   /* place-items: center; */
 
-  font-family: "Manrope", sans-serif;
+    font-family: "Outfit", sans-serif;
   color: white;
   padding: 2rem;
   overflow-x: hidden;

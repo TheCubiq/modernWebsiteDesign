@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Bento';
+    src: url('Bento.woff2') format('woff2'),
+        url('Bento.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
