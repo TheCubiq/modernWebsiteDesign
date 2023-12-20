@@ -10,7 +10,7 @@
       </filter>
       
       <mask id="masking-path" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
-        <path d="M.0478.0013.7512.0443V.459H.9477L.9996.8931 0 1 .0478.0013Z" fill="white" filter="url(#round)" />
+        <path d="M.0478.0013.7512.0443V.245H.9477L.9996.8931 0 1 .0478.0013Z" fill="white" filter="url(#round)" />
       </mask>
       
       <!-- <animate
