@@ -27,7 +27,7 @@
 
         
         background-image: url("https://i.imgur.com/7JQsjw1.png");
-        background-size: cover;
+        background-size: 100%;
         background-position: center;
 
         display: flex;
@@ -37,18 +37,31 @@
         text-align: center;
 
         padding: calc(var(--card-padding) + 1rem); 
+        /* padding-inline-end: 0; */
 
         /* scale: 1.17; */
 
+        
+        min-width: min-content;
+        
+        z-index: 2;
+        
+        /* padding-inline: 5em; */
+        
         margin-left: -10%;
         margin-bottom: -10%;
-
-        z-index: 2;
-
-        /* padding-inline: 5em; */
-
         /* padding-inline-end: 10rem; */
+        
+        transform-origin: right top;
 
+        transition: .3s;
+    }
+    
+    section:hover {
+        
+        background-size: 110%;
+        margin-left: -5%;
+        margin-bottom: -5%;
     }
 
     article {
@@ -69,6 +82,7 @@
         padding-block: 1.5em;
 
         /* overflow: clip; */
+        max-width:min-content;
 
     }
     

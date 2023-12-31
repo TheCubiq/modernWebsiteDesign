@@ -25,7 +25,7 @@
     <div class="event-wrapper">
         {#each events as event}
             <article style="--bg-img:url({event.image})">
-                <h1>{event.name}</h1>
+                <h1 data-event-name={event.name}>{event.name}</h1>
             </article>
         {/each}
     </div>
@@ -59,6 +59,9 @@
 
         display: grid;
         grid-template-rows: 1fr auto;
+
+        /* max-width: 70rem; */
+        /* overflow-x: scroll; */
     }
 
     .event-wrapper {
@@ -76,7 +79,7 @@
         flex:1;
         display: flex;
         /* gap: 1.5em; */
-        justify-content: space-evenly;
+        /* justify-content: space-evenly; */
 
         border-radius: 1.5em;
         border: 2px solid #20202B;
@@ -90,6 +93,10 @@
         padding: 1em;
         margin: 1rem;
 
+        /* overflow-x: scroll; */
+
+        gap: .5em;
+
         /* background-color: red; */
     }
 
@@ -97,6 +104,7 @@
         flex-grow: 1;
         flex-basis: 33%;
         transition: 0.3s;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 20%);
     }
 
     article:hover {
@@ -104,6 +112,7 @@
     }
 
     article {
+        cursor: pointer;
         display: flex;
         /* align-items: flex-end; */
         /* justify-content: center; */
@@ -119,42 +128,99 @@
         content: "";
         position: absolute;
         inset: 0;
-        border-radius: 2em;
+        /* border-radius: 2em; */
         /* background-image: url("https://i.imgur.com/20Q7JDm.png"); */
         background-image: var(--bg-img);
         
+        z-index: -1;
+
         background-size: cover;
         background-position: center;
         filter: brightness(0.5);
         transition: 0.3s;
     }
     article:hover::before {
-        filter: brightness(1);
+        filter: brightness(.9);
+        scale:1.1;
     }
 
+    
+            /* inset: 0; */
+            /* grid-row: middleY;
+            grid-column: middleX; */
     h1 {
-        position: absolute;
-        font-size: 1.5rem;
+        /* position: absolute; */
+        flex:1;
+        margin-inline-end: -2em;
 
-        /* inset: 0; */
-        /* grid-row: middleY;
-        grid-column: middleX; */
+        /* transform-origin: center left; */
 
-
-
-
-        left:80%;
-        top: 10%;
-
-        transform-origin: center left;
-
-        transform: rotate(90deg);
         
         transition: .3s;
         line-break: normal;
         
         white-space: nowrap;
+
+        font-size: 1.7rem;
+        margin-inline-end: -2em;
+        /* opacity: 0; */
+        color: transparent;
+
+        transition: .3s;
     }
+
+
+    h1::after, h1::before {
+        transition: inherit;
+    }
+    /* h1::after {
+        content: attr(data-event-name);
+        font-size: 1.7rem;
+        margin-inline-end: -2em;
+        opacity: 0;
+        transition-delay: 0s;
+    } */
+
+    h1::before {
+        
+        transition-delay: .2s;
+        color: var(--clr-text);
+        font-weight: normal;
+        content: attr(data-event-name);
+        font-size: 1.5rem;
+        position: absolute;
+        transform: translateX(100%) rotate(90deg) translateX(0%);
+        /* left: calc(100% - 1em); */
+        
+        position: absolute;
+        right:0.75rem;
+        top:2.5rem;
+        transform-origin: left;
+        /* margin-block-start: 1em; */
+    }
+
+    article:hover h1::before {
+        /* transform: translateX(100%) rotate(0deg) translateX(-100%); */
+        top: 1rem;
+        opacity: 0;
+    }
+
+    /* article:hover h1::after {
+        transition-delay: .4s;
+        margin: 0em;
+        opacity: 1;
+    } */
+
+    article:hover h1 {
+        transition-delay: .4s;
+        margin: 0em;
+        color: var(--clr-text);
+    }
+
+
+    /* article:hover h1 {
+        color: var(--clr-text);
+    } */
 
     ul span {
 
@@ -175,10 +241,12 @@
 
     article {
         /* margin-inline: .5em; */
-        border-radius: 1em;
+        border-radius: 2em;
+        overflow: clip;
+        padding-block: 1em;
     }
     
-    article:hover h1 {
+    /* article:hover h1 { */
         /* transform: rotate(-90deg) translateY(-100%) ; */
         /* animation-direction: alternate; */
         /* transition: slide 0.3s ease-in-out; */
@@ -186,14 +254,21 @@
         /* grid-row: middleX;
         grid-column: middleY; */
 
-        top: 10%;
+        /* top: 10%;
         left: 50%;
-        transform: translate(-50%, -50%) rotate(-0deg);
+        transform: translate(-50%, -50%) rotate(-0deg); */
 
-    }
+    /* } */
 
-    article:nth-child(1):hover > h1 {
-        left: calc(50% + 2.2rem);
+    /* article > h1::before {
+        content: attr(data-event-name);
+        font-size: 1.5rem;
+    } */
+
+    article:nth-child(1) {
+        /* left: calc(50% + 2.2rem); */
+        padding-inline-start: calc(5rem);
+
     }
 
     .mask {

@@ -15,6 +15,9 @@
         flex-direction: column;
 
         font-size: 1.5rem;
+
+        margin-inline: auto;
+
     }
     span {
         font-size: .7em;
@@ -28,5 +31,6 @@
         align-items: center;
         /* gap: 0.3em; */
         text-decoration: none;
+
     }
 </style>
