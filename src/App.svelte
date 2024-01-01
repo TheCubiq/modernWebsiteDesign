@@ -5,6 +5,7 @@
     import Events from "./lib/Tabs/Events.svelte";
     import Navigation from "./lib/Tabs/Header.svelte";
     import Hero from "./lib/Tabs/Hero.svelte";
+    import Others from "./lib/Tabs/Others.svelte";
 </script>
 
 
@@ -13,6 +14,7 @@
     <Hero />
     <Data />
     <Events />
+    <Others />
 </main>
 
 <SvgDefines />
@@ -30,6 +32,8 @@
         grid-template-columns: 5fr 2fr 5fr;
         grid-template-rows: repeat(8, 1fr);
         position: relative;
+
+        column-gap: 1em;
     }
 
     main::before {

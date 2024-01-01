@@ -33,6 +33,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        padding-block: 1.5em;
     }
 
     ul {
@@ -40,6 +41,7 @@
         display: flex;
         /* gap: 1.5em; */
         justify-content: space-evenly;
+        margin-block-end: -2em;
     }
 
     p {

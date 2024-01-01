@@ -22,13 +22,10 @@
 <style>
 
     section {
+        cursor: pointer;
+
         grid-column: 1/3;
         grid-row: 1/7;
-
-        
-        background-image: url("https://i.imgur.com/7JQsjw1.png");
-        background-size: 100%;
-        background-position: center;
 
         display: flex;
         align-items: flex-end;
@@ -37,11 +34,7 @@
         text-align: center;
 
         padding: calc(var(--card-padding) + 1rem); 
-        /* padding-inline-end: 0; */
 
-        /* scale: 1.17; */
-
-        
         min-width: min-content;
         
         z-index: 2;
@@ -55,13 +48,29 @@
         transform-origin: right top;
 
         transition: .3s;
+
+        position: relative;
+        overflow: hidden;
+    }
+
+    section::before {
+        transition: inherit;
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("https://i.imgur.com/7JQsjw1.png");
+        background-size: cover;
+        background-position: center;
+        scale: 1;
     }
     
     section:hover {
-        
-        background-size: 110%;
-        margin-left: -5%;
-        margin-bottom: -5%;
+        /* margin-left: -5%;
+        margin-bottom: -5%; */
+    }
+
+    section:hover::before {
+        scale: 1.1;
     }
 
     article {

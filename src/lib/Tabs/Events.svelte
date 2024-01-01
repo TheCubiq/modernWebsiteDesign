@@ -1,6 +1,7 @@
 <script>
 
-    import Stat from "../Stat.svelte";
+    import Pill from "../Pill.svelte";
+import Stat from "../Stat.svelte";
 
     export let events = [
         {
@@ -32,7 +33,8 @@
     <ul>
         {#each events as event}
             <Stat name={event.name}>
-                <span>{event.time}</span>
+                <!-- <span>{event.time}</span> -->
+                <Pill text={event.time} />
             </Stat>
         {/each}
     </ul>
@@ -47,12 +49,7 @@
     section {
         grid-column: -1/-2;
         grid-row: 1/6;
-        margin: 1em;
-        
-        /* display: flex; */
-
-        transition: 0.3s;
-
+        margin-block: 1em;
 
         margin-right: -10%;
         /* margin-bottom: -10%; */
@@ -103,7 +100,10 @@
     article {
         flex-grow: 1;
         flex-basis: 33%;
+
         transition: 0.3s;
+        transition-property: flex-basis;
+
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 20%);
     }
 
@@ -138,6 +138,7 @@
         background-position: center;
         filter: brightness(0.5);
         transition: 0.3s;
+        transition-property: brightness scale;
     }
     article:hover::before {
         filter: brightness(.9);
@@ -165,24 +166,14 @@
         margin-inline-end: -2em;
         /* opacity: 0; */
         color: transparent;
-
-        transition: .3s;
     }
 
 
     h1::after, h1::before {
         transition: inherit;
     }
-    /* h1::after {
-        content: attr(data-event-name);
-        font-size: 1.7rem;
-        margin-inline-end: -2em;
-        opacity: 0;
-        transition-delay: 0s;
-    } */
 
     h1::before {
-        
         transition-delay: .2s;
         color: var(--clr-text);
         font-weight: normal;
@@ -205,38 +196,10 @@
         opacity: 0;
     }
 
-    /* article:hover h1::after {
-        transition-delay: .4s;
-        margin: 0em;
-        opacity: 1;
-    } */
-
     article:hover h1 {
         transition-delay: .4s;
         margin: 0em;
         color: var(--clr-text);
-    }
-
-
-    /* article:hover h1 {
-        color: var(--clr-text);
-    } */
-
-    ul span {
-
-        font-size: .8rem;
-
-        white-space: nowrap;
-
-        padding: .1em;
-        padding-inline: 1em;
-        border-radius: 5em;
-
-        border: 1px solid #757391;
-
-        background: rgba(117, 115, 145, 0.10);
-
-        backdrop-filter: blur(12px);
     }
 
     article {
@@ -245,25 +208,6 @@
         overflow: clip;
         padding-block: 1em;
     }
-    
-    /* article:hover h1 { */
-        /* transform: rotate(-90deg) translateY(-100%) ; */
-        /* animation-direction: alternate; */
-        /* transition: slide 0.3s ease-in-out; */
-
-        /* grid-row: middleX;
-        grid-column: middleY; */
-
-        /* top: 10%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(-0deg); */
-
-    /* } */
-
-    /* article > h1::before {
-        content: attr(data-event-name);
-        font-size: 1.5rem;
-    } */
 
     article:nth-child(1) {
         /* left: calc(50% + 2.2rem); */
@@ -274,12 +218,5 @@
     .mask {
         --masking-path: none;
         --masking-path: url("#blob2");
-    }
-
-    @keyframes slide {
-        
-        to {
-            transform: rotate(-90deg);
-        }
     }
 </style>

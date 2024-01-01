@@ -1,8 +1,10 @@
 <script>
-    import { BookText, CalendarDays, Command, LayoutDashboard } from "lucide-svelte";
+    import { Bell, BookText, CalendarDays, Coffee, Command, LayoutDashboard } from "lucide-svelte";
 </script>
 
 <header>
+
+    <!-- logo -->
     <svg
         height="2em"
         viewBox="0 0 48 33"
@@ -35,15 +37,27 @@
             About
         </a>
     </nav>
-
+    
     <nav class="user">
-        <li>item</li>
-        <li>item</li>
-        <li>item</li>
+        <a href="/">
+            <Bell size="1em" />
+        </a>
+        <a href="/">
+            <Coffee size="1em" />
+            Donate
+        </a>
+        <a  href="/" class="pfp" style="--bg-img:url(https://i.imgur.com/KCdqE47.png)">
+            <img src="https://i.imgur.com/KCdqE47.png" alt="pfp">
+        </a>
     </nav>
 </header>
 
 <style>
+
+    :root {
+        --bg-img: 'https://i.imgur.com/20Q7JDm.png';
+    }
+
     header {
         margin-inline: var(--card-padding);
         display: grid;
@@ -61,7 +75,7 @@
 
         backdrop-filter: blur(12px);
 
-        gap: 1.5rem;
+        gap: 1.5em;
     }
 
     a {
@@ -70,6 +84,28 @@
         gap: 0.3em;
         text-decoration: none;
         color: var(--clr-text);
+    }
+
+    a:hover {
+        color: var(--clr-primary);
+    }
+
+    a.pfp {
+        /* background-image: var(--bg-img); */
+        background-size: cover;
+        background-position: center;
+
+        height: 1.5em;
+        aspect-ratio: 1;
+
+        border-radius: 50%;
+        overflow: hidden;
+    }
+
+    a.pfp > img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
     }
 
     nav.menu {
@@ -87,5 +123,16 @@
     nav {
         display: flex;
         list-style: none;
+        font-size: 1rem;
+    }
+
+    nav.user > :not(:nth-child(1))::before {
+        content: "|";
+        position: absolute;
+        margin-inline-start: -.8em;
+        line-height: .5em;
+        color: var(--clr-text);
+        pointer-events: none;
+        opacity: .5;
     }
 </style>
