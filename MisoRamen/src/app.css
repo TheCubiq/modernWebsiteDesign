@@ -17,6 +17,9 @@
   --clr-text: #0d0d0e;
   --clr-primary: #b15131;
 
+  --gap-sm: 1rem;
+  --gap-lg: 5rem;
+
   
   background-color: var(--clr-background);
   color: var(--clr-text);
