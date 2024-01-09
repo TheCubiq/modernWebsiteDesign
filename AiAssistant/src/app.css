@@ -1,5 +1,5 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family:'Roundabout NF', Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -16,6 +16,8 @@
   --clr-text: #000;
   --clr-primary: #4d9ba2;
   --clr-secondary: #d1d9d6;
+
+  --corner-radius: .75rem;
 }
 
 
@@ -45,6 +47,12 @@ body {
   /* scrollbar fix */
   width: calc(100svw - (100svw - 100%));
   display: flex;
+}
+
+
+a {
+  color: var(--clr-text);
+  text-decoration: none;
 }
 
 
