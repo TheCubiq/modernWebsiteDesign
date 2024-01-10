@@ -18,6 +18,8 @@
   --clr-secondary: #d1d9d6;
 
   --corner-radius: .75rem;
+  --spacing: 2rem;
+  --spacing-half: calc(var(--spacing) / 2);
 }
 
 
