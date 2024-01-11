@@ -92,6 +92,8 @@
     border-radius: 1em;
 
     text-wrap: nowrap;
+
+    opacity: 0.8;
   }
 
   ul li {
