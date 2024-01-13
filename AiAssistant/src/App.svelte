@@ -10,7 +10,7 @@ import Header from "./lib/tabs/Header.svelte";
   <Header />
 
   <Hero />
-  <Slideshow />
+  <!-- <Slideshow /> -->
 </main>
 
 <SvgDefines />
@@ -26,8 +26,9 @@ import Header from "./lib/tabs/Header.svelte";
     grid-template-columns: [header-start hero-start slideshow-start] 1fr [header-end hero-end slideshow-end];
     grid-template-rows: 
       [header-start] auto 
-      [header-end hero-start] 1fr 
-      [hero-end slideshow-start] 1fr [slideshow-end];
+      [header-end hero-start] 1fr
+      /* [hero-end slideshow-start] 1fr [slideshow-end] */
+      ;
 
     padding: 1.5rem;
     column-gap: var(--spacing);
