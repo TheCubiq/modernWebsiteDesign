@@ -4,9 +4,9 @@
 
 <section id="hero" class="corners">
   <nav>
-      <a href="/">home</a>
-      <a href="/">inside</a>
-      <a href="/">leave</a>
+    <a href="/">home</a>
+    <a href="/">inside</a>
+    <a href="/">leave</a>
   </nav>
 
   <h1>ai gen.2 starsets new pic.dawn</h1>
@@ -19,7 +19,7 @@
       <a href="/">news & blog</a>
     </li>
     <li>
-      <img src="{AppleLogo}" alt="" />
+      <img src={AppleLogo} alt="" />
       <a href="/">get the app</a>
     </li>
   </ul>
@@ -28,97 +28,96 @@
 </section>
 
 <style>
+  #hero {
+    grid-area: hero;
 
-#hero {
+    display: grid;
+    grid-template-columns: 1fr;
 
-  grid-area: hero;
+    align-items: flex-start;
 
-  display: grid;
+    padding: 0.75rem;
 
-  align-items: flex-start;
-
-  padding: .75rem;
-
-  /* grid-template-columns: 
+    /* grid-template-columns: 
     [nav-start buttons-start] 1fr [nav-end buttons-end] 1fr [end]; */
-}
 
-ul, nav {
-  list-style: none;
+    --stroke-width: .1em;
 
-  display: flex;
-  column-gap: var(--spacing);
-}
+    background: 
+      linear-gradient(
+      to left bottom,
+      transparent calc(50% - var(--stroke-width)/2 - 0.15px),
+      var(--clr-secondary) calc(50% - var(--stroke-width)),
+      var(--clr-secondary) calc(50% + var(--stroke-width)),
+      transparent calc(50% + var(--stroke-width)/2 + 0.15px)
+    );
+    background-color: var(--clr-bg);
 
-ul {
-  
-  flex-direction: column;
+    box-shadow: 0 0 0 calc(var(--stroke-width)*1.5) var(--clr-secondary);
+  }
 
-  row-gap: var(--spacing-half);
-}
+  ul,
+  nav {
+    list-style: none;
 
+    display: flex;
+    column-gap: var(--spacing);
+  }
 
-li {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.375rem;
+  ul {
+    flex-direction: column;
 
-  white-space: nowrap;
+    row-gap: var(--spacing-half);
+  }
 
-  border-radius: 0.75rem;
-  border: 1px solid var(--Text, #000);
+  li {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.375rem;
 
-  padding: 0.375rem 0.75rem;
-}
+    white-space: nowrap;
 
+    border-radius: 0.75rem;
+    border: 1px solid var(--Text, #000);
 
+    padding: 0.375rem 0.75rem;
+  }
 
+  ul::after {
+    /* content: "---"; */
+    content: "";
 
+    --size: 0.2em;
 
+    background: radial-gradient(
+      50% 50% at 50% 50%,
+      var(--clr-text) calc(var(--size) - 0.5px),
+      /*   antialiasing   */ transparent var(--size)
+    );
+    background-size: 1em 1em;
+    background-repeat: space;
+    background-position: center;
 
-ul::after {
-  /* content: "---"; */
-  content: '';
+    margin-inline: auto;
 
-  --size: .2em;
-  
-  background: radial-gradient(
-    50% 50% at 50% 50%,
-    var(--clr-text) calc(var(--size) - .5px), /*   antialiasing   */
-    transparent var(--size)
-  );
-  background-size: 1em 1em;
-  background-repeat: space;
-  background-position: center;
+    margin-block: -0.5em;
 
-  margin-inline: auto;
+    width: 3em;
+    height: 1em;
 
-  margin-block: -.5em;
+    /* flex: 1; */
+    order: 98;
+  }
 
-  width: 3em;
-  height: 1em;
+  li:last-child {
+    order: 99;
+  }
 
-  /* flex: 1; */
-  order: 98;
-}
+  li img {
+    height: 0.85em;
+  }
 
-li:last-child {
-  order: 99;
-}
-
-
-
-
-
-
-
-
-
-li img {
-  height: .85em;
-}
-  
   .corners {
     z-index: 0;
   }
@@ -149,12 +148,29 @@ li img {
 
     --circ: var(--clr-primary) var(--off-radi), transparent var(--off-radi);
 
-    background: radial-gradient(circle at left top, var(--circ)),
+
+    --corners-final: 
+      radial-gradient(circle at left top, var(--circ)),
       radial-gradient(circle at right top, var(--circ)),
       radial-gradient(circle at left bottom, var(--circ)),
       radial-gradient(circle at right bottom, var(--circ));
+
+    background: var(--corners-final);
     z-index: -2;
 
     scale: 1;
   }
+
+  section > h1 {
+    /* aspect-ratio: 1/1;    */
+    /* display: flex; */
+    align-items: center;
+    border: var(--clr-secondary) solid calc(var(--stroke-width)* 1.5);
+    border-radius: 100em; 
+
+    /* max-width: 15ch; */
+    justify-self: center;
+
+  }
+
 </style>
