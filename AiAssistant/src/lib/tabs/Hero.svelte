@@ -1,6 +1,7 @@
 <script>
   import { Home, LogOut, ShoppingBag } from "lucide-svelte";
   import AppleLogo from "/apple-logo.svg";
+  import QR from '@svelte-put/qr/svg/QR.svelte';
 </script>
 
 <section id="hero" class="corners">
@@ -37,6 +38,13 @@
           </a>
         </li>
       </ul>
+    </li>
+
+    <li>
+      <QR 
+        data="https://cubiq.dev"
+        shape="circle"
+      />
     </li>
   </menu>
 
@@ -89,7 +97,8 @@
 
     /* grid-auto-columns: 100%; */
 
-    grid-template-columns: [nav-start buttons-start] 1fr [nav-end buttons-end] 1fr [end];
+    /* grid-template-columns: [nav-start buttons-start] 1fr [nav-end buttons-end] 1fr [end]; */
+    grid-auto-columns: 1fr;
 
     grid-auto-flow: column;
 
