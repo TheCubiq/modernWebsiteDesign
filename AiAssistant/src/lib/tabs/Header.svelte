@@ -48,11 +48,10 @@
     border-radius: var(--corner-radius);
 
     gap: var(--spacing);
-  }
 
-  /* header > * {
-    background-color: var(--clr-bg);
-  } */
+    position: sticky;
+    top: 0;
+  }
 
   header > ul {
     display: flex;
@@ -98,15 +97,16 @@
 
   ul li {
     display: flex;
-
-    /* background: blue; */
-    background: var(--clr-bg);
     padding: 0.5em;
   }
 
   .left li {
     border-radius: var(--corner-radius);
     padding-inline: 0;
+  }
+
+  .right li {
+    background: var(--clr-bg);
   }
 
   .corners {

@@ -10,7 +10,7 @@ import Header from "./lib/tabs/Header.svelte";
   <Header />
 
   <Hero />
-  <!-- <Slideshow /> -->
+  <Slideshow />
 </main>
 
 <SvgDefines />
@@ -20,21 +20,27 @@ import Header from "./lib/tabs/Header.svelte";
     flex: 1;
     display: grid;
     place-items: center;
-    max-height: 100vh;
+    /* max-height: 100vh; */
+
+    height: auto;
+
     background-color: var(--clr-bg);
 
     grid-template-columns: [header-start hero-start slideshow-start] 1fr [header-end hero-end slideshow-end];
-    grid-template-rows: 
+    /* grid-template-rows: 
       [header-start] auto 
       [header-end hero-start] 1fr
+      ; */
       /* [hero-end slideshow-start] 1fr [slideshow-end] */
-      ;
+
+    grid-template-rows: [header-start] auto [header-end hero-start] minmax(3rem,70svh) [hero-end slideshow-start] 100vh [slideshow-end];
 
     padding: 1.5rem;
     column-gap: var(--spacing);
     row-gap: var(--spacing-half);
 
     max-width: 100rem;
+
   }
 
   @media (min-width: 48rem) {
