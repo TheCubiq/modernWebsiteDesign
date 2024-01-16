@@ -33,7 +33,7 @@ import Header from "./lib/tabs/Header.svelte";
       ; */
       /* [hero-end slideshow-start] 1fr [slideshow-end] */
 
-    grid-template-rows: [header-start] auto [header-end hero-start] minmax(3rem,70svh) [hero-end slideshow-start] 100vh [slideshow-end];
+    grid-template-rows: [header-start] auto [header-end hero-start] minmax(3rem,80svh) [hero-end slideshow-start] 100vh [slideshow-end];
 
     padding: 1.5rem;
     column-gap: var(--spacing);

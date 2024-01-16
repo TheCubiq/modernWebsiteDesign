@@ -53,6 +53,23 @@
     top: 0;
   }
 
+  header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+
+    /* background: var(--clr-bg); */
+    z-index: -1;
+
+    backdrop-filter: blur(10px);
+
+    mask: linear-gradient(
+      black 80%,
+      transparent
+    );
+
+  }
+
   header > ul {
     display: flex;
     /* justify-content: space-between; */

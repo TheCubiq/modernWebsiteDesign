@@ -23,6 +23,13 @@
   --spacing-half: calc(var(--spacing) / 2);
 }
 
+::selection {
+  background: color-mix(in srgb, var(--clr-primary), transparent);
+  color: var(--clr-bg);
+  /* pretty text shadow */
+  text-shadow: 0 0 5px var(--clr-text);
+}
+
 body {
   margin: 0;
   display: grid;
