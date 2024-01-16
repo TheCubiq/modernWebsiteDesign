@@ -1,8 +1,19 @@
 <script>
+  import { fly } from "svelte/transition";
   import FeatureBlob from "../FeatureBlob.svelte";
+  import { quintOut } from "svelte/easing";
 </script>
 
-<section id="slideshow">
+<section 
+transition:fly|global={{ 
+  delay: 700,
+  duration: 700,
+  x: 50,
+  opacity: 0,
+  easing: quintOut,
+}}
+
+id="slideshow">
   <img src="https://i.imgur.com/OdRYIJN.jpg" alt="" />
 
   <FeatureBlob

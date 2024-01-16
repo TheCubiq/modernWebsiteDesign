@@ -1,4 +1,8 @@
-<header>
+<script>
+  import { blur } from "svelte/transition";
+</script>
+
+<header transition:blur={{ duration: 1000 }}>
   <ul class="left">
     <li>
       <svg
@@ -15,15 +19,15 @@
       </svg>
     </li>
     <li>
-      <a href="/">subscription</a>
+      <a href="#">subscription</a>
     </li>
     <li>
-      <a href="/">the finals released</a>
+      <a href="#">the finals released</a>
     </li>
   </ul>
   <ul class="right">
     <li class="corners">
-      <a href="/">en</a>
+      <a href="#">en</a>
     </li>
   </ul>
 </header>
@@ -62,12 +66,11 @@
     z-index: -1;
 
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 
-    mask: linear-gradient(
-      black 80%,
-      transparent
-    );
-
+    mask-image: linear-gradient(black 80%, transparent);
+    -webkit-mask-image: -webkit-linear-gradient(black 80%, transparent);
+    /* -webkit-mask-clip: content-box; */
   }
 
   header > ul {
@@ -83,8 +86,6 @@
 
     list-style: none;
   }
-
-  
 
   header > ul.right {
     justify-content: flex-end;
@@ -106,9 +107,9 @@
     display: flex;
     padding: 0.5em;
   }
-  
+
   .left > li:not(:is(:first-child, :nth-child(2))) {
-      display: none;
+    display: none;
   }
 
   .left li {
@@ -121,7 +122,7 @@
   }
 
   .corners {
-    --radius: .75em;
+    --radius: 0.75em;
     border-bottom-left-radius: var(--radius);
     position: relative;
   }
@@ -137,14 +138,13 @@
 
     background: radial-gradient(
       100% 100% at 0% 100%,
-      transparent calc(100% - .3px), /* antialiasing */
+      transparent calc(100% - 0.3px) /* antialiasing */,
       var(--clr-bg) 100%
-      /* red 100% */
     );
   }
 
   .corners::before {
-    top:0;
+    top: 0;
     left: calc(var(--radius) * -1);
   }
 
@@ -153,18 +153,14 @@
     bottom: calc(var(--radius) * -1);
   }
 
-
   @media (min-width: 48rem) {
-
     header > ul.left > li {
       display: flex !important;
     }
 
     .left > :last-child {
-    flex: 1;
-    justify-content: flex-end;
+      flex: 1;
+      justify-content: flex-end;
+    }
   }
-    
-  }
-
 </style>

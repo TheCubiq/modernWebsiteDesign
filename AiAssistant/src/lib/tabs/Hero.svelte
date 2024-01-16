@@ -2,7 +2,7 @@
   import { Home, LogOut, ShoppingBag } from "lucide-svelte";
   import AppleLogo from "/apple-logo.svg";
   import QR from "@svelte-put/qr/svg/QR.svelte";
-  import { fly, scale } from "svelte/transition";
+  import { fly } from "svelte/transition";
 
   const navItems = [
     {
@@ -22,54 +22,70 @@
     },
   ];
 
-  import { onMount } from "svelte";
+  const socialButtons = [
+    {
+      name: "explore apparel",
+      href: "#",
+    },
+    {
+      name: "news & blog",
+      href: "#",
+    },
+    {
+      name: "get the app",
+      href: "#",
+      icon: AppleLogo,
+    },
+  ];
+
   import { quintOut } from "svelte/easing";
-
-  let loaded = false;
-
-  onMount(() => {
-    loaded = true;
-  });
 </script>
 
-<section id="hero" class="corners">
+<section 
+transition:fly|global={{ 
+  delay: 500,
+  duration: 700,
+  x: -50,
+  opacity: 0,
+  easing: quintOut,
+}}
+id="hero" 
+class="corners">
   <menu class="scroller">
     <!-- nav -->
     <li id="navigation">
       <!-- <nav transition:scale={{ duration: 1000 }} >
-        <a href="/">
+        <a href="#">
           <svelte:component this={Home} size="1em" />
           <span>Home</span>
         </a>
-        <a href="/">
+        <a href="#">
           <ShoppingBag size="1em" />
           <span>Store</span>
         </a>
-        <a href="/">
+        <a href="#">
           <LogOut size="1em" />
           <span>Leave</span>
         </a>
       </nav> -->
 
       <nav>
-        {#if loaded}
-          {#each navItems as { name, icon, href }, i}
-            <a
-              transition:fly|global={{
-                delay: i * 200,
-                duration: 300,
-                x: 0,
-                y: -50,
-                opacity: 0,
-                easing: quintOut,
-              }}
-              href={href || "/"}
-            >
-              <svelte:component this={icon} size="1em" />
-              <span>{name}</span>
-            </a>
-          {/each}
-        {/if}
+        {#each navItems as { name, icon, href }, i}
+          <a
+            transition:fly|global={{
+              delay: 1000 + i * 200,
+              duration: 300,
+              x: 0,
+              y: -50,
+              opacity: 0,
+              easing: quintOut,
+            }}
+            href={href || "#"}
+          >
+            <svelte:component this={icon} size="1em" />
+            <span>{name}</span>
+          </a>
+        {/each}
       </nav>
     </li>
 
@@ -81,18 +97,40 @@
     <!-- social buttons -->
     <li id="socials">
       <ul>
-        <li class="highlight">
-          <a href="/">explore apparel</a>
+        <!-- <li class="highlight">
+          <a href="#">explore apparel</a>
         </li>
         <li>
-          <a href="/">news & blog</a>
+          <a href="#">news & blog</a>
         </li>
         <li>
-          <a href="/">
+          <a href="#">
             <img src={AppleLogo} alt="" />
             get the app
           </a>
-        </li>
+        </li> -->
+
+        {#each socialButtons as { name, href, icon }, i}
+          <li
+            class={i === 0 && "highlight"}
+            transition:fly|global={{
+              delay: 1000 + i * 200,
+              duration: 300,
+              x: 0,
+              y: 50,
+              opacity: 0,
+              easing: quintOut,
+            }}
+          >
+            <a href={href || "#"}>
+              {#if icon}
+                <img src={icon} alt="" />
+              {/if}
+              {name}
+            </a>
+          </li>
+        {/each}
+
       </ul>
       <aside>
         <QR data="https://cubiq.dev" shape="circle" moduleFill="gray" />
@@ -367,24 +405,24 @@
 
   #barcode {
     /* display: none; */
-    
+
     grid-area: barcode;
 
     display: none;
 
     font-family: "Libre Barcode 39 Extended Text";
-      white-space: nowrap;
-      /* font direction up to down */
-      writing-mode: vertical-rl;
-      /* position: absolute; */
-      font-size: clamp(2rem, 2vw + 1rem, 3rem);
-      text-transform: uppercase;
+    white-space: nowrap;
+    /* font direction up to down */
+    writing-mode: vertical-rl;
+    /* position: absolute; */
+    font-size: clamp(2rem, 2vw + 1rem, 3rem);
+    text-transform: uppercase;
 
-      justify-content: center;
-      align-items: center;
-      height: 100%;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
 
-      color: var(--clr-secondary);
+    color: var(--clr-secondary);
   }
 
   #navigation {
@@ -463,7 +501,6 @@
     li#barcode {
       grid-area: barcode;
 
-      
       align-self: start;
     }
 

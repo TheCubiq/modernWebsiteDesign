@@ -4,13 +4,24 @@ import Header from "./lib/tabs/Header.svelte";
   import Hero from "./lib/tabs/Hero.svelte";
   import Slideshow from "./lib/tabs/Slideshow.svelte";
 
+  import { onMount } from "svelte";
+
+  let loaded = false;
+
+  onMount(() => {
+    loaded = true;
+  });
+
 </script>
 
 <main>
+  
+  {#if loaded}
   <Header />
-
+  
   <Hero />
   <Slideshow />
+  {/if}
 </main>
 
 <SvgDefines />

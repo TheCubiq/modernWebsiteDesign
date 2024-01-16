@@ -6,7 +6,7 @@
 <div class="wrapper">
   <div class="goome">
     <div class="circle"></div>
-    <a href="/" class="text-container">
+    <a href="#" class="text-container">
       <span>{text}</span>
     </a>
   </div>
