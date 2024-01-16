@@ -2,15 +2,43 @@
   import { Home, LogOut, ShoppingBag } from "lucide-svelte";
   import AppleLogo from "/apple-logo.svg";
   import QR from "@svelte-put/qr/svg/QR.svelte";
+  import { fly, scale } from "svelte/transition";
+
+  const navItems = [
+    {
+      name: "Home",
+      icon: Home,
+      href: "#title",
+    },
+    {
+      name: "Store",
+      icon: ShoppingBag,
+      href: "#socials",
+    },
+    {
+      name: "Leave",
+      icon: LogOut,
+      href: "#barcode",
+    },
+  ];
+
+  import { onMount } from "svelte";
+  import { quintOut } from "svelte/easing";
+
+  let loaded = false;
+
+  onMount(() => {
+    loaded = true;
+  });
 </script>
 
 <section id="hero" class="corners">
   <menu class="scroller">
     <!-- nav -->
-    <li class="nav">
-      <nav>
+    <li id="navigation">
+      <!-- <nav transition:scale={{ duration: 1000 }} >
         <a href="/">
-          <Home size="1em" />
+          <svelte:component this={Home} size="1em" />
           <span>Home</span>
         </a>
         <a href="/">
@@ -21,16 +49,37 @@
           <LogOut size="1em" />
           <span>Leave</span>
         </a>
+      </nav> -->
+
+      <nav>
+        {#if loaded}
+          {#each navItems as { name, icon, href }, i}
+            <a
+              transition:fly|global={{
+                delay: i * 200,
+                duration: 300,
+                x: 0,
+                y: -50,
+                opacity: 0,
+                easing: quintOut,
+              }}
+              href={href || "/"}
+            >
+              <svelte:component this={icon} size="1em" />
+              <span>{name}</span>
+            </a>
+          {/each}
+        {/if}
       </nav>
     </li>
 
     <!-- title -->
-    <li class="title">
+    <li id="title">
       <h1>ai gen.2 <br /> starsets new <br />pic.dawn</h1>
     </li>
 
     <!-- social buttons -->
-    <li class="buttons">
+    <li id="socials">
       <ul>
         <li class="highlight">
           <a href="/">explore apparel</a>
@@ -50,8 +99,8 @@
       </aside>
     </li>
 
-    <li class="barcode">
-      <p>Libre Barcode 39</p>
+    <li id="barcode">
+      <p>made by cubiq.dev</p>
     </li>
   </menu>
 
@@ -105,7 +154,7 @@
     grid-auto-columns: 100%;
 
     grid-auto-flow: column;
-    grid-template-areas: "title buttons nav barcode";
+    grid-template-areas: "title buttons barcode nav";
 
     --skew-angle: 30deg;
 
@@ -269,11 +318,17 @@
     aspect-ratio: 1/1;
   }
 
-  .title {
+  #title {
     grid-area: title;
+
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
-  .buttons {
+  #socials {
     grid-area: buttons;
 
     display: flex;
@@ -288,12 +343,12 @@
     flex-direction: column;
   }
 
-  .buttons > ul {
+  #socials > ul {
     width: 100%;
     max-width: 50ch;
   }
 
-  .buttons > aside {
+  #socials > aside {
     display: flex;
     max-height: 10rem;
     min-width: 10rem;
@@ -306,15 +361,33 @@
     aspect-ratio: 1;
   }
 
-  .nav {
+  #navigation {
     grid-area: nav;
   }
 
-  .barcode {
+  #barcode {
+    /* display: none; */
+    
+    grid-area: barcode;
+
     display: none;
+
+    font-family: "Libre Barcode 39 Extended Text";
+      white-space: nowrap;
+      /* font direction up to down */
+      writing-mode: vertical-rl;
+      /* position: absolute; */
+      font-size: clamp(2rem, 2vw + 1rem, 3rem);
+      text-transform: uppercase;
+
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+
+      color: var(--clr-secondary);
   }
 
-  .nav {
+  #navigation {
     display: flex;
     justify-content: center;
     position: sticky;
@@ -323,21 +396,23 @@
     margin-block: 3em;
     margin-block-start: 75vh;
     z-index: 999;
+    scroll-snap-align: none;
   }
 
-  .nav nav {
+  #navigation nav {
     display: flex;
     justify-content: center;
     gap: var(--spacing-half);
     flex-direction: inherit;
+    align-items: flex-start;
   }
 
-  .nav a {
+  #navigation a {
     line-height: 1;
     font-size: 1.25rem;
   }
 
-  .nav a span {
+  #navigation a span {
     display: none;
     vertical-align: text-top;
   }
@@ -364,13 +439,13 @@
       transform: none;
     }
 
-    .nav,
-    .barcode,
+    #navigation,
+    #barcode,
     .qr {
       display: list-item;
     }
 
-    .nav {
+    #navigation {
       display: flex;
       position: static;
       right: 0;
@@ -381,26 +456,18 @@
       align-items: flex-start;
     }
 
-    .nav a span {
+    #navigation a span {
       display: inline;
     }
 
-    li.barcode {
+    li#barcode {
       grid-area: barcode;
 
-      font-family: "Libre Barcode 39 Extended Text";
-      white-space: nowrap;
-      /* font direction up to down */
-      writing-mode: vertical-rl;
-      /* position: absolute; */
-      font-size: clamp(2rem, 2vw + 1rem, 3rem);
-      text-transform: uppercase;
-
+      
       align-self: start;
-      color: var(--clr-secondary);
     }
 
-    .buttons {
+    #socials {
       grid-area: buttons;
 
       display: flex;
@@ -414,12 +481,12 @@
       gap: var(--spacing-half);
     }
 
-    .buttons > ul {
+    #socials > ul {
       flex: 1;
       max-width: 30ch;
     }
 
-    .buttons > aside {
+    #socials > aside {
       display: flex;
       flex: 1;
       max-width: 10rem;

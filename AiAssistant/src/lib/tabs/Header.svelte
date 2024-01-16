@@ -41,7 +41,7 @@
     display: flex;
     justify-content: space-between;
 
-    align-items: flex-start;
+    /* align-items: flex-start; */
 
     z-index: 999;
 
@@ -77,24 +77,14 @@
 
     flex-basis: 50%;
 
-    flex-wrap: wrap;
-    justify-content: space-evenly;
+    /* flex-wrap: wrap; */
+    /* justify-content: space-evenly; */
     column-gap: var(--spacing-half);
 
     list-style: none;
   }
 
-  header > ul.left > :last-child {
-    /* justify-content: flex-start; */
-    display: flex;
-    justify-self: flex-end;
-  }
-
-  header > ul.left > :last-child {
-    display: flex;
-    flex: 1;
-    justify-content: flex-end;
-  }
+  
 
   header > ul.right {
     justify-content: flex-end;
@@ -115,6 +105,10 @@
   ul li {
     display: flex;
     padding: 0.5em;
+  }
+  
+  .left > li:not(:is(:first-child, :nth-child(2))) {
+      display: none;
   }
 
   .left li {
@@ -157,6 +151,20 @@
   .corners::after {
     right: 0;
     bottom: calc(var(--radius) * -1);
+  }
+
+
+  @media (min-width: 48rem) {
+
+    header > ul.left > li {
+      display: flex !important;
+    }
+
+    .left > :last-child {
+    flex: 1;
+    justify-content: flex-end;
+  }
+    
   }
 
 </style>
