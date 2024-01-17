@@ -9,7 +9,10 @@ import Header from "./lib/tabs/Header.svelte";
   let loaded = false;
 
   onMount(() => {
-    loaded = true;
+    // tiny delay
+    setTimeout(() => {
+      loaded = true;
+    }, 300);
   });
 
 </script>
