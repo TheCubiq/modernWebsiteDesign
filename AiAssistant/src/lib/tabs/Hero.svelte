@@ -349,20 +349,33 @@
     scale: 1;
   }
 
-  section .circle {
+  #title .circle {
     border: var(--clr-secondary) solid calc(var(--stroke-width) * 1.5);
     border-radius: var(--magnet-rad, 100em);
     background-color: var(--clr-bg);
-    box-shadow: 0px 0px 0px 0px transparent;
-    text-shadow: 0px 0px 0px transparent;
-    transition-duration: 0.5s;
-    transition-property: text-shadow, box-shadow;
+    /* text-shadow: 0px 0px 0px transparent; */
+    transition-duration: var(--shadow-duration);
+    transition-property: padding, scale, box-shadow;
+
+    user-select: none;
+
+    --shadow-duration: 0.5s;
+    
+    box-shadow: calc(var(--magnet-x) * -0.5px) calc(var(--magnet-y) * -1px) var(--shadow-intensity) 5px var(--shadow-color);
+    
   }
 
-  :global(section :hover > .circle) {
-    box-shadow: calc(var(--magnet-x) * -0.5px) calc(var(--magnet-y) * -1px) 10px
-      5px var(--clr-secondary) !important;
-    transition-duration: 0.1s !important;
+  :global(#title :hover > .circle) {
+    --shadow-intensity: 10px;
+    --shadow-color: var(--clr-secondary);
+  }
+
+  :global(#title :hover:active > .circle) {
+    --shadow-intensity: 20px;
+    --shadow-color: var(--clr-primary);
+    --shadow-duration: 0.1s !important;
+    padding: 1em;
+    scale: .95;
   }
 
   .circle h1 {
