@@ -249,9 +249,6 @@
 
     white-space: nowrap;
 
-    background-color: var(--clr-bg);
-    border-radius: 0.75rem;
-    border: 1px solid var(--clr-text);
 
     /* padding: 0.375rem 0.75rem; */
   }
@@ -263,6 +260,10 @@
     align-items: center;
     gap: 0.375rem;
     padding: 0.375rem 0.75rem;
+    
+    background-color: var(--clr-bg);
+    border-radius: 0.75rem;
+    border: 1px solid var(--clr-text);
   }
 
   ul::after {
@@ -299,14 +300,10 @@
     height: 0.85em;
   }
 
-  .highlight {
+  .highlight a {
     background-color: var(--clr-text);
     /* color: var(--clr-bg); */
     --clr-btn-text: var(--clr-bg);
-  }
-
-  .highlight a {
-    /* color: inherit; */
   }
 
   .corners {
@@ -420,6 +417,7 @@
   #socials > ul {
     width: 100%;
     max-width: 50ch;
+    z-index: 2;
   }
 
   #socials > aside {
