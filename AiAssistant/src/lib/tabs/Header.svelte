@@ -5,7 +5,7 @@
 <header transition:blur={{ duration: 1000 }}>
   <ul class="left">
     <li>
-      <svg
+      <svg class="logo"
         xmlns="http://www.w3.org/2000/svg"
         width="47"
         height="19"
@@ -151,6 +151,10 @@
   .corners::after {
     right: 0;
     bottom: calc(var(--radius) * -1);
+  }
+
+  .logo {
+    color: var(--clr-primary)
   }
 
   @media (min-width: 48rem) {

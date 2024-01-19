@@ -81,12 +81,12 @@
     top: var(--y);
     transform: scale(var(--s)) translate(-50%, -50%);
 
-    transition: 0.2s;
+    transition: 50ms ease-out;
 
   }
 
   .wrapper:active {
-    --s: .9;
+    --s: .95;
   }
 
   .goome {
