@@ -3,6 +3,10 @@
   import AppleLogo from "/apple-logo.svg";
   import QR from "@svelte-put/qr/svg/QR.svelte";
   import { fly } from "svelte/transition";
+  import { quintOut } from "svelte/easing";
+
+  import Linkable from "../Linkable.svelte";
+  import Magnetic from "../Magnetic.svelte";
 
   const navItems = [
     {
@@ -37,20 +41,18 @@
       icon: AppleLogo,
     },
   ];
-
-  import { quintOut } from "svelte/easing";
 </script>
 
-<section 
-transition:fly|global={{ 
-  delay: 500,
-  duration: 700,
-  x: -50,
-  opacity: 0,
-  easing: quintOut,
-}}
-id="hero" 
-class="corners">
+<section
+  transition:fly|global={{
+    delay: 500,
+    duration: 700,
+    x: -50,
+    opacity: 0,
+    easing: quintOut,
+  }}
+  id="hero"
+  class="corners">
   <menu class="scroller">
     <!-- nav -->
     <li id="navigation">
@@ -82,8 +84,9 @@ class="corners">
             }}
             href={href || "#"}
           >
-            <svelte:component this={icon} size="1em" />
-            <span>{name}</span>
+            <Linkable text={name}>
+              <svelte:component this={icon} size="1em" />
+            </Linkable>
           </a>
         {/each}
       </nav>
@@ -91,7 +94,13 @@ class="corners">
 
     <!-- title -->
     <li id="title">
-      <h1>ai gen.2 <br /> starsets new <br />pic.dawn</h1>
+      <Magnetic rot mul={{ x: 15, y: 15 }} init={{ x: -30, y: 0 }}>
+        <div class="circle" style:--intensity={"-10"}>
+          <h1 style:--intensity={"80"}>
+            ai gen.2 <br /> starsets new <br />pic.dawn
+          </h1>
+        </div>
+      </Magnetic>
     </li>
 
     <!-- social buttons -->
@@ -123,14 +132,14 @@ class="corners">
             }}
           >
             <a href={href || "#"}>
-              {#if icon}
-                <img src={icon} alt="" />
-              {/if}
-              {name}
+              <Linkable text={name}>
+                {#if icon}
+                  <img src={icon} alt="" />
+                {/if}
+              </Linkable>
             </a>
           </li>
         {/each}
-
       </ul>
       <aside>
         <QR data="https://cubiq.dev" shape="circle" moduleFill="gray" />
@@ -244,6 +253,15 @@ class="corners">
     border-radius: 0.75rem;
     border: 1px solid var(--clr-text);
 
+    /* padding: 0.375rem 0.75rem; */
+  }
+
+  ul > li > a {
+    flex: 1;
+    justify-self: center;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
     padding: 0.375rem 0.75rem;
   }
 
@@ -283,11 +301,12 @@ class="corners">
 
   .highlight {
     background-color: var(--clr-text);
-    color: var(--clr-bg);
+    /* color: var(--clr-bg); */
+    --clr-btn-text: var(--clr-bg);
   }
 
   .highlight a {
-    color: inherit;
+    /* color: inherit; */
   }
 
   .corners {
@@ -333,12 +352,26 @@ class="corners">
     scale: 1;
   }
 
-  section h1 {
+  section .circle {
+    border: var(--clr-secondary) solid calc(var(--stroke-width) * 1.5);
+    border-radius: var(--magnet-rad, 100em);
+    background-color: var(--clr-bg);
+    box-shadow: 0px 0px 0px 0px transparent;
+    text-shadow: 0px 0px 0px transparent;
+    transition-duration: 0.5s;
+    transition-property: text-shadow, box-shadow;
+  }
+
+  :global(section :hover > .circle) {
+    box-shadow: calc(var(--magnet-x) * -0.5px) calc(var(--magnet-y) * -1px) 10px
+      5px var(--clr-secondary) !important;
+    transition-duration: 0.1s !important;
+  }
+
+  .circle h1 {
     /* aspect-ratio: 1/1;    */
     /* display: flex; */
     align-items: center;
-    border: var(--clr-secondary) solid calc(var(--stroke-width) * 1.5);
-    border-radius: 100em;
 
     font-size: clamp(1.5rem, 2vw + 1rem, 2.25rem);
 
@@ -347,7 +380,6 @@ class="corners">
 
     padding: 0.3em;
     display: flex;
-    background-color: var(--clr-bg);
 
     margin-inline: auto;
 
@@ -364,6 +396,10 @@ class="corners">
     display: flex;
     justify-content: center;
     align-items: center;
+
+    transform-style: preserve-3d;
+
+    --magnet-rad: 100em;
   }
 
   #socials {
@@ -423,6 +459,8 @@ class="corners">
     height: 100%;
 
     color: var(--clr-secondary);
+
+    pointer-events: none;
   }
 
   #navigation {
@@ -450,7 +488,7 @@ class="corners">
     font-size: 1.25rem;
   }
 
-  #navigation a span {
+  :global(#navigation a .link) {
     display: none;
     vertical-align: text-top;
   }
@@ -494,8 +532,8 @@ class="corners">
       align-items: flex-start;
     }
 
-    #navigation a span {
-      display: inline;
+    :global(#navigation a .link) {
+      display: block;
     }
 
     li#barcode {
