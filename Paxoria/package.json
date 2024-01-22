@@ -10,7 +10,13 @@
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
+    "@types/animejs": "^3.1.12",
     "svelte": "^4.2.8",
+    "svelte-motion": "0.12.1",
     "vite": "^5.0.8"
+  },
+  "packageManager": "pnpm@7.33.6+sha256.f0c52b41f8128da92160f6826b53a105aad31c6c7cdc00b907fde507c5ca09b5",
+  "dependencies": {
+    "animejs": "^3.2.2"
   }
 }
