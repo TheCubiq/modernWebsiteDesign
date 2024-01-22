@@ -1,4 +1,4 @@
-<script>Simpsons
+<script>
   import Inner from "./lib/Inner.svelte";
   import Futurama from "./lib/pages/Futurama.svelte";
   import StarWars from "./lib/pages/StarWars.svelte";
@@ -9,15 +9,15 @@
   let page = "Simpsons";
 
   const pages = {
-    Simpsons: Simpsons,
-    Futurama: Futurama,
-    StarWars: StarWars,
+    Simpsons,
+    Futurama,
+    StarWars,
   };
 </script>
 
 <main>
   <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
-    <Inner {item}>
+    <Inner>
       <article>
         <nav>
           {#each Object.entries(pages) as [key], i}

@@ -3,8 +3,6 @@
 
   import { M, Motion } from "svelte-motion";
 
-  export let item;
-
   const anim = (variants) => {
     return {
       initial: "initial",
@@ -16,10 +14,10 @@
 
   const opacity = {
     initial: { opacity: 0 },
-    enter: { 
+    enter: {
       opacity: 1,
       transition: {
-        duration: .5,
+        duration: 0.5,
       },
     },
     exit: { opacity: 1 },
@@ -66,15 +64,17 @@
 </script>
 
 <div class="inner">
-  <Motion let:motion {...anim(slide)}>
-    <div class="slide" use:motion></div>
+  <Motion let:motion={m_slide} {...anim(slide)}>
+    <div class="slide" use:m_slide></div>
   </Motion>
 
-  <Motion let:motion {...anim(perspective)}>
-    <div class="page" use:motion>
-      <M.div {...anim(opacity)}>
-        <slot />
-      </M.div>
+  <Motion let:motion={m_perspective} {...anim(perspective)}>
+    <div class="page" use:m_perspective>
+      <Motion let:motion={m_opacity} {...anim(opacity)}>
+        <div use:m_opacity>
+          <slot />
+        </div>
+      </Motion>
     </div>
   </Motion>
 </div>
