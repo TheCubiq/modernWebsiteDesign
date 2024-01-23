@@ -48,6 +48,12 @@ body {
 }
 
 
+.page {
+  background-color: var(--clr-bg);
+  min-height: 100vh;
+}
+
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

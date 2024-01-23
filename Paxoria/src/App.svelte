@@ -5,6 +5,7 @@
   import Simpsons from "./lib/pages/Simpsons.svelte";
 
   import { AnimatePresence } from "svelte-motion";
+  import Stairs from "./lib/Stairs.svelte";
 
   let page = "Simpsons";
 
@@ -16,7 +17,8 @@
 </script>
 
 <main>
-  <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
+
+  <!-- <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
     <Inner>
       <article>
         <nav>
@@ -27,16 +29,36 @@
         <svelte:component this={pages[item.key]} />
       </article>
     </Inner>
+  </AnimatePresence> -->
+
+  <nav>
+    {#each Object.entries(pages) as [key], i}
+      <button on:click={() => (page = key)}>{key}</button>
+    {/each}
+  </nav>
+  <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
+    <Stairs nbOfColumns={5}>
+      <article>
+        <svelte:component this={pages[item.key]} />
+      </article>
+    </Stairs>
   </AnimatePresence>
+
 </main>
 
 <style>
   main {
     flex: 1;
     place-items: center;
-    max-height: 100vh;
+    /* max-height: 100vh; */
 
     background-color: var(--clr-bg);
+  }
+
+  main nav {
+    position: sticky;
+    top: 0;
+    margin-block: 3em;
   }
 
   article {

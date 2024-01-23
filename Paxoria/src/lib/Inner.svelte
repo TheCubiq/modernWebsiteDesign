@@ -96,8 +96,4 @@
     background-color: black;
   }
 
-  .page {
-    background-color: var(--clr-bg);
-    min-height: 100vh;
-  }
 </style>
