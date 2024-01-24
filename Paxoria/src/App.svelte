@@ -6,6 +6,9 @@
 
   import { AnimatePresence } from "svelte-motion";
   import Stairs from "./lib/Stairs.svelte";
+  import Curve from "./lib/Curve.svelte";
+  import { fade, fly } from "svelte/transition";
+  import StairsNative from "./lib/StairsNative.svelte";
 
   let page = "Simpsons";
 
@@ -14,10 +17,23 @@
     Futurama,
     StarWars,
   };
+
+  const sections = {
+    "Arc Browser": {
+      Simpsons,
+      Futurama,
+      StarWars,
+    },
+    "Chromium": {
+      Simpsons,
+      Futurama,
+      StarWars,
+    },
+  }
+
 </script>
 
 <main>
-
   <!-- <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
     <Inner>
       <article>
@@ -31,7 +47,7 @@
     </Inner>
   </AnimatePresence> -->
 
-  <nav>
+  <!-- <nav>
     {#each Object.entries(pages) as [key], i}
       <button on:click={() => (page = key)}>{key}</button>
     {/each}
@@ -42,8 +58,36 @@
         <svelte:component this={pages[item.key]} />
       </article>
     </Stairs>
-  </AnimatePresence>
+  </AnimatePresence> -->
 
+  <!-- <nav>
+    {#each Object.entries(pages) as [key], i}
+      <button on:click={() => (page = key)}>{key}</button>
+    {/each}
+  </nav>
+  <AnimatePresence list={[{ key: page }]} let:item exitBeforeEnter>
+    <Curve title={item.key}>
+      <article>
+        <svelte:component this={pages[item.key]} />
+      </article>
+    </Curve>
+  </AnimatePresence> -->
+
+  <nav>
+    {#each Object.entries(pages) as [key], i}
+      <button on:click={() => (page = key)}>{key}</button>
+    {/each}
+  </nav>
+
+  {#key page}
+    <StairsNative nbOfColumns={10}>
+      <article>
+        <svelte:component this={pages[page]} />
+      </article>
+    </StairsNative>
+  {/key}
+
+  <button>test</button>
 </main>
 
 <style>
