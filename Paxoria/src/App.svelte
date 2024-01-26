@@ -7,7 +7,7 @@
   import { AnimatePresence } from "svelte-motion";
   import Stairs from "./lib/Stairs.svelte";
   import Curve from "./lib/Curve.svelte";
-  import { fade, fly } from "svelte/transition";
+  import { crossfade, fade, fly } from "svelte/transition";
   import StairsNative from "./lib/StairsNative.svelte";
   import { flip } from "svelte/animate";
   import { onMount } from "svelte";
@@ -29,7 +29,7 @@
     "DeepMind",
     "Notice",
     "Easings",
-    // "Want",
+    "Want",
     // "Koto",
     // "OnSite",
     // "10x",
@@ -46,9 +46,6 @@
     // "Archive",
   ];
 
-  const intervalDelay = 2000;
-  let counter = 0;
-
   const transitionBase = (i) => {
     return {
       duration: 1000,
@@ -57,33 +54,52 @@
     };
   };
 
+  let counter = 0;
+
   onMount(() => {
     const interval = setInterval(() => {
-      // counter = counter + Math.floor(((Math.random() - 0.5) * 2) * 2);
-      counter = counter + 2;
-    }, intervalDelay);
+      counter = counter + 1;
+    }, 1000);
 
     return () => clearInterval(interval);
   });
+
+  const scrollArray = (arr, offset) => {
+    const newArr = [...arr];
+
+    const len = arr.length;
+    // Calculate the effective offset to handle negative values and offsets larger than array length
+    const effectiveOffset = ((offset % len) + len) % len;
+
+    // Use array.slice() to get the rotated parts and concatenate them in the desired order
+    const rotatedArray = arr
+      .slice(len - effectiveOffset)
+      .concat(arr.slice(0, len - effectiveOffset));
+
+    return rotatedArray;
+  };
+
+
+  const [send, receive] = crossfade({});
 </script>
 
 <main>
   <nav class="entries">
-  <InfiniteScroller let:dup={count}>
-    {#each sections as section}
+    <InfiniteScroller items={sections} let:item>
       <a
+        
+
+        on:click={() => page = item}
+
         href="#"
-        on:click={() => {
-          page = section;
-        }}
         class="entry"
       >
-        {section}-{count}
+    {item.name}
+    <!-- {item.id} -->
       </a>
-    {/each} 
   </InfiniteScroller>
-  {page}
-  </nav> 
+    <!-- {page} -->
+  </nav>
 </main>
 
 <style>
@@ -109,7 +125,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* grid-template-columns: 1fr 1fr; */
 
     padding: 1em;
 
