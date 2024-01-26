@@ -12,6 +12,7 @@
   import { flip } from "svelte/animate";
   import { onMount } from "svelte";
   import { quintInOut } from "svelte/easing";
+  import InfiniteScroller from "./lib/infiniteScroller.svelte";
 
   let page = "Simpsons";
 
@@ -28,13 +29,13 @@
     "DeepMind",
     "Notice",
     "Easings",
-    "Want",
-    "Koto",
-    "OnSite",
-    "10x",
-    "Follow",
-    "Photographs",
-    "Thread",
+    // "Want",
+    // "Koto",
+    // "OnSite",
+    // "10x",
+    // "Follow",
+    // "Photographs",
+    // "Thread",
     // "SuperHi",
     // "Nonagrams",
     // "IO",
@@ -44,14 +45,6 @@
     // "Google",
     // "Archive",
   ];
-
-  const repeatArray = (arr, times) => {
-    let result = [];
-    for (let i = 0; i < times; i++) {
-      result = result.concat(arr);
-    }
-    return result;
-  };
 
   const intervalDelay = 2000;
   let counter = 0;
@@ -75,32 +68,22 @@
 </script>
 
 <main>
-  <!-- <nav>
-    {#each Object.entries(pages) as [key], i}
-      <button on:click={() => (page = key)}>{key}</button>
-    {/each}
-  </nav> -->
-
   <nav class="entries">
-    {#each sections as section, i (i + counter)}
-      <span
-        animate:flip={{
-          ...transitionBase(i + 5),
+  <InfiniteScroller let:dup={count}>
+    {#each sections as section}
+      <a
+        href="#"
+        on:click={() => {
+          page = section;
         }}
-        out:fly={{ x: -100, ...transitionBase(i) }}
-        in:fly={{ x: -100, ...transitionBase(i + 5) }}
-        >{sections[(i + counter) % sections.length]}</span
+        class="entry"
       >
-    {/each}
-  </nav>
-
-  <!-- {#key page}
-    <StairsNative nbOfColumns={10}>
-      <article>
-        <svelte:component this={pages[page]} />
-      </article>
-    </StairsNative>
-  {/key} -->
+        {section}-{count}
+      </a>
+    {/each} 
+  </InfiniteScroller>
+  {page}
+  </nav> 
 </main>
 
 <style>
@@ -123,14 +106,21 @@
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
-    overflow: hidden;
+    height: 100%;
 
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    padding: 1em;
+
+    /* overflow: hidden; */
 
     font-size: 2.5rem;
+  }
+
+  .entries a {
+    text-decoration: none;
+    color: var(--clr-text);
   }
 
   article {
