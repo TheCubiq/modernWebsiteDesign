@@ -1,15 +1,18 @@
 <script>
   import { onMount } from "svelte";
   import { flip } from "svelte/animate";
-  import { crossfade } from "svelte/transition";
+  import { quintInOut } from "svelte/easing";
+  import { crossfade, fade } from "svelte/transition";
+  import Mover from "./Mover.svelte";
 
   export let items = ["nothing really"];
+  export let open = false;
 
   let listFull = [];
   // let list;
   let innerHeight;
 
-  const intervalDelay = 2000;
+  const intervalDelay = 5000;
   let counter = 0;
 
   $: list = listFull[0];
@@ -20,7 +23,8 @@
 
   onMount(() => {
     const interval = setInterval(() => {
-      counter = counter + 1;
+      counter = counter + 2;
+      // counter = counter + Math.floor(((Math.random() - 0.5) * 2) * 2);
     }, intervalDelay);
 
     return () => clearInterval(interval);
@@ -43,90 +47,59 @@
     }
   };
 
-  // generate unique id based on the offset, item and the counter
+  const mod = (n, m) => {
+    return ((n % m) + m) % m;
+  };
 
-  // const generateId = (item, offset) => {
-  //   return `${item}-${offset}`;
-  // };
-
-  // const generateKey = (item, offset) => {
-  //   return `${item}-${offset}`;
-  // };
-
-  // const scrollArray = (arr, offset) => {
-  //   const newArr = [...arr];
-
-  //   const len = arr.length;
-  //   // Calculate the effective offset to handle negative values and offsets larger than array length
-  //   const effectiveOffset = ((offset % len) + len) % len;
-
-  //   // Use array.slice() to get the rotated parts and concatenate them in the desired order
-  //   const rotatedArray = arr
-  //     .slice(len - effectiveOffset)
-  //     .concat(arr.slice(0, len - effectiveOffset));
-
-  //   return rotatedArray;
-  // };
-
-  // const duplicateArray = (arr, duplicatesNeeded) => {
-  //   const newArr = [];
-
-  //   for (let i = 0; i < duplicatesNeeded + 1; i++) {
-  //     newArr.push(...[arr]);
-  //   }
-
-  //   return newArr;
-  // };
-
-  // const indexData = (arr) => {
-  //   // [a,b,c] = [{id: 1, name: "a"}, {id: 2, name: "b"}, {id: 3, name: "c"}]
-
-  //   const newArr = arr.map((item, i) => {
-  //     return { id: i, name: item };
-  //   });
-
-  //   return newArr;
-  // };
-
-  // const mod = (n, m) => {
-  //   return ((n % m) + m) % m;
-  // };
-
-  const [send, receive] = crossfade({
-    duration: 1000,
-  });
+  // const [send, receive] = crossfade({
+  //   duration: 1000,
+  // });
 
   const getProperKey = (i, j, cnt) => {
     // return mod(j + items.length * i + cnt, itemFullCount)
     return j + items.length * i + cnt;
   };
+
+  // const outTransition = (node, params) => {
+  //   return {
+  //     duration: 1000,
+  //     delay: 0,
+  //     easing: quintInOut,
+  //     css: (t) => {
+  //       return `
+  //         transform: translateX(${t * 100}%);
+  //         opacity: ${t};
+  //       `;
+  //     },
+  //   };
+  // };
 </script>
 
 <svelte:window bind:innerHeight />
 
 <div class="infinite-scroller" on:scroll={scrollHandler}>
   <!-- {#each duplicateArray(items, duplicatesNeeded) as itemArr, i} -->
-  {#each Array(duplicatesNeeded + 1) as _, i}
-    <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
-      <!-- {#each itemArr as item, j (getProperKey(i, j, counter))} -->
-      {#each Array(items.length) as _, j (getProperKey(i, j, counter))}
-        <div
-          animate:flip={{ duration: 1000 }}
-          in:receive={{ key: getProperKey(i, j, counter) }}
-          out:send={{ key: getProperKey(i, j, counter) }}
-        >
-          <slot
-            {duplicatesNeeded}
-            item={{
-              id: getProperKey(i, j, counter),
-              // name:itemArr[(j+counter) % itemArr.length]
-              name: items[(j + counter) % items.length],
-            }}
-          />
-        </div>
-      {/each}
-    </div>
-  {/each}
+  {#if open}
+    {#each Array(duplicatesNeeded + 1) as _, i}
+      <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
+        {#each Array(items.length) as _, j }
+          <!-- <div out:fade|global> -->
+            <Mover y={counter} delay={50} i={j+i*items.length} itemCount={items.length*(duplicatesNeeded + 1)}>
+              <slot
+                {duplicatesNeeded}
+                item={{
+                  id: getProperKey(i, j, counter),
+                  // name:itemArr[(j+counter) % itemArr.length]
+                  // name: items[mod(j + counter, items.length)],
+                  name: items[j],
+                }}
+              />
+            </Mover>
+          <!-- </div> -->
+        {/each}
+      </div>
+    {/each}
+  {/if}
 </div>
 
 <!-- {(counter) % itemCount} -->

@@ -64,32 +64,33 @@
     return () => clearInterval(interval);
   });
 
-  const scrollArray = (arr, offset) => {
-    const newArr = [...arr];
+  // const scrollArray = (arr, offset) => {
+  //   const newArr = [...arr];
 
-    const len = arr.length;
-    // Calculate the effective offset to handle negative values and offsets larger than array length
-    const effectiveOffset = ((offset % len) + len) % len;
+  //   const len = arr.length;
+  //   // Calculate the effective offset to handle negative values and offsets larger than array length
+  //   const effectiveOffset = ((offset % len) + len) % len;
 
-    // Use array.slice() to get the rotated parts and concatenate them in the desired order
-    const rotatedArray = arr
-      .slice(len - effectiveOffset)
-      .concat(arr.slice(0, len - effectiveOffset));
+  //   // Use array.slice() to get the rotated parts and concatenate them in the desired order
+  //   const rotatedArray = arr
+  //     .slice(len - effectiveOffset)
+  //     .concat(arr.slice(0, len - effectiveOffset));
 
-    return rotatedArray;
-  };
+  //   return rotatedArray;
+  // };
 
+  let open = true;
 
   const [send, receive] = crossfade({});
 </script>
 
 <main>
   <nav class="entries">
-    <InfiniteScroller items={sections} let:item>
+    <InfiniteScroller items={sections} {open} let:item>
       <a
         
 
-        on:click={() => page = item}
+        on:click={() => page = item.id}
 
         href="#"
         class="entry"
@@ -99,6 +100,9 @@
       </a>
   </InfiniteScroller>
     <!-- {page} -->
+    <button
+      on:click={() => open = !open}
+    ></button>
   </nav>
 </main>
 
@@ -125,7 +129,7 @@
     height: 100%;
 
     display: grid;
-    /* grid-template-columns: 1fr 1fr; */
+    grid-template-columns: 1fr auto;
 
     padding: 1em;
 
