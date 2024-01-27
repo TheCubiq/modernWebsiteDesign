@@ -14,6 +14,8 @@
   import { quintInOut } from "svelte/easing";
   import InfiniteScroller from "./lib/infiniteScroller.svelte";
 
+  import { selectedIndex } from "./lib/stores";
+
   let page = "Simpsons";
 
   const pages = {
@@ -27,9 +29,9 @@
     "F37",
     "Nomad",
     "DeepMind",
-    "Notice",
-    "Easings",
-    "Want",
+    // "Notice",
+    // "Easings",
+    // "Want",
     // "Koto",
     // "OnSite",
     // "10x",
@@ -56,9 +58,11 @@
 
   let counter = 0;
 
+  let previousId = 0;
+
   onMount(() => {
     const interval = setInterval(() => {
-      counter = counter + 1;
+      // counter = counter + 1;
     }, 1000);
 
     return () => clearInterval(interval);
@@ -88,21 +92,23 @@
   <nav class="entries">
     <InfiniteScroller items={sections} {open} let:item>
       <a
-        
-
-        on:click={() => page = item.id}
-
+        on:click={() => {
+          // page = item;
+          selectedIndex.set(item.id);
+          previousId = item.id;
+        }}
         href="#"
         class="entry"
+
+        class:selected={$selectedIndex === item.id}
+
       >
-    {item.name}
-    <!-- {item.id} -->
+        {item.name}
+        <!-- {item.absolute} -->
       </a>
-  </InfiniteScroller>
+    </InfiniteScroller>
     <!-- {page} -->
-    <button
-      on:click={() => open = !open}
-    ></button>
+    <button on:click={() => (open = !open)}></button>
   </nav>
 </main>
 
@@ -141,6 +147,15 @@
   .entries a {
     text-decoration: none;
     color: var(--clr-text);
+    transition: color 0.2s ease-in-out;
+  }
+
+  .entries a:hover {
+    color: var(--clr-secondary);
+  }
+
+  .entries a.selected {
+    color: var(--clr-primary);
   }
 
   article {
