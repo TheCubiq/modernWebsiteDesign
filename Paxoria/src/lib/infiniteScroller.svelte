@@ -5,7 +5,7 @@
   import { crossfade, fade } from "svelte/transition";
   import Mover from "./Mover.svelte";
 
-  import { selectedIndex } from "./stores";
+  import { selectedOffset } from "./stores";
   import Inner from "./Inner.svelte";
 
   export let items = ["nothing really"];
@@ -26,9 +26,12 @@
 
   $: list = listFull[0];
 
-  $: duplicatesNeeded = list ? Math.ceil(innerHeight / list.scrollHeight) : 0;
-
-  // $: itemFullCount = items.length * (duplicatesNeeded + 1);
+  $: duplicatesNeeded = list ? Math.ceil(innerHeight / list.scrollHeight) : 1;
+  // $: duplicatesNeeded = 0;
+  // let duplicatesNeeded = 0;
+  // $: {
+  //   duplicatesNeeded = Math.ceil(innerHeight / list?.scrollHeight);
+  // }
 
   onMount(() => {
     const interval = setInterval(() => {
@@ -40,7 +43,7 @@
   });
 
   $: if (list) {
-    // list.parentNode.scrollTop = list.scrollHeight - 1;
+    list.parentNode.scrollTop = list.scrollHeight - 1;
   }
 
   let scrollOffset = 0;
@@ -113,34 +116,17 @@
     {#each Array(duplicatesNeeded + 1) as _, i}
       <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
         {#each Array(items.length) as _, j}
-          <!-- <div out:fade|global> -->
-            <!-- i={(j + i * items.length)}
-            itemCount={items.length * (duplicatesNeeded + 1)}
-            offsetRow={offsetRow} -->
           <Mover
-            y={$selectedIndex}
+            i = {j + i * items.length}
             delay={50}
             {scrollOffset}
+            itemCount={items.length * (duplicatesNeeded + 1)}
           >
+          <!-- {duplicatesNeeded}  -->
             <slot
-              {duplicatesNeeded}
               item={{
-                // id: getProperKey(i, j, counter),
                 id: j + i * items.length,
-                // name:itemArr[(j+counter) % itemArr.length]
-                // name: items[mod(j + counter, items.length)],
                 name: items[j],
-
-                innerHeight,
-
-                // myHeight: getVisibleDistanceFromWindow(listFull[i]?.getElementsByTagName('div')[j], scrollOffset),
-                myHeight: getVisibleDistanceFromWindow(i, j, scrollOffset),
-
-                // relativePos
-                relative: j + i * items.length - $selectedIndex,
-
-                // absolutePos
-                absolute: mod((j + i * items.length) - $selectedIndex, items.length * (duplicatesNeeded + 1)),
               }}
             />
           </Mover>
@@ -179,6 +165,8 @@
     flex-direction: column;
     align-items: flex-start;
     /* align-items: center; */
+    /* border: 1px solid var(--clr-text); */
+    /* box-sizing: content-box; */
   }
 
   .list:not(.shadow) {

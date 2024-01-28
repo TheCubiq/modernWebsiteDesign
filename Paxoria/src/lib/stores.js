@@ -1,3 +1,3 @@
 import { writable } from 'svelte/store';
 
-export const selectedIndex = writable(0);
+export const selectedOffset = writable(0);

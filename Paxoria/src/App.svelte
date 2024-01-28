@@ -14,7 +14,7 @@
   import { quintInOut } from "svelte/easing";
   import InfiniteScroller from "./lib/infiniteScroller.svelte";
 
-  import { selectedIndex } from "./lib/stores";
+  import { selectedOffset } from "./lib/stores";
 
   let page = "Simpsons";
 
@@ -29,7 +29,7 @@
     "F37",
     "Nomad",
     "DeepMind",
-    // "Notice",
+    "Notice",
     // "Easings",
     // "Want",
     // "Koto",
@@ -91,24 +91,16 @@
 <main>
   <nav class="entries">
     <InfiniteScroller items={sections} {open} let:item>
+      <!-- class:selected={$selectedIndex === item.id} -->
       <a
-        on:click={() => {
-          // page = item;
-          selectedIndex.set(item.id);
-          previousId = item.id;
-        }}
         href="#"
         class="entry"
-
-        class:selected={$selectedIndex === item.id}
-
       >
         {item.name}
-        <!-- {item.absolute} -->
       </a>
     </InfiniteScroller>
     <!-- {page} -->
-    <button on:click={() => (open = !open)}></button>
+    <!-- <button on:click={() => (open = !open)}></button> -->
   </nav>
 </main>
 
@@ -135,7 +127,7 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: 1fr 30px;
 
     padding: 1em;
 
