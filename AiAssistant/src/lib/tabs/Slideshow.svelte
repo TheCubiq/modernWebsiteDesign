@@ -2,6 +2,9 @@
   import { fly } from "svelte/transition";
   import FeatureBlob from "../FeatureBlob.svelte";
   import { quintOut } from "svelte/easing";
+
+  import image from "/src/assets/AiModel.webp";
+
 </script>
 
 <section 
@@ -14,7 +17,7 @@ transition:fly|global={{
 }}
 
 id="slideshow">
-  <img src="https://i.imgur.com/OdRYIJN.jpg" alt="" />
+  <img src={image} alt="aiStuff" />
 
   <FeatureBlob
     text="Z - ring - $200"
