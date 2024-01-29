@@ -3,6 +3,7 @@
   import { quintInOut } from "svelte/easing";
   import { tweened } from "svelte/motion";
   import { selectedOffset } from "./stores";
+  import { transform } from "svelte-motion";
 
   
   export let delay = 0;
@@ -12,13 +13,15 @@
 
   export let scrollOffset = 0;
 
-  // export let currentPos = 0;
+  export let yHeight = 0;
+
+  let currentPos = 0;
 
   let mover;
 
   let width, height;
 
-  let previousOffset = 0;
+  // let previousOffset = 0;
 
   const mod = (n, m) => {
     return ((n % m) + m) % m;
@@ -32,20 +35,23 @@
   };
 
   const getDelay = () => {
-    const pos = getCurrentPos();
-    const delay = $selectedOffset;
-    previousOffset = $selectedOffset;
+
+    currentPos = getCurrentPos();
+    const delay = $selectedOffset - currentPos 
+
+    // const pos = getNewPos($selectedOffset - getCurrentPos() );
+    // const delay = pos;
+
+    // - previousOffset;
+    // previousOffset = $selectedOffset;
     return delay
   };
 
   // tween motion
   let pos = tweened(
-    { y: 0 },
+    { y: $selectedOffset },
     {
       duration: 3000,
-      // delay: (delay*mod(i,itemCount)) || 0,
-      delay: 0,
-      // delay: 0,
       easing: quintInOut,
     }
   );
@@ -57,7 +63,7 @@
         $selectedOffset,
     },
     {
-      delay:  getDelay(),
+      // delay:  getDelay(),
     }
     );
   }
@@ -67,7 +73,7 @@
   // let currentPos = 0;
 
   // $: if (scrollOffset) {
-  //   currentPos = mover ? mover.getBoundingClientRect().top : 0;
+  //   currentPos = mover ? mover.getBoundingClientRect().bottom : 0;
   // }
 
   // let currentPos = 0
@@ -77,11 +83,15 @@
   $: currentPos = mover ? (mover.getBoundingClientRect().top + scrollOffset) : 0;
 
   $: maxHeight = (itemCount) * height;
-  $: absoluteOffset = i * height;
+  $: absoluteOffset = (i+1) * height;
 
-  const px = (y) => {
+  const getNewPos = (y) => {
+    return (-absoluteOffset) + (mod(y+absoluteOffset, maxHeight));
+  };
+
+  const px = (value) => {
     // return `${y}px`;
-    return `${(-absoluteOffset) + (mod(y+absoluteOffset, maxHeight))}px`;
+    return `${value}px`;
     // return `${mod(height, itemCount * height)}px`;
   };
 
@@ -98,20 +108,24 @@
 
 </script>
 
-<a
+<!-- style:--x={`${0}px`} -->
+  <!-- style:transform={`transtateY(${px($pos.y)})`} -->
+  <!-- style:background-color={i % 2 ? "red" : "green"} -->
+  <!-- style={`transform:transtateY(${$pos.y}px)`}  -->
+  <a
   bind:this={mover}
-  style:--x={`${0}px`}
-  style:--y={px($pos.y)}
   href="#"
+  
+  style:--y={px(getNewPos($pos.y))}
+
   on:click={() => {
-    // page = item;
     selectedOffset.set(moveTo(640));
-    // previousId = item.id;
-    
   }}
 >
   <slot />
-  {currentPos}
+  <!-- {Math.floor(yHeight - currentPos)}   -->
+  <!-- {i} -->
+  <!-- {currentPos} -->
   <!-- {absoluteOffset} -->
   <!-- {$selectedOffset}
   {absoluteOffset + $selectedOffset} -->
@@ -121,7 +135,9 @@
 <style>
   a {
     position: relative;
-    transform: translate(var(--x), var(--y));
+    transform: translateY(var(--y));
+
+    white-space: nowrap;
   }
 
   a {

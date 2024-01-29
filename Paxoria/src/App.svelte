@@ -30,8 +30,8 @@
     "Nomad",
     "DeepMind",
     "Notice",
-    // "Easings",
-    // "Want",
+    "Easings",
+    "Want",
     // "Koto",
     // "OnSite",
     // "10x",
@@ -56,10 +56,6 @@
     };
   };
 
-  let counter = 0;
-
-  let previousId = 0;
-
   onMount(() => {
     const interval = setInterval(() => {
       // counter = counter + 1;
@@ -67,21 +63,6 @@
 
     return () => clearInterval(interval);
   });
-
-  // const scrollArray = (arr, offset) => {
-  //   const newArr = [...arr];
-
-  //   const len = arr.length;
-  //   // Calculate the effective offset to handle negative values and offsets larger than array length
-  //   const effectiveOffset = ((offset % len) + len) % len;
-
-  //   // Use array.slice() to get the rotated parts and concatenate them in the desired order
-  //   const rotatedArray = arr
-  //     .slice(len - effectiveOffset)
-  //     .concat(arr.slice(0, len - effectiveOffset));
-
-  //   return rotatedArray;
-  // };
 
   let open = true;
 
@@ -99,6 +80,7 @@
         {item.name}
       </a>
     </InfiniteScroller>
+    <span class="defaultPos">--&gt;</span>
     <!-- {page} -->
     <!-- <button on:click={() => (open = !open)}></button> -->
   </nav>
@@ -127,13 +109,14 @@
     height: 100%;
 
     display: grid;
-    grid-template-columns: 1fr 30px;
+    grid-template-rows: 1fr 30px;
+    grid-auto-flow: row;
 
     padding: 1em;
 
     /* overflow: hidden; */
 
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
 
   .entries a {
@@ -156,4 +139,10 @@
     margin: 0 auto;
     padding: 1rem;
   }
+
+  .defaultPos {
+    position: fixed;
+    top: 640px;
+  }
+
 </style>

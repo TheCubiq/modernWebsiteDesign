@@ -12,125 +12,112 @@
   export let open = false;
 
   let listFull = [];
+  let scroller;
   // let list;
   let innerHeight;
 
   const intervalDelay = 5000;
-  let counter = 0;
 
-  let ItemList = [];
+  let itemList = [];
 
-  
+  let yScroll = 0;
+  let yHeight = 0;
+  let scrollOffset = 0;
+  let childHeight = 0;
 
   const offsetRow = 5;
 
-  $: list = listFull[0];
+  $: firstChild = listFull[0];
 
-  $: duplicatesNeeded = list ? Math.ceil(innerHeight / list.scrollHeight) : 1;
-  // $: duplicatesNeeded = 0;
-  // let duplicatesNeeded = 0;
-  // $: {
-  //   duplicatesNeeded = Math.ceil(innerHeight / list?.scrollHeight);
-  // }
+  $: duplicatesNeeded = firstChild ? Math.ceil(innerHeight / firstChild.scrollHeight) : 1;
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      // counter = counter + 2;
-      // counter = counter + Math.floor(((Math.random() - 0.5) * 2) * 2);
-    }, intervalDelay);
-
-    return () => clearInterval(interval);
-  });
-
-  $: if (list) {
-    list.parentNode.scrollTop = list.scrollHeight - 1;
-  }
-
-  let scrollOffset = 0;
-
-  const scrollHandler = (e) => {
-    const childHeight = e.target.firstElementChild.scrollHeight;
+  const scrollHandler = () => {
+    childHeight = scroller.firstElementChild.getBoundingClientRect().height;
 
     // Looper
-    // if (e.target.scrollTop >= childHeight) {
-    //   e.target.scrollTop = 1;
-    // }
 
-    // if (e.target.scrollTop === 0) {
-    //   e.target.scrollTop = childHeight - 1;
-    // }
+    if (scroller.scrollTop >= childHeight) {
+      console.log("bottom", childHeight)
+      scroller.scrollTop = 1;
+    }
 
-    scrollOffset = e.target.scrollTop;
+    if (scroller.scrollTop <= 0) {
+      console.log("top")
+      scroller.scrollTop = childHeight - 1;
+    }
+
+
+    updateValues();
+
+  };
+  
+  const updateValues = () => {
+    yScroll = scroller.scrollHeight;
+    yHeight = scroller.clientHeight;
+    scrollOffset = scroller.scrollTop;
   };
 
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
 
-  // const [send, receive] = crossfade({
-  //   duration: 1000,
-  // });
+  onMount(() => {
+    updateValues();
+    
+    scroller.scrollTop = 5;
+  });
 
-  const getProperKey = (i, j, cnt) => {
-    // return mod(j + items.length * i + cnt, itemFullCount)
-    return j + items.length * i + cnt;
+  $: if (firstChild) {
+    scroller.scrollTop = firstChild.scrollHeight - 1;
+  }
+
+  const duplicateArray = (arr, n) => {
+    return Array(n).fill(arr);
+  };
+
+  const giveId = (arr) => {
+    const final = arr.map((entryList, i) => {
+      return entryList.map((entry, j) => {
+        return {
+          id: j + i * entryList.length,
+          name: entry,
+        };
+      });
+    });
+
+    console.log(final)
+
+    return final
   };
 
   
+  $: itemList = giveId(duplicateArray(items, duplicatesNeeded + 1));
+  $: fullEntryCount = (duplicatesNeeded + 1) * items.length;
 
-  const getVisibleDistanceFromWindow = (i,j, scroll) => {
+  $: console.log(fullEntryCount);
 
-    const el = listFull[i]?.getElementsByTagName('div')[j];
-    // const { top, bottom } = el.getBoundingClientRect();
-    const vHeight = innerHeight;
-    // console.log(el?.getBoundingClientRect().top);
-
-    const fromTop = el?.getBoundingClientRect().top;
-    
-    // return (fromTop > vHeight) ? 0 : fromTop;
-    return fromTop;
-  };
-
-
-
-  // const outTransition = (node, params) => {
-  //   return {
-  //     duration: 1000,
-  //     delay: 0,
-  //     easing: quintInOut,
-  //     css: (t) => {
-  //       return `
-  //         transform: translateX(${t * 100}%);
-  //         opacity: ${t};
-  //       `;
-  //     },
-  //   };
-  // };
 </script>
 
 <svelte:window bind:innerHeight />
 
-<div class="infinite-scroller" on:scroll={scrollHandler}>
-  <!-- {#each duplicateArray(items, duplicatesNeeded) as itemArr, i} -->
+<div class="infinite-scroller" on:scroll={scrollHandler} bind:this={scroller} on:resize={scrollHandler}>
   {#if open}
-    {#each Array(duplicatesNeeded + 1) as _, i}
+    {#each itemList as list, i}
       <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
-        {#each Array(items.length) as _, j}
+        {#each list as entry}
           <Mover
-            i = {j + i * items.length}
-            delay={50}
+            i = {entry.id}
             {scrollOffset}
-            itemCount={items.length * (duplicatesNeeded + 1)}
+            yHeight={yHeight}
+            itemCount={fullEntryCount}
           >
-          <!-- {duplicatesNeeded}  -->
             <slot
               item={{
-                id: j + i * items.length,
-                name: items[j],
+                id: entry.id,
+                name: entry.name,
               }}
             />
           </Mover>
-          <!-- </div> -->
         {/each}
       </div>
     {/each}
@@ -144,16 +131,12 @@
     padding: 0 1em;
     display: flex;
     flex-direction: column;
-    /* 
-    display: grid;
-    grid-auto-columns: 1fr;
-    grid-auto-flow: column; */
-
-    /* align-items: center; */
 
     overflow: hidden;
     overflow-y: auto;
     min-width: 50%;
+
+    max-height: max-content;
   }
 
   .infinite-scroller::-webkit-scrollbar {
