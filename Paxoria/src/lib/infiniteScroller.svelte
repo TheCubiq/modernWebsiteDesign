@@ -1,22 +1,13 @@
 <script>
   import { onMount } from "svelte";
-  import { flip } from "svelte/animate";
-  import { quintInOut } from "svelte/easing";
-  import { crossfade, fade } from "svelte/transition";
   import Mover from "./Mover.svelte";
-
-  import { selectedOffset } from "./stores";
-  import Inner from "./Inner.svelte";
 
   export let items = ["nothing really"];
   export let open = false;
 
   let listFull = [];
   let scroller;
-  // let list;
   let innerHeight;
-
-  const intervalDelay = 5000;
 
   let itemList = [];
 
@@ -25,11 +16,13 @@
   let scrollOffset = 0;
   let childHeight = 0;
 
-  const offsetRow = 5;
+  const additionalDupes = 2; // for the animation not to overflow
 
   $: firstChild = listFull[0];
 
-  $: duplicatesNeeded = firstChild ? Math.ceil(innerHeight / firstChild.scrollHeight) : 1;
+  $: duplicatesNeeded = firstChild
+    ? Math.ceil(innerHeight / firstChild.scrollHeight) + additionalDupes
+    : 1;
 
   const scrollHandler = () => {
     childHeight = scroller.firstElementChild.getBoundingClientRect().height;
@@ -37,20 +30,16 @@
     // Looper
 
     if (scroller.scrollTop >= childHeight) {
-      console.log("bottom", childHeight)
       scroller.scrollTop = 1;
     }
 
     if (scroller.scrollTop <= 0) {
-      console.log("top")
       scroller.scrollTop = childHeight - 1;
     }
 
-
     updateValues();
-
   };
-  
+
   const updateValues = () => {
     yScroll = scroller.scrollHeight;
     yHeight = scroller.clientHeight;
@@ -63,7 +52,6 @@
 
   onMount(() => {
     updateValues();
-    
     scroller.scrollTop = 5;
   });
 
@@ -76,7 +64,7 @@
   };
 
   const giveId = (arr) => {
-    const final = arr.map((entryList, i) => {
+    return arr.map((entryList, i) => {
       return entryList.map((entry, j) => {
         return {
           id: j + i * entryList.length,
@@ -84,31 +72,30 @@
         };
       });
     });
-
-    console.log(final)
-
-    return final
   };
 
-  
-  $: itemList = giveId(duplicateArray(items, duplicatesNeeded + 1));
-  $: fullEntryCount = (duplicatesNeeded + 1) * items.length;
+  $: itemList = giveId(duplicateArray(items, duplicatesNeeded));
+  $: fullEntryCount = duplicatesNeeded * items.length;
 
-  $: console.log(fullEntryCount);
-
+  $: desiredPos = innerHeight * 0.6;
 </script>
 
 <svelte:window bind:innerHeight />
 
-<div class="infinite-scroller" on:scroll={scrollHandler} bind:this={scroller} on:resize={scrollHandler}>
+<div
+  class="infinite-scroller"
+  on:scroll={scrollHandler}
+  on:resize={scrollHandler}
+  bind:this={scroller}
+>
   {#if open}
     {#each itemList as list, i}
       <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
         {#each list as entry}
           <Mover
-            i = {entry.id}
-            {scrollOffset}
-            yHeight={yHeight}
+            {desiredPos}
+            i={entry.id}
+            {yHeight}
             itemCount={fullEntryCount}
           >
             <slot
@@ -122,9 +109,8 @@
       </div>
     {/each}
   {/if}
+  <span class="defaultPos" style:--y={`${desiredPos}px`}>--&gt;</span>
 </div>
-
-<!-- {(counter) % itemCount} -->
 
 <style>
   .infinite-scroller {
@@ -158,5 +144,11 @@
 
   .shadow {
     /* background-color: aqua; */
+  }
+
+  .defaultPos {
+    position: fixed;
+    top: var(--y, 0px);
+    left: 0;
   }
 </style>

@@ -32,20 +32,20 @@
     "Notice",
     "Easings",
     "Want",
-    // "Koto",
-    // "OnSite",
-    // "10x",
-    // "Follow",
-    // "Photographs",
-    // "Thread",
-    // "SuperHi",
-    // "Nonagrams",
-    // "IO",
-    // "Kindeo",
-    // "INT",
-    // "Airbnb",
-    // "Google",
-    // "Archive",
+    "Koto",
+    "OnSite",
+    "10x",
+    "Follow",
+    "Photographs",
+    "Thread",
+    "SuperHi",
+    "Nonagrams",
+    "IO",
+    "Kindeo",
+    "INT",
+    "Airbnb",
+    "Google",
+    "Archive",
   ];
 
   const transitionBase = (i) => {
@@ -80,7 +80,6 @@
         {item.name}
       </a>
     </InfiniteScroller>
-    <span class="defaultPos">--&gt;</span>
     <!-- {page} -->
     <!-- <button on:click={() => (open = !open)}></button> -->
   </nav>
@@ -140,9 +139,5 @@
     padding: 1rem;
   }
 
-  .defaultPos {
-    position: fixed;
-    top: 640px;
-  }
 
 </style>
