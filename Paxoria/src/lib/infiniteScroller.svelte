@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import Mover from "./Mover.svelte";
+  import { desiredPosition } from "./stores";
 
   export let items = ["nothing really"];
   export let open = false;
@@ -36,24 +37,21 @@
     if (scroller.scrollTop <= 0) {
       scroller.scrollTop = childHeight - 1;
     }
-
-    updateValues();
-  };
-
-  const updateValues = () => {
-    yScroll = scroller.scrollHeight;
-    yHeight = scroller.clientHeight;
-    scrollOffset = scroller.scrollTop;
   };
 
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
-
+  
   onMount(() => {
-    updateValues();
     scroller.scrollTop = 5;
   });
+
+  $: if (scroller) {
+    yScroll = scroller.scrollHeight;
+    yHeight = scroller.clientHeight;
+    scrollOffset = scroller.scrollTop;
+  }
 
   $: if (firstChild) {
     scroller.scrollTop = firstChild.scrollHeight - 1;
@@ -68,6 +66,7 @@
       return entryList.map((entry, j) => {
         return {
           id: j + i * entryList.length,
+          sectionId: j,
           name: entry,
         };
       });
@@ -77,7 +76,8 @@
   $: itemList = giveId(duplicateArray(items, duplicatesNeeded));
   $: fullEntryCount = duplicatesNeeded * items.length;
 
-  $: desiredPos = innerHeight * 0.6;
+  $: $desiredPosition = innerHeight * 0.6;
+
 </script>
 
 <svelte:window bind:innerHeight />
@@ -93,8 +93,8 @@
       <div class="list" class:shadow={!(i == 0)} bind:this={listFull[i]}>
         {#each list as entry}
           <Mover
-            {desiredPos}
             i={entry.id}
+            sectionId={entry.sectionId}
             {yHeight}
             itemCount={fullEntryCount}
           >
@@ -109,12 +109,10 @@
       </div>
     {/each}
   {/if}
-  <span class="defaultPos" style:--y={`${desiredPos}px`}>--&gt;</span>
 </div>
 
 <style>
   .infinite-scroller {
-    padding: 0 1em;
     display: flex;
     flex-direction: column;
 

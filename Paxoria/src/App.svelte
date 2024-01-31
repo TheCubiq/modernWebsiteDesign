@@ -1,28 +1,9 @@
 <script>
-  import Inner from "./lib/Inner.svelte";
-  import Futurama from "./lib/pages/Futurama.svelte";
-  import StarWars from "./lib/pages/StarWars.svelte";
-  import Simpsons from "./lib/pages/Simpsons.svelte";
-
-  import { AnimatePresence } from "svelte-motion";
-  import Stairs from "./lib/Stairs.svelte";
-  import Curve from "./lib/Curve.svelte";
-  import { crossfade, fade, fly } from "svelte/transition";
-  import StairsNative from "./lib/StairsNative.svelte";
-  import { flip } from "svelte/animate";
-  import { onMount } from "svelte";
-  import { quintInOut } from "svelte/easing";
   import InfiniteScroller from "./lib/infiniteScroller.svelte";
 
-  import { selectedOffset } from "./lib/stores";
+  import Hero from "./lib/pages/Hero.svelte";
 
-  let page = "Simpsons";
-
-  const pages = {
-    Simpsons,
-    Futurama,
-    StarWars,
-  };
+  import { desiredPosition, selectedId } from "./lib/stores";
 
   const sections = [
     "Works",
@@ -48,41 +29,24 @@
     "Archive",
   ];
 
-  const transitionBase = (i) => {
-    return {
-      duration: 1000,
-      delay: i * 50,
-      easing: quintInOut,
-    };
-  };
-
-  onMount(() => {
-    const interval = setInterval(() => {
-      // counter = counter + 1;
-    }, 1000);
-
-    return () => clearInterval(interval);
-  });
-
   let open = true;
-
-  const [send, receive] = crossfade({});
 </script>
 
 <main>
   <nav class="entries">
     <InfiniteScroller items={sections} {open} let:item>
       <!-- class:selected={$selectedIndex === item.id} -->
-      <a
-        href="#"
-        class="entry"
-      >
+      <a href="#" class="entry">
         {item.name}
       </a>
     </InfiniteScroller>
     <!-- {page} -->
     <!-- <button on:click={() => (open = !open)}></button> -->
   </nav>
+
+  <!-- <Hero /> -->
+
+  <span class="defaultPos" style:--y={`${$desiredPosition}px`}>--&gt;</span>
 </main>
 
 <style>
@@ -92,6 +56,10 @@
     /* max-height: 100vh; */
 
     background-color: var(--clr-bg);
+
+    font-size: 2.5rem;
+
+    --padding: 1.5em;
   }
 
   /* main nav {
@@ -111,11 +79,7 @@
     grid-template-rows: 1fr 30px;
     grid-auto-flow: row;
 
-    padding: 1em;
-
-    /* overflow: hidden; */
-
-    font-size: 2rem;
+    padding: var(--padding);
   }
 
   .entries a {
@@ -132,12 +96,9 @@
     color: var(--clr-primary);
   }
 
-  article {
-    text-align: justify;
-    max-width: 50rem;
-    margin: 0 auto;
-    padding: 1rem;
+  .defaultPos {
+    position: fixed;
+    top: var(--y, 0px);
+    left: 0;
   }
-
-
 </style>

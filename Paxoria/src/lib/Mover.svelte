@@ -1,13 +1,14 @@
 <script>
   import { expoInOut } from "svelte/easing";
   import { tweened } from "svelte/motion";
-  import { selectedOffset } from "./stores";
+  import { desiredPosition, selectedId, selectedOffset } from "./stores";
 
   export let delay = 0;
   export let i = 0;
   export let itemCount = 0;
   export let yHeight = 0;
-  export let desiredPos = 0;
+
+  export let sectionId = 0;
 
   let currentPos = 0;
   let mover;
@@ -18,6 +19,7 @@
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
+  const lerp = (x, y, a) => x * (1 - a) + y * a;
 
   $: width = mover ? mover.clientWidth : 0;
   $: height = mover ? mover.clientHeight : 0;
@@ -27,7 +29,6 @@
     return mover?.getBoundingClientRect().top;
   };
 
-  const lerp = (x, y, a) => x * (1 - a) + y * a;
 
   const getDuration = (minDur, maxDur) => {
     const duration = Math.abs($selectedOffset - previousOffset) / yHeight;
@@ -77,7 +78,8 @@
   };
 
   const handleClick = () => {
-    selectedOffset.set(moveTo(desiredPos));
+    selectedOffset.set(moveTo($desiredPosition));
+    $selectedId = sectionId;
   };
 
   const moveTo = (y) => {
