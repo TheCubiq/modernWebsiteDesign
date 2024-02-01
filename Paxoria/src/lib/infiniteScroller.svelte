@@ -42,7 +42,7 @@
   const mod = (n, m) => {
     return ((n % m) + m) % m;
   };
-  
+
   onMount(() => {
     scroller.scrollTop = 5;
   });
@@ -61,23 +61,20 @@
     return Array(n).fill(arr);
   };
 
-  const giveId = (arr) => {
-    return arr.map((entryList, i) => {
-      return entryList.map((entry, j) => {
-        return {
-          id: j + i * entryList.length,
-          sectionId: j,
-          name: entry,
-        };
-      });
-    });
-  };
+  const giveId = (arr) =>
+    arr.map((entryList, i) =>
+      entryList.map((entry, j) => ({
+        id: j + i * entryList.length,
+        sectionId: j,
+        name: entry,
+      }))
+    );
+
 
   $: itemList = giveId(duplicateArray(items, duplicatesNeeded));
   $: fullEntryCount = duplicatesNeeded * items.length;
 
-  $: $desiredPosition = innerHeight * 0.6;
-
+  // $: $desiredPosition = innerHeight * 0.6;
 </script>
 
 <svelte:window bind:innerHeight />
@@ -96,6 +93,7 @@
             i={entry.id}
             sectionId={entry.sectionId}
             {yHeight}
+            delay={30}
             itemCount={fullEntryCount}
           >
             <slot
@@ -124,7 +122,7 @@
   }
 
   .infinite-scroller::-webkit-scrollbar {
-    display: none;
+    /* display: none; */
   }
 
   .list {

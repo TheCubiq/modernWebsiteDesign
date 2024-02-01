@@ -44,7 +44,7 @@
     <!-- <button on:click={() => (open = !open)}></button> -->
   </nav>
 
-  <!-- <Hero /> -->
+  <Hero />
 
   <span class="defaultPos" style:--y={`${$desiredPosition}px`}>--&gt;</span>
 </main>
@@ -79,7 +79,7 @@
     grid-template-rows: 1fr 30px;
     grid-auto-flow: row;
 
-    padding: var(--padding);
+    padding: 0 var(--padding);
   }
 
   .entries a {

@@ -1,7 +1,12 @@
 <script>
   import { expoInOut } from "svelte/easing";
   import { tweened } from "svelte/motion";
-  import { desiredPosition, selectedId, selectedOffset } from "./stores";
+  import {
+    desiredPosition,
+    waitForChange,
+    selectedId,
+    selectedOffset,
+  } from "./stores";
 
   export let delay = 0;
   export let i = 0;
@@ -13,7 +18,7 @@
   let currentPos = 0;
   let mover;
 
-  let width, height;
+  let width, height = 0;
   let previousOffset = 0;
 
   const mod = (n, m) => {
@@ -21,14 +26,28 @@
   };
   const lerp = (x, y, a) => x * (1 - a) + y * a;
 
+  let rect
+
+  // $: height = rect?.height;
+  // $: width = rect?.width;
   $: width = mover ? mover.clientWidth : 0;
   $: height = mover ? mover.clientHeight : 0;
+
+  // $: {
+  //   height = rect.height;
+  //   width = rect.width;
+  // }
+
+  // $: width = rect.height;
+  // $: height = mover ? mover.clientHeight : 0;
+
+
+
   $: maxHeight = itemCount * height;
 
   const getCurrentPos = () => {
     return mover?.getBoundingClientRect().top;
   };
-
 
   const getDuration = (minDur, maxDur) => {
     const duration = Math.abs($selectedOffset - previousOffset) / yHeight;
@@ -43,7 +62,7 @@
     const yPos = offsetDifference > 0 ? yHeight - currentPos : currentPos;
 
     previousOffset = $selectedOffset;
-    return (mod(yPos, maxHeight + height) / height) * delay;
+    return (mod(yPos  + height, maxHeight + height) / height) * delay;
   };
 
   // tween motion
@@ -54,7 +73,10 @@
     }
   );
 
-  $: {
+  $: 
+  // if ($selectedOffset)
+  // if ($selectedId) 
+  {
     pos.set(
       {
         y:
@@ -63,32 +85,63 @@
       },
       {
         duration: getDuration(1000, 2500),
-        delay: getDelay(30),
+        delay: getDelay(delay),
       }
     );
   }
 
   const getNewPos = (y) => {
-    const absoluteOffset = (i + 1) * -height;
-    return absoluteOffset + mod(y + absoluteOffset, maxHeight);
+    // console.log(y)
+    const absoluteOffset = (i) * height;
+    return (-1*absoluteOffset) + mod(y + absoluteOffset, maxHeight) - height;
+    // return absoluteOffset + mod((i + 1)*height + y, maxHeight)
   };
 
   const px = (value) => {
     return `${value}px`;
   };
 
-  const handleClick = () => {
-    selectedOffset.set(moveTo($desiredPosition));
-    $selectedId = sectionId;
-  };
+  let clicked = false;
 
-  const moveTo = (y) => {
-    const pos = getCurrentPos();
-    delay = pos;
-    return $selectedOffset + y - pos;
+  const handleClick = () => {
+    // debugger;
+
+    // if ($selectedOffset == measureTo($desiredPosition)) return;
+
+    clicked = true;
+    
+    // previous = $selectedId;
+    
+    $selectedId = sectionId;
+    $waitForChange = true;
+    // console.log($selectedId, "clicked");
+    // console.log("mover: (old)", $desiredPosition);
+    // getPositionOfHeroDescription()
+    // selectedOffset.set(measureTo($desiredPosition));
+  };
+  
+  $: if (clicked === true && $waitForChange === false) {
+    clicked = false;
+    $selectedOffset = measureTo($desiredPosition);
+    // selectedOffset.set(measureTo($desiredPosition));
+  }
+
+  // $: {
+  //   $selectedOffset = 0;
+  //   selectedOffset.set(0);
+  // } 
+
+  // $: console.log($pos.y)
+
+  const measureTo = (y) => {
+    // debugger;
+    // delay = pos;
+    return $selectedOffset + y - getCurrentPos();
   };
 </script>
 
+<!-- on:resize={handleResize} -->
+<!-- bind:contentRect={rect} -->
 <a
   bind:this={mover}
   href="#"
@@ -96,6 +149,7 @@
   on:click={handleClick}
 >
   <slot />
+  <!-- {i} -->
 </a>
 
 <style>
