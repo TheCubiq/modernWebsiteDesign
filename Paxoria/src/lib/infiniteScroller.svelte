@@ -122,7 +122,7 @@
   }
 
   .infinite-scroller::-webkit-scrollbar {
-    /* display: none; */
+    display: none;
   }
 
   .list {

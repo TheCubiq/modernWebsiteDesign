@@ -1,6 +1,12 @@
 <script>
   import { MoveDown } from "lucide-svelte";
-  import { desiredPosition, waitForChange, selectedId, selectedOffset } from "../stores";
+  import {
+    desiredPosition,
+    waitForChange,
+    selectedSection,
+    selectedOffset,
+    descriptionPositions,
+  } from "../stores";
 
   // export let sections = [];
 
@@ -118,59 +124,68 @@
 
   let descriptionLines = [];
 
+  $: firstLine = descriptionLines[0];
 
-  $: firstLine = descriptionLines[0]
+  $: height = firstLine?.clientHeight;
 
   let innerHeight;
 
   // $: if (firstLine) {console.log(firstLine.innerHTML)}
 
+  let hero;
 
   $: if (firstLine || innerHeight) {
-    $desiredPosition = getPos(firstLine)
-    console.log("Hero, (new):",$desiredPosition)
+    $descriptionPositions.lineCount = descriptionLines.filter(Boolean).length;
+    // $desiredPosition = getPos(firstLine)
+    $desiredPosition = getPos(hero);
     $waitForChange = false;
   }
-  
+
+  // $: console.log(lineCount);
+
   // $: if (firstLine) {
   // }
 
+  $: ({ linePositions, selectedId} = $descriptionPositions);
 
-
-
+  const px = (n) => {
+    if (selectedId === -1) return "0px";
+    return `${n}px`;
+  };
 </script>
-
 
 <svelte:window bind:innerHeight />
 
-<section id="hero" >
-
+<section id="hero">
   <!-- style:--y={`${$selectedOffset}px`} -->
-  <article
-  >
+  <article bind:this={hero}>
     <!-- <h1>{sections[$selectedId]}</h1> -->
-    
-    {#key ($waitForChange)}
-      {#each sectionDescription[$selectedId] as description, i}
-        <p
-          bind:this={descriptionLines[i]}
-        >{@html description}</p>
+
+    {#key $waitForChange}
+      {#each sectionDescription[$selectedSection] as description, i}
+        <!-- style:--y={px(linePositions[i] - ($desiredPosition + height*i))} -->
+        <p style:--y={px(linePositions[i])} bind:this={descriptionLines[i]}>
+          {@html description}
+        </p>
       {/each}
     {/key}
   </article>
 
   <MoveDown />
-
 </section>
 
 <style>
-
-  article {
+  p {
     transform: translateY(var(--y));
   }
 
-  section {    
-    color: var(--clr-primary);
+  :global(#hero a) {
+    color: var(--clr-bg);
+  }
+
+  section {
+    background-color: var(--clr-text);
+    color: var(--clr-bg);
     display: grid;
     grid-template-columns: 1fr auto;
     height: 100vh;

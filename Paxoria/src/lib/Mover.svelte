@@ -4,9 +4,11 @@
   import {
     desiredPosition,
     waitForChange,
-    selectedId,
+    selectedSection,
     selectedOffset,
+    descriptionPositions,
   } from "./stores";
+  import { onMount } from "svelte";
 
   export let delay = 0;
   export let i = 0;
@@ -18,7 +20,8 @@
   let currentPos = 0;
   let mover;
 
-  let width, height = 0;
+  let width,
+    height = 0;
   let previousOffset = 0;
 
   const mod = (n, m) => {
@@ -26,22 +29,8 @@
   };
   const lerp = (x, y, a) => x * (1 - a) + y * a;
 
-  let rect
-
-  // $: height = rect?.height;
-  // $: width = rect?.width;
   $: width = mover ? mover.clientWidth : 0;
   $: height = mover ? mover.clientHeight : 0;
-
-  // $: {
-  //   height = rect.height;
-  //   width = rect.width;
-  // }
-
-  // $: width = rect.height;
-  // $: height = mover ? mover.clientHeight : 0;
-
-
 
   $: maxHeight = itemCount * height;
 
@@ -62,7 +51,7 @@
     const yPos = offsetDifference > 0 ? yHeight - currentPos : currentPos;
 
     previousOffset = $selectedOffset;
-    return (mod(yPos  + height, maxHeight + height) / height) * delay;
+    return (mod(yPos + height, maxHeight + height) / height) * delay;
   };
 
   // tween motion
@@ -73,10 +62,9 @@
     }
   );
 
-  $: 
   // if ($selectedOffset)
-  // if ($selectedId) 
-  {
+  // if ($selectedId)
+  $: {
     pos.set(
       {
         y:
@@ -90,11 +78,32 @@
     );
   }
 
+  const checkSwitch = (y, triggerPerc) => {
+    // console.log({
+    //   current: y,
+    //   start: previousY,
+    //   end: $selectedOffset,
+    // })
+
+    const currentProgress = (y - previousY) / ($selectedOffset - previousY) * 100;
+
+    if (currentProgress > triggerPerc) {
+      $descriptionPositions.closedNav = true;
+    }
+
+    console.log(currentProgress)
+
+  }
+
+
   const getNewPos = (y) => {
-    // console.log(y)
-    const absoluteOffset = (i) * height;
-    return (-1*absoluteOffset) + mod(y + absoluteOffset, maxHeight) - height;
-    // return absoluteOffset + mod((i + 1)*height + y, maxHeight)
+
+    if (i === selectedId) {
+      checkSwitch(y,80);
+    }
+
+    const absoluteOffset = i * height;
+    return -1 * absoluteOffset + mod(y + absoluteOffset, maxHeight) - height;
   };
 
   const px = (value) => {
@@ -104,44 +113,78 @@
   let clicked = false;
 
   const handleClick = () => {
-    // debugger;
-
-    // if ($selectedOffset == measureTo($desiredPosition)) return;
-
     clicked = true;
-    
-    // previous = $selectedId;
-    
-    $selectedId = sectionId;
+
+    $selectedSection = sectionId;
+    $descriptionPositions.selectedId = i;
     $waitForChange = true;
-    // console.log($selectedId, "clicked");
-    // console.log("mover: (old)", $desiredPosition);
-    // getPositionOfHeroDescription()
-    // selectedOffset.set(measureTo($desiredPosition));
   };
-  
+
+  let previousY = 0;
+
   $: if (clicked === true && $waitForChange === false) {
     clicked = false;
+    previousY = $selectedOffset
     $selectedOffset = measureTo($desiredPosition);
     // selectedOffset.set(measureTo($desiredPosition));
+  }
+
+  // $: if (i === 0) {
+  //   $selectedOffset = measureTo($desiredPosition);
+  // }
+
+  let selected = false;
+
+  $: if (!$waitForChange) {
+    selected = targetSelected(i, $pos.y);
   }
 
   // $: {
   //   $selectedOffset = 0;
   //   selectedOffset.set(0);
-  // } 
+  // }
 
   // $: console.log($pos.y)
 
-  const measureTo = (y) => {
+  const measureTo = (to) => {
     // debugger;
     // delay = pos;
-    return $selectedOffset + y - getCurrentPos();
+    return $selectedOffset + to - getCurrentPos();
   };
+
+  // $: targetMover = $descriptionPositions.selectedId
+  // $: lnCount = $descriptionPositions.lineCount
+
+  $: ({ selectedId, lineCount } = $descriptionPositions);
+
+  const targetSelected = (id, updater) => {
+    // const minItem = selectedId;
+    // const maxItem = mod(selectedId + lineCount - 1, itemCount);
+    // // return id >= minItem && id <= maxItem;
+    // return id >= minItem && id <= maxItem;
+
+    // get relative id of mover
+    const relativeId = mod(id - selectedId, itemCount);
+
+    if (relativeId >= 0 && relativeId < lineCount) {
+      $descriptionPositions.linePositions[relativeId] =
+        mover.getBoundingClientRect().top -
+        ($desiredPosition + height * relativeId);
+      return true;
+    }
+    return false;
+  };
+
+  // if (targetSelected()) {
+
+  // }
 </script>
 
 <!-- on:resize={handleResize} -->
 <!-- bind:contentRect={rect} -->
+<!-- class:sel={selectedId === i} -->
+<!-- class:sel={selected} -->
+<!-- class:sel={targetSelected(i, $pos.y)} -->
 <a
   bind:this={mover}
   href="#"
@@ -164,6 +207,10 @@
     text-decoration: none;
     color: var(--clr-text);
     transition: color 0.2s ease-in-out;
+  }
+
+  .sel {
+    background-color: red;
   }
 
   a:hover {
