@@ -70,11 +70,8 @@
       }))
     );
 
-
   $: itemList = giveId(duplicateArray(items, duplicatesNeeded));
   $: fullEntryCount = duplicatesNeeded * items.length;
-
-  // $: $desiredPosition = innerHeight * 0.6;
 </script>
 
 <svelte:window bind:innerHeight />

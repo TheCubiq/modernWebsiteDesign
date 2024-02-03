@@ -53,7 +53,9 @@
 </main>
 
 <style>
+
   main {
+
     flex: 1;
     place-items: center;
     /* max-height: 100vh; */
@@ -88,10 +90,10 @@
     background: var(--clr-bg);
   }
 
-  .closed {
-    opacity: 0;
+  nav.entries.closed {
+    visibility: hidden;
   }
-
+  
   .entries a {
     text-decoration: none;
     color: var(--clr-text);

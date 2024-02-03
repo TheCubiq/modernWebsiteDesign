@@ -90,9 +90,6 @@
     if (currentProgress > triggerPerc) {
       $descriptionPositions.closedNav = true;
     }
-
-    console.log(currentProgress)
-
   }
 
 

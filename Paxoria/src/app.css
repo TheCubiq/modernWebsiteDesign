@@ -12,8 +12,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --clr-bg: #180d18;
+
+  --clr-bg: #000000;
   --clr-text: #c7c7c7;
+  
   --clr-primary: #4d9ba2;
   --clr-secondary: #6c6c6c;
 }

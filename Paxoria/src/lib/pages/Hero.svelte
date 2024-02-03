@@ -146,7 +146,7 @@
   // $: if (firstLine) {
   // }
 
-  $: ({ linePositions, selectedId} = $descriptionPositions);
+  $: ({ linePositions, selectedId, closedNav } = $descriptionPositions);
 
   const px = (n) => {
     if (selectedId === -1) return "0px";
@@ -158,6 +158,13 @@
 
 <section id="hero">
   <!-- style:--y={`${$selectedOffset}px`} -->
+
+  <button
+    on:click={() => ($descriptionPositions.closedNav = !closedNav)}
+    class:closed={closedNav}
+    class="nav"></button
+  >
+
   <article bind:this={hero}>
     <!-- <h1>{sections[$selectedId]}</h1> -->
 
@@ -183,11 +190,37 @@
     color: var(--clr-bg);
   }
 
+  button {
+    position: fixed;
+    top: 1em;
+    left: 1em;
+
+    min-width: 2em;
+    aspect-ratio: 1;
+    border-radius: 99em;
+
+    background-color: var(--clr-text);
+
+    z-index: 100;
+    box-shadow: none;
+    border: none;
+
+    cursor: pointer
+
+  }
+
+  .closed {
+    background-color: var(--clr-bg);
+  }
+
+
   section {
     background-color: var(--clr-text);
     color: var(--clr-bg);
+
     display: grid;
     grid-template-columns: 1fr auto;
+
     height: 100vh;
     align-items: end;
     justify-items: start;
