@@ -5,12 +5,16 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview"
+    "prebuild": "vite build --base=/scroll/",
+    "preview": "vite preview",
+    "deploy": "npx gh-pages -d dist -b build --dest ./scroll"
+
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@types/animejs": "^3.1.12",
+    "@types/gh-pages": "^6.1.0",
+    "gh-pages": "6.1.1",
     "svelte": "^4.2.8",
     "svelte-motion": "0.12.1",
     "vite": "^5.0.8"
