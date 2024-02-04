@@ -1,7 +1,6 @@
 <script>
   import { onMount } from "svelte";
   import Mover from "./Mover.svelte";
-  import { desiredPosition } from "./stores";
 
   export let items = ["nothing really"];
   export let open = false;
@@ -29,7 +28,6 @@
     childHeight = scroller.firstElementChild.getBoundingClientRect().height;
 
     // Looper
-
     if (scroller.scrollTop >= childHeight) {
       scroller.scrollTop = 1;
     }
@@ -37,10 +35,6 @@
     if (scroller.scrollTop <= 0) {
       scroller.scrollTop = childHeight - 1;
     }
-  };
-
-  const mod = (n, m) => {
-    return ((n % m) + m) % m;
   };
 
   onMount(() => {

@@ -2,13 +2,10 @@
   import { MoveDown } from "lucide-svelte";
   import {
     desiredPosition,
-    waitForChange,
+    requestedUpdate,
     selectedSection,
-    selectedOffset,
-    descriptionPositions,
+    scrollerData,
   } from "../stores";
-
-  // export let sections = [];
 
   const sectionDescription = [
     [
@@ -126,30 +123,21 @@
 
   $: firstLine = descriptionLines[0];
 
-  $: height = firstLine?.clientHeight;
-
   let innerHeight;
 
-  // $: if (firstLine) {console.log(firstLine.innerHTML)}
 
   let hero;
 
   $: if (firstLine || innerHeight) {
-    $descriptionPositions.lineCount = descriptionLines.filter(Boolean).length;
-    // $desiredPosition = getPos(firstLine)
+    $scrollerData.lineCount = descriptionLines.filter(Boolean).length;
     $desiredPosition = getPos(hero);
-    $waitForChange = false;
+    $requestedUpdate = false;
   }
 
-  // $: console.log(lineCount);
-
-  // $: if (firstLine) {
-  // }
-
-  $: ({ linePositions, selectedId, closedNav } = $descriptionPositions);
+  $: ({ linePositions, selectedId, closedNav } = $scrollerData);
 
   const px = (n) => {
-    if (selectedId === -1) return "0px";
+    if (selectedId === -1 || n === null) return "0px";
     return `${n}px`;
   };
 </script>
@@ -157,20 +145,16 @@
 <svelte:window bind:innerHeight />
 
 <section id="hero">
-  <!-- style:--y={`${$selectedOffset}px`} -->
 
   <button
-    on:click={() => ($descriptionPositions.closedNav = !closedNav)}
+    on:click={() => ($scrollerData.closedNav = !closedNav)}
     class:closed={closedNav}
     class="nav"></button
   >
 
   <article bind:this={hero}>
-    <!-- <h1>{sections[$selectedId]}</h1> -->
-
-    {#key $waitForChange}
+    {#key $requestedUpdate}
       {#each sectionDescription[$selectedSection] as description, i}
-        <!-- style:--y={px(linePositions[i] - ($desiredPosition + height*i))} -->
         <p style:--y={px(linePositions[i])} bind:this={descriptionLines[i]}>
           {@html description}
         </p>

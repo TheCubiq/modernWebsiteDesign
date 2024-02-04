@@ -3,12 +3,12 @@
   import { tweened } from "svelte/motion";
   import {
     desiredPosition,
-    waitForChange,
+    requestedUpdate,
     selectedSection,
     selectedOffset,
-    descriptionPositions,
+    scrollerData,
   } from "./stores";
-  import { onMount } from "svelte";
+  import { lerp, mod } from "./helpers";
 
   export let delay = 0;
   export let i = 0;
@@ -23,12 +23,7 @@
   let width,
     height = 0;
   let previousOffset = 0;
-
-  const mod = (n, m) => {
-    return ((n % m) + m) % m;
-  };
-  const lerp = (x, y, a) => x * (1 - a) + y * a;
-
+  
   $: width = mover ? mover.clientWidth : 0;
   $: height = mover ? mover.clientHeight : 0;
 
@@ -48,10 +43,24 @@
     currentPos = getCurrentPos();
 
     const offsetDifference = $selectedOffset - previousOffset;
+
+    // check if to delay from the top or the bottom
     const yPos = offsetDifference > 0 ? yHeight - currentPos : currentPos;
 
     previousOffset = $selectedOffset;
     return (mod(yPos + height, maxHeight + height) / height) * delay;
+  };
+
+  const updatePos = (y) => {
+    pos.set(
+      {
+        y,
+      },
+      {
+        duration: getDuration(1000, 2500),
+        delay: getDelay(delay),
+      }
+    );
   };
 
   // tween motion
@@ -62,126 +71,109 @@
     }
   );
 
-  // if ($selectedOffset)
-  // if ($selectedId)
-  $: {
-    pos.set(
-      {
-        y:
-          // previous pos relative to current pos
-          $selectedOffset,
-      },
-      {
-        duration: getDuration(1000, 2500),
-        delay: getDelay(delay),
-      }
-    );
-  }
+  $: {updatePos($selectedOffset)};
 
+
+  // check when the switch (closedNav) should be triggered
   const checkSwitch = (y, triggerPerc) => {
-    // console.log({
-    //   current: y,
-    //   start: previousY,
-    //   end: $selectedOffset,
-    // })
 
-    const currentProgress = (y - previousY) / ($selectedOffset - previousY) * 100;
+    // percentage of the current transition progress
+    const currentProgress =
+      ((y - previousY) / ($selectedOffset - previousY)) * 100;
 
+    // if the progress is greater than the trigger percentage
     if (currentProgress > triggerPerc) {
-      $descriptionPositions.closedNav = true;
+      $scrollerData.closedNav = true;
     }
-  }
+  };
 
-
+  // capped position of the mover
   const getNewPos = (y) => {
 
+    // for the current selected section, switch nav to closed state
     if (i === selectedId) {
-      checkSwitch(y,80);
+      checkSwitch(y, 80);
     }
 
+    // offset where all of the movers are on the same position
     const absoluteOffset = i * height;
-    return -1 * absoluteOffset + mod(y + absoluteOffset, maxHeight) - height;
+    
+    // start from the beginning if it goes over the max height
+    const cappedY = mod(y + absoluteOffset, maxHeight) - height;
+
+    // calculate the position of the mover
+    return -1 * absoluteOffset + cappedY;
   };
 
   const px = (value) => {
+    if (!value) return "0px";
     return `${value}px`;
   };
 
+  // to determine which mover is the clicked one
   let clicked = false;
 
   const handleClick = () => {
     clicked = true;
 
+    // update the selected section
     $selectedSection = sectionId;
-    $descriptionPositions.selectedId = i;
-    $waitForChange = true;
+    $scrollerData.selectedId = i;
+
+    // wait for Hero data to reload
+    $requestedUpdate = true;
   };
 
   let previousY = 0;
 
-  $: if (clicked === true && $waitForChange === false) {
+  // when Hero data is reloaded
+  // (desiredPosition is updated)
+  // (for clicked mover only)
+  $: if (clicked === true && $requestedUpdate === false) {
     clicked = false;
-    previousY = $selectedOffset
+
+    // for animation calculations
+    previousY = $selectedOffset;
+
+    // measure the distance for the new offset
     $selectedOffset = measureTo($desiredPosition);
-    // selectedOffset.set(measureTo($desiredPosition));
   }
 
-  // $: if (i === 0) {
-  //   $selectedOffset = measureTo($desiredPosition);
-  // }
+  // which items to use for the line offset
+  let isUsed = false;
 
-  let selected = false;
-
-  $: if (!$waitForChange) {
-    selected = targetSelected(i, $pos.y);
+  // on successful Hero update
+  $: {
+    isUsed = targetSelected(i, $pos.y);
   }
 
-  // $: {
-  //   $selectedOffset = 0;
-  //   selectedOffset.set(0);
-  // }
-
-  // $: console.log($pos.y)
-
+  // measure the distance for the new offset
   const measureTo = (to) => {
-    // debugger;
-    // delay = pos;
     return $selectedOffset + to - getCurrentPos();
   };
 
-  // $: targetMover = $descriptionPositions.selectedId
-  // $: lnCount = $descriptionPositions.lineCount
-
-  $: ({ selectedId, lineCount } = $descriptionPositions);
+  $: ({ selectedId, lineCount } = $scrollerData);
 
   const targetSelected = (id, updater) => {
-    // const minItem = selectedId;
-    // const maxItem = mod(selectedId + lineCount - 1, itemCount);
-    // // return id >= minItem && id <= maxItem;
-    // return id >= minItem && id <= maxItem;
-
-    // get relative id of mover
+    // get relative id of mover from selectedId
     const relativeId = mod(id - selectedId, itemCount);
 
-    if (relativeId >= 0 && relativeId < lineCount) {
-      $descriptionPositions.linePositions[relativeId] =
-        mover.getBoundingClientRect().top -
+    // if the relative id is within the line count
+    // (0 .. lineCount)
+    const isWithin = (relativeId >= 0 && relativeId < lineCount)
+
+    if (isWithin) {
+      // update the line position
+      $scrollerData.linePositions[relativeId] =
+      mover.getBoundingClientRect().top -
         ($desiredPosition + height * relativeId);
-      return true;
     }
-    return false;
+
+    return isWithin;
   };
 
-  // if (targetSelected()) {
-
-  // }
 </script>
 
-<!-- on:resize={handleResize} -->
-<!-- bind:contentRect={rect} -->
-<!-- class:sel={selectedId === i} -->
-<!-- class:sel={selected} -->
-<!-- class:sel={targetSelected(i, $pos.y)} -->
 <a
   bind:this={mover}
   href="#"
@@ -189,7 +181,6 @@
   on:click={handleClick}
 >
   <slot />
-  <!-- {i} -->
 </a>
 
 <style>
@@ -204,10 +195,6 @@
     text-decoration: none;
     color: var(--clr-text);
     transition: color 0.2s ease-in-out;
-  }
-
-  .sel {
-    background-color: red;
   }
 
   a:hover {

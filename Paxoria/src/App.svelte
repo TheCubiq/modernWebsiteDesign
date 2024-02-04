@@ -3,7 +3,7 @@
 
   import Hero from "./lib/pages/Hero.svelte";
 
-  import { descriptionPositions, desiredPosition, selectedSection } from "./lib/stores";
+  import { scrollerData } from "./lib/stores";
 
   const sections = [
     "Works",
@@ -35,15 +35,13 @@
 
 <main>
   <nav class="entries"
-    class:closed={$descriptionPositions.closedNav}
+    class:closed={$scrollerData.closedNav}
   >
     <InfiniteScroller items={sections} {open} let:item>
-      <!-- class:selected={$selectedIndex === item.id} -->
       <a href="#" class="entry">
         {item.name}
       </a>
     </InfiniteScroller>
-    <!-- {page} -->
   </nav>
   
   <Hero />
