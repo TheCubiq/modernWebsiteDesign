@@ -85,6 +85,11 @@
     if (currentProgress > triggerPerc) {
       $scrollerData.closedNav = true;
     }
+
+    if (currentProgress >= 99){
+      $scrollerData.isPlaying = false;
+    }
+
   };
 
   // capped position of the mover
@@ -137,6 +142,7 @@
 
     // measure the distance for the new offset
     $selectedOffset = measureTo($desiredPosition);
+    $scrollerData.isPlaying = true;
   }
 
   // which items to use for the line offset

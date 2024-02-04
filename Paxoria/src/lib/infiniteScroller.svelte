@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import Mover from "./Mover.svelte";
+  import { scrollerData } from "./stores.js";
 
   export let items = ["nothing really"];
   export let open = false;
@@ -66,6 +67,9 @@
 
   $: itemList = giveId(duplicateArray(items, duplicatesNeeded));
   $: fullEntryCount = duplicatesNeeded * items.length;
+
+  $: ({isPlaying} = $scrollerData)
+
 </script>
 
 <svelte:window bind:innerHeight />
@@ -74,6 +78,9 @@
   class="infinite-scroller"
   on:scroll={scrollHandler}
   on:resize={scrollHandler}
+
+  class:playing={isPlaying}
+
   bind:this={scroller}
 >
   {#if open}
@@ -110,6 +117,10 @@
     min-width: 50%;
 
     max-height: max-content;
+  }
+
+  .infinite-scroller.playing {
+    overflow-y: hidden;
   }
 
   .infinite-scroller::-webkit-scrollbar {

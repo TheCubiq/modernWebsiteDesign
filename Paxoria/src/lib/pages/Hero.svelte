@@ -12,7 +12,6 @@
       "Works. A collection of recent <span class='intro-dash'></span> ish",
       "work by Cubiq.",
       "Currently working with Twitter.",
-      "Currently working with Twitter.",
     ],
     [
       "F37. Design direction for the",
@@ -147,6 +146,7 @@
 <section id="hero">
 
   <button
+    aria-label="Toggle Navigation"
     on:click={() => ($scrollerData.closedNav = !closedNav)}
     class:closed={closedNav}
     class="nav"></button
@@ -162,7 +162,7 @@
     {/key}
   </article>
 
-  <MoveDown />
+  <!-- <MoveDown /> -->
 </section>
 
 <style>
@@ -205,7 +205,10 @@
     display: grid;
     grid-template-columns: 1fr auto;
 
-    height: 100vh;
+    height: 100svh;
+
+    overflow: hidden;
+
     align-items: end;
     justify-items: start;
     text-align: start;
