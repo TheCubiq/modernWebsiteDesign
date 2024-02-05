@@ -3,8 +3,6 @@
   import { emojiList } from "./emojies";
   import { fade, scale } from "svelte/transition";
 
-
-  
   const emojis = emojiList;
 
   let current = [0, 0],
@@ -37,16 +35,27 @@
       this.x = x;
       this.y = y;
       this.emoji = this.generateEmoji();
-      this.size = Math.random() * 2 + 1;
-      this.rotation = Math.random() * 360;
+      this.size = this.randomSize(1, 2);
+      this.rotation = Math.floor(Math.random() * 360);
       this.id = id;
+    }
+
+    round(num, places = 0) {
+      return Math.round(num * 10 ** places) / 10 ** places;
+    }
+
+    randomSize(min, max) {
+      const size = Math.random() * max + min;
+      return this.round(size, 2);
+    }
+
+    randomRotation() {
+      return this.round(Math.random() * 360);
     }
 
     generateEmoji() {
       return emojis[Math.floor(Math.random() * emojis.length)];
-
     }
-
   }
 
   // create class emojiCanvas
@@ -57,9 +66,8 @@
       this.emojiCount = 0;
     }
 
-    addEmoji(x, y, emoji) {
+    addEmoji(x, y) {
       this.emojis$.update((emojis) => {
-
         if (emojis.length > 30) {
           emojis.shift();
         }
@@ -83,10 +91,7 @@
       style:--posY={emoji.y + "px"}
       style:--size={emoji.size + "em"}
       style:--rot={emoji.rotation + "deg"}
-
-      transition:scale
-      
-      >{emoji.emoji}</span
+      transition:scale>{emoji.emoji}</span
     >
   {/each}
 </div>
@@ -103,11 +108,10 @@
 
     filter: drop-shadow(0 0 3px #000);
 
-    
     transform: translate(-50%, -50%) rotate(var(--rot, 0deg));
     left: var(--posX);
     top: var(--posY);
-    
+
     animation: pop-in 0.5s ease-out;
     pointer-events: none;
     user-select: none;

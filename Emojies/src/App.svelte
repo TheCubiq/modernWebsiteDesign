@@ -40,13 +40,17 @@
     color: var(--clr-bg);
 
     mix-blend-mode: difference;
-
+    
     display: flex;
     justify-content: center;
     align-items: center;
 
     user-select: none;
 
+  }
+
+  h1 {
+    filter: drop-shadow(0 0 .1em var(--clr-bg));
   }
 
 
