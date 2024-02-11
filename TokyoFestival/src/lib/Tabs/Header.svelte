@@ -71,7 +71,7 @@
     header > nav {
         background-color: color-mix(in lab, var(--clr-bg) 80%, transparent);
         border-radius: var(--border-rad);
-        padding: 1.5em;
+        padding: 1em 2em;
 
         backdrop-filter: blur(12px);
 

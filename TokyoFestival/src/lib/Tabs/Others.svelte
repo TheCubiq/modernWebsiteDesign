@@ -10,8 +10,9 @@
 <style>
     section {
         /* background-color: blueviolet; */
-        grid-row: -1/-4;
-        grid-column: -2/-1;
+        /* grid-row: -1/-4;
+        grid-column: -2/-1; */
+        grid-area: others;
 
         border-radius: 3rem;
         border: 2px solid #20202b;

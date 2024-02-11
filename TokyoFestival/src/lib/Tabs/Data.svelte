@@ -22,8 +22,10 @@
 
 <style>
     section {
-        grid-column: 1/2;
-        grid-row: -1/-3;
+        /* grid-column: 1/2;
+        grid-row: -1/-3; */
+
+        grid-area: data;
 
         border-radius: var(--border-rad);
 

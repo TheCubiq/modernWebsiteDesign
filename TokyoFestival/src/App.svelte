@@ -29,16 +29,49 @@
 
     main {
         display: grid;
-        grid-template-columns: 5fr 2fr 5fr;
-        grid-template-rows: repeat(8, 1fr);
+        /* grid-template-columns: 5fr 2fr 5fr;
+        grid-template-rows: repeat(8, 1fr); */
+
+        grid-template-columns: 
+            [hero-start data-start events-start others-start] 1fr;
+            /* [hero-start data-start] 5fr 
+            [data-end] 2fr 
+            [events-start others-start hero-end] 5fr 
+            [events-end others-end]; */
+
+        /* grid-auto-rows: 100%; */
+        
+        grid-template-rows: 
+            [hero-start] 80vh
+            [hero-end events-start] 30vh 
+            [events-end data-start] 20vh
+            [data-end others-start] 20vh
+            [events-end];
+
         position: relative;
 
         column-gap: 1em;
     }
 
+    @media (min-width: 48rem) {
+        main {
+            grid-template-columns: 
+                [hero-start data-start] 5fr 
+                [data-end] 2fr 
+                [events-start others-start hero-end] 5fr 
+                [events-end others-end];
+
+            grid-template-rows: 
+                [hero-start events-start] 5fr 
+                [events-end others-start] 1fr 
+                [data-start hero-end] 2fr 
+                [others-end data-end];
+        }
+    }
+
     main::before {
         content: "";
-        position: absolute;
+        position: fixed;
         /* inset: 1em; */
 
         height: 12rem;

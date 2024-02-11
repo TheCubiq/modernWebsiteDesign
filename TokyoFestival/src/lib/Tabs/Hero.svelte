@@ -24,8 +24,10 @@
     section {
         cursor: pointer;
 
-        grid-column: 1/3;
-        grid-row: 1/7;
+        /* grid-column: 1/3;
+        grid-row: 1/7; */
+
+        grid-area: hero;
 
         display: flex;
         align-items: flex-end;
@@ -41,8 +43,8 @@
         
         /* padding-inline: 5em; */
         
-        margin-left: -10%;
-        margin-bottom: -10%;
+        /* margin-left: -10%;
+        margin-bottom: -10%; */
         /* padding-inline-end: 10rem; */
         
         transform-origin: right top;

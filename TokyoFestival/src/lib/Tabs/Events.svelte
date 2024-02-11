@@ -47,8 +47,11 @@ import Stat from "../Stat.svelte";
     }
 
     section {
-        grid-column: -1/-2;
-        grid-row: 1/6;
+        /* grid-column: -1/-2;
+        grid-row: 1/6; */
+
+        grid-area: events;
+
         margin-block: 1em;
 
         margin-right: -10%;
@@ -184,7 +187,7 @@ import Stat from "../Stat.svelte";
         /* left: calc(100% - 1em); */
         
         position: absolute;
-        right:0.75rem;
+        right:1.25rem;
         top:2.5rem;
         transform-origin: left;
         /* margin-block-start: 1em; */
