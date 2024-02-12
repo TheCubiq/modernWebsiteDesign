@@ -2,10 +2,12 @@
 
     import MaskedImage from "../MaskedImage.svelte";
     import { MapPin } from 'lucide-svelte';
+
+    import HeroImage from "../../assets/images/anime3_Fish.webp"
 </script>
 
 
-<section id="hero" class="mask">
+<section id="hero" class="mask" style="--bg-img:url({HeroImage})">
 
     <article class="mask">
         <span>
@@ -43,8 +45,8 @@
         
         /* padding-inline: 5em; */
         
-        /* margin-left: -10%;
-        margin-bottom: -10%; */
+        margin-left: -10%;
+        margin-bottom: -10%;
         /* padding-inline-end: 10rem; */
         
         transform-origin: right top;
@@ -60,7 +62,8 @@
         content: "";
         position: absolute;
         inset: 0;
-        background-image: url("https://i.imgur.com/7JQsjw1.png");
+        /* background-image: url("https://i.imgur.com/7JQsjw1.png"); */
+        background-image: var(--bg-img);
         background-size: cover;
         background-position: center;
         scale: 1;

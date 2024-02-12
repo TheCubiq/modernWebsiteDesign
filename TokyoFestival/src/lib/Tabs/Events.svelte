@@ -3,21 +3,25 @@
     import Pill from "../Pill.svelte";
 import Stat from "../Stat.svelte";
 
+import event1 from "../../assets/images/anime4_Dojo2.webp"
+import event2 from "../../assets/images/anime5_Dojo3.webp"
+import event3 from "../../assets/images/anime1_Lanterns.webp"
+
     export let events = [
         {
             name: "Main",
             time: "5:00 pm - 7:00 pm",
-            image: "https://i.imgur.com/qvykxBe.png"
+            image: event1
         },
         {
             name: "Quiver Dance",
             time: "5:00 pm - 7:00 pm",
-            image: "https://i.imgur.com/wHILIjl.png"
+            image: event2
         },
         {
             name: "Golden Road",
             time: "5:00 pm - 7:00 pm",
-            image: "https://i.imgur.com/7awMHXd.png"
+            image: event3
         }
     ]
 </script>
@@ -43,7 +47,7 @@ import Stat from "../Stat.svelte";
 <style>
 
     :root {
-        --bg-img: 'https://i.imgur.com/20Q7JDm.png';
+        --bg-img: '';
     }
 
     section {

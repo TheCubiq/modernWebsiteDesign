@@ -1,8 +1,9 @@
 <script>
     import Pill from "../Pill.svelte";
+    import fishBowl from "../../assets/images/fishBowl.webp"
 </script>
 
-<section id="others">
+<section id="others" style="--bg-img:url({fishBowl})">
     <h1>Gold Fish Group Dance</h1>
     <Pill text="5:00 pm - 7:00 pm" />
 </section>
@@ -46,7 +47,7 @@
                 rgba(0, 0, 0, 0.6),
                 rgba(0, 0, 0, 0) 60%
             ),
-            url("https://i.imgur.com/h7gWTFE.png")
+            var(--bg-img)
             ;
         background-size: cover;
         background-position: center 70%;

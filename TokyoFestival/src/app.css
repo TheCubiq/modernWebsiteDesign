@@ -36,7 +36,7 @@ body {
     background: rgb(2, 6, 23);
 
     min-width: 320px;
-    height: 100svh;
+    min-height: 100vh;
 
     display: grid;
     place-items: center;
@@ -51,9 +51,9 @@ body {
 
 body::before {
     content: "";
-    position: absolute;
+    position: fixed;
     inset: 0;
-    background-image: url(https://i.imgur.com/TGQl5tZ.png);
+    background-image: url(./assets/images/bg_midnight.jpg);
 
     /* this positioning is intentional to showcase the blur better */
     background-position: center;
@@ -97,7 +97,7 @@ body::before {
             rgba(9, 9, 10, 0) 0%,
             rgba(9, 9, 10, 0) 100%
         ),
-        url(https://i.imgur.com/2kGyIF8.png), no-repeat;
+        url(./assets/images/pattern.webp), no-repeat;
 
     /* backdrop-filter: blur(24px); */
 }

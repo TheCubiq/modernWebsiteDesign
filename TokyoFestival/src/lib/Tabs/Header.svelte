@@ -1,5 +1,6 @@
 <script>
     import { Bell, BookText, CalendarDays, Coffee, Command, LayoutDashboard } from "lucide-svelte";
+    import pfp from "../../assets/images/pfp.webp"
 </script>
 
 <header>
@@ -46,8 +47,8 @@
             <Coffee size="1em" />
             Donate
         </a>
-        <a  href="/" class="pfp" style="--bg-img:url(https://i.imgur.com/KCdqE47.png)">
-            <img src="https://i.imgur.com/KCdqE47.png" alt="pfp">
+        <a  href="/" class="pfp">
+            <img src={pfp} alt="pfp">
         </a>
     </nav>
 </header>
