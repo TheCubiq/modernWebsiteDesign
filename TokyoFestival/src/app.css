@@ -105,6 +105,8 @@ body::before {
 .mask {
     -webkit-mask-image: var(--masking-path);
     mask-image: var(--masking-path);
+    -webkit-mask: var(--masking-path);
+    mask: var(--masking-path);
 
     mask-repeat: no-repeat;
     mask-size: 100%;
