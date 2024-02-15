@@ -44,7 +44,7 @@ body {
   height: 100%;
   /* scrollbar fix */
   width: calc(100svw - (100svw - 100%));
-  display: flex;
+  display: grid;
 }
 
 
