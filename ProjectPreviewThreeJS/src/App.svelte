@@ -16,18 +16,23 @@
     // texture.minFilter = THREE.LinearFilter;
     return texture;
   });
+
+
   
   let list,
       links = [];
 
   let innerWidth = 0,
-      innerHeight = 0;
+      innerHeight = 0,
+
+      mouseX = 0,
+      mouseY = 0;
 
   $: aspect = innerWidth / innerHeight;
 
   const entries = [
     { name: 'Home', url: '/' },
-    { name: 'About', url: '/about' },
+    { name: 'About', url: '/about'},
     { name: 'Projects', url: '/projects' },
     { name: 'Contact', url: '/contact' }
   ];
@@ -116,6 +121,25 @@
     }
 
     render() {
+
+      // offset (smooth mouse follow)
+      this.offset.x = lerp(this.offset.x, mouseX, 0.05);
+      this.offset.y = lerp(this.offset.y, mouseY, 0.05);
+
+      // velocity kinda
+      this.uniforms.uOffset.value.set(
+        (mouseX - this.offset.x) * 0.0005,
+        -(mouseY - this.offset.y) * 0.0005,
+      )
+
+      
+      this.mesh.position.set(this.offset.x - (innerWidth / 2), -this.offset.y + (innerHeight/ 2), 0);
+      this.uniforms.uAlpha.value = lerp(
+        this.uniforms.uAlpha.value,
+        this.linksHovering ? 1.0 : 0.0,
+        0.05
+      );
+
       this.renderer.render(this.scene, this.camera);
       requestAnimationFrame(this.render.bind(this));
     }
@@ -126,7 +150,8 @@
   let el;
 
   const handleMouseMove = (e) => {
-    // console.log(e);
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   }
 
   
@@ -138,20 +163,19 @@
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<main>
+<main on:mousemove={handleMouseMove}>
 
+  
   <canvas bind:this={el}></canvas>
-
   <ul 
-    bind:this={list} 
-    on:mousemove={handleMouseMove}
+  bind:this={list} 
   >
-    {#each entries as link, i}
-      <li bind:this={links[i]}>
-        <a href={link.url}>{link.name}</a>
-      </li>
-    {/each}
-  </ul>
+  {#each entries as link, i}
+  <li bind:this={links[i]}>
+    <a href={link.url}>{link.name}</a>
+  </li>
+  {/each}
+</ul>
 </main>
 
 <style>
@@ -161,16 +185,22 @@
     display: grid;
     place-items: center;
     font-size: 1.5rem;
+    padding: 2em;
 
     grid-template-areas: "stack";
   }
 
-  :global(main > *) {
+  main > * {
     grid-area: stack;
   }
 
+  canvas {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+  }
+
   ul {
-    padding: 2em;
     list-style: none;
     display: flex; 
     flex-direction: column;
