@@ -25,8 +25,9 @@
   let innerWidth = 0,
       innerHeight = 0,
 
-      mouseX = 0,
-      mouseY = 0;
+      mouse = {x: 0, y: 0},
+
+      hovering = false;
 
   $: aspect = innerWidth / innerHeight;
 
@@ -55,22 +56,14 @@
         });
       })
       this.linksHovering = false;
+    }
 
+    init() {
       this.setupRenderer(el);
-      this.setupMainZoneListener(list);
       this.setupCamera();
       this.setupMesh();
       this.render();
       this.resize();
-    }
-
-    setupMainZoneListener(list) {
-      list.addEventListener('mouseenter', () => {
-        this.linksHovering = true;
-      });
-      list.addEventListener('mouseleave', () => {
-        this.linksHovering = false;
-      });
     }
 
     onMouseEnter(i) {
@@ -123,20 +116,20 @@
     render() {
 
       // offset (smooth mouse follow)
-      this.offset.x = lerp(this.offset.x, mouseX, 0.05);
-      this.offset.y = lerp(this.offset.y, mouseY, 0.05);
+      this.offset.x = lerp(this.offset.x, mouse.x, 0.05);
+      this.offset.y = lerp(this.offset.y, mouse.y, 0.05);
 
       // velocity kinda
       this.uniforms.uOffset.value.set(
-        (mouseX - this.offset.x) * 0.0005,
-        -(mouseY - this.offset.y) * 0.0005,
+        (mouse.x - this.offset.x) * 0.0005,
+        -(mouse.y - this.offset.y) * 0.0005,
       )
 
       
       this.mesh.position.set(this.offset.x - (innerWidth / 2), -this.offset.y + (innerHeight/ 2), 0);
       this.uniforms.uAlpha.value = lerp(
         this.uniforms.uAlpha.value,
-        this.linksHovering ? 1.0 : 0.0,
+        hovering ? 1.0 : 0.0,
         0.05
       );
 
@@ -144,26 +137,57 @@
       requestAnimationFrame(this.render.bind(this));
     }
 
+    checkElementHovering(el) {
+      const rect = el.getBoundingClientRect();       
+      return mouse.x > rect.left && mouse.x < rect.right && mouse.y > rect.top && mouse.y < rect.bottom;
+    }
+    
+    updateHovering(){
+      
+      const parentHover = this.checkElementHovering(list);
+
+      if (parentHover) {
+        this.linksHovering = links.some((link, i) => {
+          const hovering = this.checkElementHovering(link);
+          if(hovering){
+            this.onMouseEnter(i);
+          }
+          return hovering;
+        }) 
+      }
+
+      hovering = parentHover;
+    }
+
 
 
   }
   let el;
 
+  const getTouchingPos = (e) => {
+    e = e.clientX ? e : e.touches[0];
+    return {x : e.clientX, y : e.clientY};
+  };
+
   const handleMouseMove = (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+    mouse = getTouchingPos(e);
+    // const {x, y} = 
+    // mouse.x = x;
+    // mouse.y = y;
+    webgl.updateHovering();
   }
 
-  
+
+  const webgl = new Webgl(el);
   onMount(() => {
-    const webgl = new Webgl(el);
+    webgl.init()
   });
 
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
 
-<main on:mousemove={handleMouseMove}>
+<main on:mousemove={handleMouseMove} on:touchmove={handleMouseMove}>
 
   
   <canvas bind:this={el}></canvas>
@@ -184,7 +208,7 @@
 
     display: grid;
     place-items: center;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
     padding: 2em;
 
     grid-template-areas: "stack";
