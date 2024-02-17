@@ -224,6 +224,7 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
 
     .mask {
         --masking-path: none;
-        --masking-path: url("#blob2");
+        /* --masking-path: url("#blob2"); */
+        --masking-path: url("../../assets/masks/mask2.svg");
     }
 </style>
