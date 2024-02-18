@@ -31,6 +31,8 @@
 
     /* --masking-path: url("#masking-path"); */
     --masking-path: url("./assets/masks/mask.svg");
+    font-size: clamp(.5rem, 1vw + .5rem, 1rem);
+
 }
 
 body {

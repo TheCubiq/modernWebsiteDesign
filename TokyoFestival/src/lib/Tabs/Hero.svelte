@@ -45,8 +45,6 @@
         
         /* padding-inline: 5em; */
         
-        margin-left: -10%;
-        margin-bottom: -10%;
         /* padding-inline-end: 10rem; */
         
         transform-origin: right top;
@@ -55,7 +53,18 @@
 
         position: relative;
         overflow: hidden;
+        --masking-path: none;
+
+        border-radius: var(--card-padding);
     }
+
+    @media (min-width: 48rem) {
+        section {
+            margin-left: -10%;
+            margin-bottom: -10%;
+            --masking-path: unset;
+        }
+     }
 
     section::before {
         transition: inherit;
@@ -97,7 +106,7 @@
 
         /* overflow: clip; */
         max-width:min-content;
-
+        --masking-path: url("/src/assets/masks/mask.svg");
     }
     
     article > *{

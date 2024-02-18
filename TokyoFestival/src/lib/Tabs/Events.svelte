@@ -27,21 +27,20 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
 </script>
 
 <section id="events" class="mask">
-    <div class="event-wrapper">
+    <div class="event-wrapper ">
         {#each events as event}
             <article style="--bg-img:url({event.image})">
                 <h1 data-event-name={event.name}>{event.name}</h1>
             </article>
         {/each}
     </div>
-    <ul>
+    <!-- <ul>
         {#each events as event}
             <Stat name={event.name}>
-                <!-- <span>{event.time}</span> -->
                 <Pill text={event.time} />
             </Stat>
         {/each}
-    </ul>
+    </ul> -->
 </section>
 
 <style>
@@ -58,15 +57,25 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
 
         margin-block: 1em;
 
-        margin-right: -10%;
+        
         /* margin-bottom: -10%; */
 
         display: grid;
         grid-template-rows: 1fr auto;
 
         /* max-width: 70rem; */
-        /* overflow-x: scroll; */
+        overflow-x: auto;
+
+        scroll-snap-type: x mandatory;
+
+        container: scrollview / inline-size;
     }
+
+    @media (min-width: 48rem) {
+        section {
+            margin-right: -10%;
+        }
+     }
 
     .event-wrapper {
         display: flex;
@@ -105,18 +114,38 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
     }
 
     article {
-        flex-grow: 1;
-        flex-basis: 33%;
-
+        min-width: 100%;
+        
         transition: 0.3s;
-        transition-property: flex-basis;
 
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 20%);
+
+        scroll-snap-align: start;
     }
 
     article:hover {
-        flex-basis: 60%;
+        /* flex-basis: 60%; */
+        /* flex-grow: 3; */
+        /* flex: 2 */
+        /* min-width: 20rem; */
     }
+
+    /* .event-wrapper:has(article:hover) article:not(:hover) {
+        min-width: 0em;
+    } */
+
+    
+    @container scrollview (width > 30rem) {
+        article {
+            flex:1;
+            min-width: 0rem;
+        }
+        article:hover {
+            flex: 2;
+        }
+    }
+
+
 
     article {
         cursor: pointer;
@@ -126,6 +155,10 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         line-break: anywhere;
 
         position: relative;
+
+        border-radius: 2em;
+        overflow: clip;
+        padding-block: 1em;
     }
     /* article:nth-child(even) {
         background-color: blue;
@@ -209,14 +242,7 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         color: var(--clr-text);
     }
 
-    article {
-        /* margin-inline: .5em; */
-        border-radius: 2em;
-        overflow: clip;
-        padding-block: 1em;
-    }
-
-    article:nth-child(1) {
+    article:nth-child(1) h1 {
         /* left: calc(50% + 2.2rem); */
         padding-inline-start: calc(5rem);
 

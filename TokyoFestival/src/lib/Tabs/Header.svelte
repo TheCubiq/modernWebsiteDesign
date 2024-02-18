@@ -39,8 +39,8 @@
         </a>
     </nav>
     
-    <nav class="user">
-        <a href="/">
+    <!-- <nav class="user"> -->
+        <!-- <a href="/">
             <Bell size="1em" />
         </a>
         <a href="/">
@@ -49,8 +49,8 @@
         </a>
         <a  href="/" class="pfp">
             <img src={pfp} alt="pfp">
-        </a>
-    </nav>
+        </a> -->
+    <!-- </nav> -->
 </header>
 
 <style>
@@ -109,9 +109,45 @@
         object-fit: cover;
     }
 
-    nav.menu {
-        z-index: 2;
+    header {
+        z-index: 999999;
+
+        
+        position: fixed;
+        left: 0; right:0;
+
+        --outset: 2em;
+
+        bottom: var(--outset);
+
+        margin: 0;
     }
+
+    header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        bottom: calc(var(--outset) * -1);
+        /* background-image: var(--bg-img); */
+        /* background-size: cover; */
+        /* background-position: center; */
+        /* background: black; */
+        z-index: -1;
+
+        background: linear-gradient(#0000 0%, #000 100%);
+        opacity: .7;
+        /* background: #000; */
+
+        top: -5em;
+        /* filter: brightness(0.5); */
+        z-index: -1;
+    }
+
+    @media (min-width: 48rem) {
+        nav.menu {
+            position: static;
+        }
+     }
 
     nav.user {
         justify-self: end;

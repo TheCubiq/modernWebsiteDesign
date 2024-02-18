@@ -57,13 +57,13 @@
         main {
             grid-template-columns: 
                 [hero-start data-start] 5fr 
-                [data-end] 2fr 
-                [events-start others-start hero-end] 5fr 
+                [data-end sun-start] 2fr 
+                [events-start others-start hero-end sun-end] 5fr 
                 [events-end others-end];
 
             grid-template-rows: 
-                [hero-start events-start] 5fr 
-                [events-end others-start] 1fr 
+                [hero-start events-start sun-start] 5fr 
+                [events-end sun-end others-start] 1fr 
                 [data-start hero-end] 2fr 
                 [others-end data-end];
         }
@@ -71,22 +71,25 @@
 
     main::before {
         content: "";
-        position: fixed;
-        /* inset: 1em; */
+        /* position: fixed; */
+        position: absolute;
 
         height: 12rem;
+        /* inset: 0; */
         top: -8rem;
+        /* top: 0; */
         justify-self: center;
 
         aspect-ratio: 1;
         border-radius: 99em;
 
-        grid-column: 2/3;
-        grid-row: 1/3;
+        /* grid-column: 2/3;
+        grid-row: 1/3; */
+
+        grid-area: sun;
 
         filter: url(#glow);
 
         background-color: #F44F3B;
-    
     }
 </style>
