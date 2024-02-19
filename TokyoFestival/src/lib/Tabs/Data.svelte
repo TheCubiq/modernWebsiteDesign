@@ -43,7 +43,7 @@
         display: flex;
         /* gap: 1.5em; */
         justify-content: space-evenly;
-        margin-block-end: -2em;
+        /* margin-block-end: -2em; */
     }
 
     p {

@@ -39,8 +39,8 @@
         </a>
     </nav>
     
-    <!-- <nav class="user"> -->
-        <!-- <a href="/">
+    <nav class="user">
+        <a href="/">
             <Bell size="1em" />
         </a>
         <a href="/">
@@ -49,8 +49,8 @@
         </a>
         <a  href="/" class="pfp">
             <img src={pfp} alt="pfp">
-        </a> -->
-    <!-- </nav> -->
+        </a>
+    </nav>
 </header>
 
 <style>
@@ -123,6 +123,8 @@
         margin: 0;
     }
 
+
+    /* subtle shadow for phone nav */
     header::before {
         content: "";
         position: absolute;
@@ -143,9 +145,23 @@
         z-index: -1;
     }
 
+
+
     @media (min-width: 48rem) {
-        nav.menu {
-            position: static;
+        header {
+            position: sticky;
+            top:0;
+            bottom: unset;
+        }
+
+        header::before {
+            display: none;
+        }
+
+        header > svg,
+        header > :nth-last-child(1) {
+            visibility: visible;
+
         }
      }
 
@@ -155,6 +171,8 @@
 
     svg {
         justify-self: start;
+        visibility: hidden;
+
     }
 
     nav {
