@@ -70,11 +70,18 @@
     }
 
     header > nav {
-        background-color: color-mix(in lab, var(--clr-bg) 80%, transparent);
+        /* background-color: color-mix(
+            in lab, 
+            var(--clr-bg) 80%, 
+            transparent
+        ); */
+        background-color: var(--clr-bg);
+
         border-radius: var(--border-rad);
         padding: 1em 2em;
 
         backdrop-filter: blur(12px);
+        opacity: .9;
 
         gap: 1.5em;
     }
@@ -146,6 +153,11 @@
     }
 
 
+    header > svg,
+    header > nav.user {
+        visibility: hidden;
+        width: 0;
+    }
 
     @media (min-width: 48rem) {
         header {
@@ -159,9 +171,9 @@
         }
 
         header > svg,
-        header > :nth-last-child(1) {
+        header > nav.user {
             visibility: visible;
-
+            width: auto;
         }
      }
 
@@ -171,8 +183,6 @@
 
     svg {
         justify-self: start;
-        visibility: hidden;
-
     }
 
     nav {
