@@ -6,10 +6,11 @@ import Stat from "../Stat.svelte";
 import event1 from "../../assets/images/anime4_Dojo2.webp"
 import event2 from "../../assets/images/anime5_Dojo3.webp"
 import event3 from "../../assets/images/anime1_Lanterns.webp"
+  import Widget from "../Widget.svelte";
 
     export let events = [
         {
-            name: "Main",
+            name: "Main Event",
             time: "5:00 pm - 7:00 pm",
             image: event1
         },
@@ -26,11 +27,14 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
     ]
 </script>
 
-<section id="events" class="mask">
-    <div class="event-wrapper ">
+<section id="events" class="mas_k">
+    <div class="event-wrapper">
         {#each events as event}
             <article style="--bg-img:url({event.image})">
+                <aside></aside>
                 <h1 data-event-name={event.name}>{event.name}</h1>
+                <!-- <Pill text={event.time} /> -->
+                <Widget/>
             </article>
         {/each}
     </div>
@@ -68,31 +72,37 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
 
         scroll-snap-type: x mandatory;
 
+        scroll-behavior: smooth;
+
         container: scrollview / inline-size;
+
+        /* resize: both;
+        overflow: auto; */
+
+        /* border-radius: 2em; */
+
+        /* overflow: visible; */
     }
 
     @media (min-width: 48rem) {
         section {
-            margin-right: -10%;
+            /* margin-right: -10%; */
         }
      }
 
     .event-wrapper {
-        display: flex;
-        flex:1;
-        gap: .8em;
-        grid-column: 1;
-        grid-row: 1/-1;
+        display: grid;
+        grid-auto-flow: column;
+        grid-auto-columns: 100%;
+        gap: 1em;
     }
 
-    ul {
+    /* ul {
         grid-column: 1;
         grid-row: 2/-1;
 
         flex:1;
         display: flex;
-        /* gap: 1.5em; */
-        /* justify-content: space-evenly; */
 
         border-radius: 1.5em;
         border: 2px solid #20202B;
@@ -106,52 +116,13 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         padding: 1em;
         margin: 1rem;
 
-        /* overflow-x: scroll; */
-
         gap: .5em;
-
-        /* background-color: red; */
-    }
-
-    article {
-        min-width: 100%;
-        
-        transition: 0.3s;
-
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 20%);
-
-        scroll-snap-align: start;
-    }
-
-    article:hover {
-        /* flex-basis: 60%; */
-        /* flex-grow: 3; */
-        /* flex: 2 */
-        /* min-width: 20rem; */
-    }
-
-    /* .event-wrapper:has(article:hover) article:not(:hover) {
-        min-width: 0em;
     } */
 
     
-    @container scrollview (width > 30rem) {
-        article {
-            flex:1;
-            min-width: 0rem;
-        }
-        article:hover {
-            flex: 2;
-        }
-    }
-
-
-
-    article {
+    /* article {
         cursor: pointer;
         display: flex;
-        /* align-items: flex-end; */
-        /* justify-content: center; */
         line-break: anywhere;
 
         position: relative;
@@ -159,43 +130,110 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         border-radius: 2em;
         overflow: clip;
         padding-block: 1em;
+    } */
+    article {
+        grid-column: span 1;
+        min-width: 100%;
+        transition: 0.3s;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), transparent 20%);
+        scroll-snap-align: start;
     }
-    /* article:nth-child(even) {
-        background-color: blue;
+
+    /* article:hover { */
+        /* flex-basis: 60%; */
+        /* flex-grow: 3; */
+        /* flex: 2 */
+        /* min-width: 20rem; */
+    /* } */
+
+    /* .event-wrapper:has(article:hover) article:not(:hover) {
+        min-width: 0em;
     } */
 
-    article::before {
+    article {
+        display: grid;
+        grid-template-columns: 
+            [backdrop-start eventname-start] 1fr
+            [widget-start] auto
+            [backdrop-end eventname-end widget-end];
+        grid-template-rows: 
+            [backdrop-start eventname-start] 1fr
+            [widget-start] auto 
+            [backdrop-end eventname-end widget-end];
+        
+        border-radius: 2em;
+        /* overflow: clip; */
+        /* overflow: hidden; */
+
+        /* padding: 1em; */
+
+        scroll-snap-align: start;
+
+        position: relative;
+
+        min-width: 0;
+
+    }
+
+    :global(article > .widget-main) {
+        grid-area: widget;
+    }
+
+    
+    @container scrollview (width > 30rem) {
+        /* article {
+            flex:1
+            min-width: 0rem;
+        } */
+        /* article:hover {
+            flex: 2;
+        } */
+    }
+
+
+
+    article > aside {
+        grid-area: backdrop;
+        position: relative;
+        overflow: hidden;
+        border-radius: 2em;
+        
+    }
+
+    article > aside::before {
         content: "";
+
+
+        display: block;
+
         position: absolute;
         inset: 0;
         /* border-radius: 2em; */
         /* background-image: url("https://i.imgur.com/20Q7JDm.png"); */
         background-image: var(--bg-img);
-        
-        z-index: -1;
-
         background-size: cover;
         background-position: center;
+        
+
+        /* overflow: clip; */
+
+        z-index: -1;
+
         filter: brightness(0.5);
         transition: 0.3s;
         transition-property: brightness scale;
     }
-    article:hover::before {
+    article:hover > aside::before  {
         filter: brightness(.9);
         scale:1.1;
     }
 
-    
-            /* inset: 0; */
-            /* grid-row: middleY;
-            grid-column: middleX; */
+
+
     h1 {
-        /* position: absolute; */
-        flex:1;
-        margin-inline-end: -2em;
-
-        /* transform-origin: center left; */
-
+        /* flex:1; */
+        /* margin-inline-end: -2em; */
+        padding-inline-start: 2em;
         
         transition: .3s;
         line-break: normal;
@@ -203,9 +241,11 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         white-space: nowrap;
 
         font-size: 1.7rem;
-        margin-inline-end: -2em;
-        /* opacity: 0; */
+        /* margin-inline-end: -2em; */
         color: transparent;
+
+        grid-area: eventname;
+
     }
 
 
@@ -221,36 +261,30 @@ import event3 from "../../assets/images/anime1_Lanterns.webp"
         font-size: 1.5rem;
         position: absolute;
         transform: translateX(100%) rotate(90deg) translateX(0%);
-        /* left: calc(100% - 1em); */
         
         position: absolute;
         right:1.25rem;
         top:2.5rem;
         transform-origin: left;
-        /* margin-block-start: 1em; */
     }
 
     article:hover h1::before {
-        /* transform: translateX(100%) rotate(0deg) translateX(-100%); */
         top: 1rem;
         opacity: 0;
     }
 
     article:hover h1 {
         transition-delay: .4s;
-        margin: 0em;
+        /* margin: 0em; */
+        padding-inline-start: 0em;
         color: var(--clr-text);
     }
 
     article:nth-child(1) h1 {
-        /* left: calc(50% + 2.2rem); */
-        padding-inline-start: calc(5rem);
-
+        /* padding-inline-start: calc(5rem); */
     }
 
     .mask {
-        --masking-path: none;
-        /* --masking-path: url("#blob2"); */
         --masking-path: url("../../assets/masks/mask2.svg");
     }
 </style>

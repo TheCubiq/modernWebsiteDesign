@@ -66,9 +66,14 @@
                 [events-end sun-end others-start] 1fr 
                 [data-start hero-end] 2fr 
                 [others-end data-end];
-        }
+        }  
     }
 
+    /* main {
+        grid-template-columns: [events-start] 1fr [events-end];
+        grid-template-rows: [events-start] 1fr [events-end];
+    } */
+    
     main::before {
         content: "";
         /* position: fixed; */
