@@ -120,6 +120,7 @@
   h2 {
     font-size: 1rem;
     width: min-content;
+    align-self: center;
   }
 
   h2 > span {
