@@ -1,5 +1,5 @@
 <script>
-  import { Droplet, Map, MapPin, Moon, MoveUpRight, Wind } from "lucide-svelte";
+  import { Droplet, Map, Moon, MoveUpRight, Wind } from "lucide-svelte";
 
   export let place;
   export let date;
@@ -33,7 +33,6 @@
     </h2>
   </div>
 
-  
   <a href="#">
     <MoveUpRight size="1em" />
   </a>
@@ -46,15 +45,14 @@
     gap: 1em;
 
     margin: 0.5em;
-    
+
     position: relative;
-    
+
     mask: none;
-    
+
     --_rad: 2rem;
-    --_p: .5rem;
+    --_p: 0.5rem;
     padding: var(--_p);
-    
   }
 
   .widget-main::before {
@@ -73,9 +71,7 @@
     mask-size: 100% 100%;
 
     mask-repeat: no-repeat;
-
   }
-
 
   span {
     white-space: nowrap;
@@ -146,19 +142,14 @@
     justify-content: center;
     align-items: center;
 
-
     width: 2em;
     aspect-ratio: 1;
     border-radius: 99em;
     background-color: white;
 
-
-    margin-block-start: -.5em;
-
-
+    margin-block-start: -0.5em;
 
     /* padding-inline-start: 1em;
     padding-left: 1em; */
-
   }
 </style>

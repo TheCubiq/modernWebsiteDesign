@@ -54,8 +54,6 @@
   section {
     grid-area: events;
 
-    margin-block: 1em;
-
     display: grid;
     grid-template-rows: 1fr;
     overflow-x: auto;
@@ -74,6 +72,7 @@
   @media (min-width: 48rem) {
     section {
       margin-right: -10%;
+      margin-block: 1em;
     }
   }
 
