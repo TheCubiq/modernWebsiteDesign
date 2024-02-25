@@ -41,7 +41,8 @@
 
     grid-template-rows:
       [hero-start] 50vh
-      [hero-end events-start] 30vh
+      [hero-end events-start] max(20em, 30vh)
+      /* [hero-end events-start] 30vh */
       [events-end others-start] 15em
       [others-end data-start] auto
       [events-end data-end];

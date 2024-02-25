@@ -106,15 +106,14 @@ body::before {
 }
 
 .mask {
-    -webkit-mask-image: var(--masking-path);
-    mask-image: var(--masking-path);
     -webkit-mask: var(--masking-path);
-    mask: var(--masking-path);
-
-    mask-repeat: no-repeat;
+    -webkit-mask-image: var(--masking-path);
     -webkit-mask-repeat: no-repeat;
-    mask-size: 100% 100%;
     -webkit-mask-size: 100% 100%;
+    mask: var(--masking-path);
+    mask-image: var(--masking-path);
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
 }
 
 @media (prefers-color-scheme: light) {
