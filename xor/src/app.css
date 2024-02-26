@@ -29,6 +29,7 @@ body {
   background: var(--clr-bg);
   color: var(--clr-text);
 
+  filter: invert(1);
 }
 
 * {
