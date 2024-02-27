@@ -64,7 +64,7 @@
   >
     {#each boardPoints as boardCol}
       {#each boardCol as point}
-        <circle r=".07" cx={point.x} cy={point.y} />
+        <circle r=".1" cx={point.x} cy={point.y} />
       {/each}
     {/each}
   </svg>
@@ -77,7 +77,7 @@
     aspect-ratio: 1;
 
     border-radius: 99em;
-    border: 1px solid rgb(0, 0, 0);
+    border: 2px solid rgb(0, 0, 0);
 
     position: relative;
   }

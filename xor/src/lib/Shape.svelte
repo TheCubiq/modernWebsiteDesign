@@ -23,7 +23,7 @@
   };
 
   const randomCoord = () => {
-    return Math.random();
+    return Math.random() * 100;
   };
 
   // the board position mapped in percentages (0-1)
@@ -33,8 +33,8 @@
       y: randomCoord()
     },
     {
-      stiffness: .05,
-      damping: .4,
+      stiffness: .01,
+      damping: .1,
     }
   );
 
@@ -50,8 +50,8 @@
 
     if (isTouching) {
       localShapePos.set({
-        x: toRelative(pos.x) - startPos.x,
-        y: toRelative(pos.y) - startPos.y ,
+        x: toRelative(pos.x)* 100 - startPos.x,
+        y: toRelative(pos.y)* 100 - startPos.y ,
       });
     }
   };
@@ -63,8 +63,8 @@
     const mobileOffset = e.touches ? 30 : 0;
 
     startPos = {
-      x: toRelative(localPos.x) - $localShapePos.x,
-      y: toRelative(localPos.y + mobileOffset) - $localShapePos.y,
+      x: toRelative(localPos.x) * 100 - $localShapePos.x,
+      y: toRelative(localPos.y + mobileOffset) * 100 - $localShapePos.y,
     };
   };
 
@@ -91,19 +91,18 @@
     );
 
     localShapePos.set({
-      x: x / boardSize,
-      y: y / boardSize,
+      x: x / boardSize * 100,
+      y: y / boardSize * 100,
     });
   };
    
   const handleMouseUp = () => {
     if (!isTouching) return;
     isTouching = false;
-
     
     updateSnapToGrid({
-      x: $localShapePos.x * boardSize,
-      y: $localShapePos.y * boardSize,
+      x: $localShapePos.x / 100 * boardSize,
+      y: $localShapePos.y / 100 * boardSize,
     })
 
   };
@@ -111,11 +110,9 @@
   let delay = 100 * id + 500;
 
   onMount(() => {
-    // updateSnapToGrid({x:5, y:5});
     setTimeout(() => {
       updateSnapToGrid(shapePos);
     }, delay);
-    // updateSnapToGrid(shapePos);
   });
 
 </script>
@@ -129,8 +126,8 @@
 
 <!-- {style} -->
 <div
-  style:--y={`${$localShapePos.y * 100}%`}
-  style:--x={`${$localShapePos.x * 100}%`}
+  style:--y={`${$localShapePos.y}%`}
+  style:--x={`${$localShapePos.x}%`}
   style:--board-size={boardSize}
   role="cell"
   tabindex="-1"
