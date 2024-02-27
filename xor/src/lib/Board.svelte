@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import Shape from "./Shape.svelte";
+  import { fade } from "svelte/transition";
 
   let boardSize = 15;
 
@@ -21,32 +22,39 @@
     .map((_, i) =>
       Array(boardSize)
         .fill()
-        .map((_, j) => ({ x: i+.5, y: j+.5 }))
+        .map((_, j) => ({ x: i + 0.5, y: j + 0.5 }))
 
         // remove points outside of circle
         .filter((point, _) => {
           return isInCircle(
-            (point.x) / (boardSize) - 0.5,
-            (point.y) / (boardSize) - 0.5,
-            .5
+            point.x / boardSize - 0.5,
+            point.y / boardSize - 0.5,
+            0.5
           );
         })
     );
 
-    
-    let boardDimensions
+  let boardDimensions;
 
-
-    $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0
+  $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
 </script>
 
-<div class="board" bind:borderBoxSize={boardDimensions}>
-  
-  {#each data as shape}
-    <!-- {shape}  -->
-    <Shape shapePos={shape.pos} {cursorPos} {boardPoints} {blockSize} {boardSize} />
+<div
+  transition:fade={{ duration: 500 }}
+  class="board"
+  bind:borderBoxSize={boardDimensions}
+>
+  {#each data as shape (shape.id)}
+    <Shape
+      id={shape.id}
+      shapePos={shape.pos}
+      {cursorPos}
+      {boardPoints}
+      {blockSize}
+      {boardSize}
+    />
   {/each}
-  
+
   <svg
     width="100%"
     height="100%"
@@ -56,11 +64,10 @@
   >
     {#each boardPoints as boardCol}
       {#each boardCol as point}
-        <circle r=".07" cx={point.x } cy={point.y} />
+        <circle r=".07" cx={point.x} cy={point.y} />
       {/each}
     {/each}
   </svg>
-
 </div>
 
 <style>

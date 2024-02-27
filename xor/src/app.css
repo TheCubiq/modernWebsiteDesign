@@ -5,17 +5,18 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --clr-bg: #ffffff;
-  --clr-text: #000;
+  --clr-bg: #000000;
+  --clr-text: #ffffff;
   --clr-primary: #000000;
   --clr-secondary: #d1d9d6;
+
+  --dark-mode: 1;
 }
 
 
@@ -28,8 +29,10 @@ body {
 
   background: var(--clr-bg);
   color: var(--clr-text);
+  overscroll-behavior: none;
+  
+  overflow: hidden;
 
-  filter: invert(1);
 }
 
 * {
@@ -51,7 +54,8 @@ body {
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
+    --clr-bg: #fff;
+    --clr-text: #000;
+    --dark-mode: 0;
   }
 }
