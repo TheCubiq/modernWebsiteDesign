@@ -28,7 +28,7 @@
 
     padding: 2rem;
 
-    filter: invert(var(--dark-mode)) blur(1px) contrast(3);
+    filter:blur(1px) contrast(3) invert(var(--dark-mode));
     transition: filter 0.5s linear;
     isolation: isolate;
     background: white;
