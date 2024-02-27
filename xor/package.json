@@ -1,13 +1,13 @@
 {
-  "name": "proj-preview-threejs",
+  "name": "xor-game-svelte",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "prebuild": "vite build --base=/threejs/demo1",
+    "prebuild": "vite build --base=/xor",
     "preview": "vite preview",
-    "deploy": "npx gh-pages -d dist -b build --dest ./threejs/demo1"
+    "deploy": "npx gh-pages -d dist -b build --dest ./xor"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
