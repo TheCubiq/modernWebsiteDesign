@@ -4,9 +4,12 @@
   import { onMount } from "svelte";
   import { spring, tweened } from "svelte/motion";
   import { fade } from "svelte/transition";
+  import skins from "./skins";
 
   export let id;
   export let cursorPos = { x: 0, y: 0 };
+
+  export let shapeSkin;
 
   export let boardPoints = [];
   export let boardSize;
@@ -30,17 +33,17 @@
   const localShapePos = spring(
     {
       x: randomCoord(),
-      y: randomCoord()
+      y: randomCoord(),
     },
     {
-      stiffness: .01,
-      damping: .1,
+      stiffness: 0.1,
+      damping: 0.25,
     }
   );
 
   const getMousePos = (e) => {
     let pos = e.touches ? e.touches[0] : e;
-    return { x: pos.clientX, y: pos.clientY }
+    return { x: pos.clientX, y: pos.clientY };
   };
 
   const handleMouseMove = (e) => {
@@ -50,8 +53,8 @@
 
     if (isTouching) {
       localShapePos.set({
-        x: toRelative(pos.x)* 100 - startPos.x,
-        y: toRelative(pos.y)* 100 - startPos.y ,
+        x: toRelative(pos.x) * 100 - startPos.x,
+        y: toRelative(pos.y) * 100 - startPos.y,
       });
     }
   };
@@ -83,28 +86,44 @@
     return closestPoint.point;
   };
 
-  
   const updateSnapToGrid = (coords) => {
-    const { x, y } = snapToGrid(
-      coords.x,
-      coords.y
-    );
+    const { x, y } = snapToGrid(coords.x, coords.y);
 
     localShapePos.set({
-      x: x / boardSize * 100,
-      y: y / boardSize * 100,
+      x: (x / boardSize) * 100,
+      y: (y / boardSize) * 100,
     });
   };
-   
+
   const handleMouseUp = () => {
     if (!isTouching) return;
     isTouching = false;
-    
-    updateSnapToGrid({
-      x: $localShapePos.x / 100 * boardSize,
-      y: $localShapePos.y / 100 * boardSize,
-    })
 
+    updateSnapToGrid({
+      x: ($localShapePos.x / 100) * boardSize,
+      y: ($localShapePos.y / 100) * boardSize,
+    });
+  };
+
+  const path = [
+    { x: 0, y: 0 },
+    { x: 1, y: 0 },
+    { x: 1, y: 1 },
+    { x: 0, y: 1 },
+  ];
+
+  const toSvgPath = (array) => {
+    return (
+      array
+        .map((point, i) => {
+          return `${i === 0 ? "M" : "L"} ${point.x} ${point.y}`;
+        })
+        .join(" ") + " Z"
+    );
+  };
+
+  const svgViewBox = (origin, size = { x: 1, y: 1 }) => {
+    return `${origin.x} ${origin.y} ${size.x} ${size.y}`;
   };
 
   let delay = 100 * id + 500;
@@ -114,15 +133,14 @@
       updateSnapToGrid(shapePos);
     }, delay);
   });
-
 </script>
 
-<svelte:window 
-  on:mousemove={handleMouseMove} 
+<svelte:window
+  on:mousemove={handleMouseMove}
   on:touchmove={handleMouseMove}
-  on:mouseup={handleMouseUp} 
+  on:mouseup={handleMouseUp}
   on:touchend={handleMouseUp}
-  />
+/>
 
 <!-- {style} -->
 <div
@@ -133,18 +151,16 @@
   tabindex="-1"
   on:mousedown|preventDefault={handleMouseDown}
   on:touchstart|preventDefault={handleMouseDown}
-
-  transition:fade|global={{duration: 100, delay}}
+  transition:fade|global={{ duration: 100, delay }}
 >
   <svg
     width="100%"
     height="100%"
-    viewBox="1 1 1 1"
+    viewBox={svgViewBox(shapeSkin.origin)}
     preserveAspectRatio="none"
     fill="currentColor"
   >
-    <!-- <circle cx="50" cy="50" r="50" fill="#fff" /> -->
-    <path d="M 0 0 L 2 0 L 0 2 Z" />
+    <path d={toSvgPath(shapeSkin.path)} />
   </svg>
 </div>
 
@@ -153,7 +169,7 @@
     --x: 0px;
     --y: 0px;
   }
-  
+
   svg {
     shape-rendering: crispEdges;
     overflow: visible;
@@ -174,15 +190,13 @@
 
     mix-blend-mode: difference;
 
-    left: var(--x); 
+    left: var(--x);
     top: var(--y);
 
-    
     color: white;
     user-select: none;
     -webkit-user-select: none; /* disable selection/Copy of UIWebView */
     -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
-
 
     /* transform: translate(-50%, -50%); */
   }

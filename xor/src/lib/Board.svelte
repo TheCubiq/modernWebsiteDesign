@@ -2,41 +2,77 @@
   import { onMount } from "svelte";
   import Shape from "./Shape.svelte";
   import { fade } from "svelte/transition";
+  import { writable } from "svelte/store";
 
-  let boardSize = 15;
+  import skins from "./skins.js";
 
   let cursorPos = { x: 0, y: 0 };
 
-  let data = [
-    { id: 1, name: "Shape 1", pos: { x: 8, y: 8 } },
-    { id: 2, name: "Shape 2", pos: { x: 7, y: 9 } },
-    { id: 3, name: "Shape 3", pos: { x: 9, y: 7 } },
-  ];
+  class ShapeItem {
+    constructor(id, pos, skin) {
+      this.id = id;
+      this.pos = pos || { x: 8, y: 8 };
+      this.skin = skin || "square";
+    }
 
-  const isInCircle = (x, y, ratio) => {
-    return Math.sqrt(x ** 2 + y ** 2) <= ratio;
-  };
+    loadSkin() {
+      return skins[this.skin];
+    }
+  }
 
-  let boardPoints = Array(boardSize)
-    .fill()
-    .map((_, i) =>
-      Array(boardSize)
+  class Board {
+    constructor(size) {
+      this.boardSize = size || 15;
+      this.boardShapes$ = writable([]);
+      this.boardPoints = this.generateBoardPoints(this.boardSize);
+    }
+
+    addShape(pos, name) {
+      
+      this.boardShapes$.update((shapes) => {
+        const newShape = new ShapeItem(shapes.length + 1, pos, name);
+          
+        return [...shapes, newShape];
+      });
+    }
+
+    generateBoardPoints(boardSize) {
+      const isInCircle = (x, y, ratio) => {
+        return Math.sqrt(x ** 2 + y ** 2) <= ratio;
+      };
+
+      return Array(boardSize)
         .fill()
-        .map((_, j) => ({ x: i + 0.5, y: j + 0.5 }))
+        .map((_, i) =>
+          Array(boardSize)
+            .fill()
+            .map((_, j) => ({ x: i + 0.5, y: j + 0.5 }))
 
-        // remove points outside of circle
-        .filter((point, _) => {
-          return isInCircle(
-            point.x / boardSize - 0.5,
-            point.y / boardSize - 0.5,
-            0.5
-          );
-        })
-    );
+            // remove points outside of circle
+            .filter((point, _) => {
+              return isInCircle(
+                point.x / boardSize - 0.5,
+                point.y / boardSize - 0.5,
+                0.5
+              );
+            })
+        );
+    }
+  }
 
   let boardDimensions;
-
   $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
+
+  const board = new Board(15);
+  
+  $: boardShapes = board.boardShapes$;
+
+  onMount(() => {
+    board.addShape();
+    board.addShape({ x: 7, y: 9 }, "square");
+    board.addShape({ x: 9, y: 7 }, "triangle");
+  });
+  
 </script>
 
 <div
@@ -44,25 +80,26 @@
   class="board"
   bind:borderBoxSize={boardDimensions}
 >
-  {#each data as shape (shape.id)}
+  {#each $boardShapes as shape (shape.id)}
     <Shape
       id={shape.id}
       shapePos={shape.pos}
+      boardPoints = {board.boardPoints}
+      boardSize = {board.boardSize}
       {cursorPos}
-      {boardPoints}
       {blockSize}
-      {boardSize}
+      shapeSkin = {shape.loadSkin()}
     />
   {/each}
 
   <svg
     width="100%"
     height="100%"
-    viewBox={`0 0 ${boardSize} ${boardSize}`}
+    viewBox={`0 0 ${board.boardSize} ${board.boardSize}`}
     xmlns="http://www.w3.org/2000/svg"
     fill="black"
   >
-    {#each boardPoints as boardCol}
+    {#each board.boardPoints as boardCol}
       {#each boardCol as point}
         <circle r=".1" cx={point.x} cy={point.y} />
       {/each}
