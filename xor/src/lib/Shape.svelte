@@ -7,7 +7,6 @@
   import skins from "./skins";
 
   export let id;
-  export let cursorPos = { x: 0, y: 0 };
 
   export let shapeSkin;
 
@@ -20,6 +19,8 @@
 
   let startPos = { x: 0, y: 0 };
   export let shapePos = { x: 0, y: 0 };
+
+  export let shape
 
   const toRelative = (coord) => {
     return coord / blockSize;
@@ -93,6 +94,7 @@
       x: (x / boardSize) * 100,
       y: (y / boardSize) * 100,
     });
+    shape.setPos({ x: x + .5, y: y + .5 });
   };
 
   const handleMouseUp = () => {

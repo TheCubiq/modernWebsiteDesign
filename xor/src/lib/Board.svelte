@@ -6,13 +6,49 @@
 
   import skins from "./skins.js";
 
-  let cursorPos = { x: 0, y: 0 };
+  const levels = [
+    // 1
+    {
+      start: [
+        {
+          skin: "square",
+          pos: { x: 8, y: 8 },
+        },
+        {
+          skin: "square",
+          pos: { x: 7, y: 9 },
+        },
+        {
+          skin: "triangle",
+          pos: { x: 9, y: 7 },
+        },
+      ],
+      final: [
+        {
+          skin: "square",
+          pos: { x: 8, y: 8 },
+        },
+        {
+          skin: "square",
+          pos: { x: 7, y: 9 },
+        },
+        {
+          skin: "triangle",
+          pos: { x: 9, y: 7 },
+        },
+      ],
+    },
+  ];
 
   class ShapeItem {
     constructor(id, pos, skin) {
       this.id = id;
       this.pos = pos || { x: 8, y: 8 };
       this.skin = skin || "square";
+    }
+
+    setPos(pos) {
+      this.pos = pos;
     }
 
     loadSkin() {
@@ -24,19 +60,62 @@
     constructor(size) {
       this.boardSize = size || 15;
       this.boardShapes$ = writable([]);
-      this.boardPoints = this.generateBoardPoints(this.boardSize);
+      this.boardPoints = this.generateBoardSnapPoints(this.boardSize);
+      this.currentLevel = 1
     }
 
     addShape(pos, name) {
-      
       this.boardShapes$.update((shapes) => {
         const newShape = new ShapeItem(shapes.length + 1, pos, name);
-          
+
         return [...shapes, newShape];
       });
     }
 
-    generateBoardPoints(boardSize) {
+    setupLevel(level, levelId) {
+      this.currentLevel = levelId + 1;
+      this.boardShapes$.set(level.start.map((shape, i) => new ShapeItem(i, shape.pos, shape.skin)));
+    }
+
+    findCenterFromShapes(shapes) {
+      const x = shapes.reduce((acc, shape) => acc + shape.pos.x, 0) / shapes.length;
+      const y = shapes.reduce((acc, shape) => acc + shape.pos.y, 0) / shapes.length;
+
+      return { x, y };
+    }
+
+    distanceBetweenPoints(p1, p2) {
+      return Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+    }
+
+    checkLevelCompletion(shapeData) {
+      const final = levels[this.currentLevel-1].final;
+
+      const center = this.findCenterFromShapes(shapeData);
+      const finalCenter = this.findCenterFromShapes(final);
+
+      const relativeFinalPoints = final.map((shape, _) => {
+        return {
+          skin: shape.skin,
+          dist: this.distanceBetweenPoints(shape.pos, finalCenter)
+        };
+      })
+
+      return shapeData.every((shape, i) => {
+        const distance = this.distanceBetweenPoints(shape.pos, center);
+        return relativeFinalPoints.some((f_shape,i) => {
+          if (f_shape.skin === shape.skin && distance === f_shape.dist) {
+            relativeFinalPoints.splice(i, 1);
+            return true;
+          }
+          return false;
+        })
+      })
+    }
+
+          
+    
+    generateBoardSnapPoints(boardSize) {
       const isInCircle = (x, y, ratio) => {
         return Math.sqrt(x ** 2 + y ** 2) <= ratio;
       };
@@ -64,15 +143,17 @@
   $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
 
   const board = new Board(15);
-  
+
   $: boardShapes = board.boardShapes$;
 
   onMount(() => {
-    board.addShape();
-    board.addShape({ x: 7, y: 9 }, "square");
-    board.addShape({ x: 9, y: 7 }, "triangle");
+    board.setupLevel(levels[0], 0);
   });
-  
+
+  const handleClick = (e) => {
+    console.log(board.checkLevelCompletion($boardShapes));
+  }
+
 </script>
 
 <div
@@ -84,11 +165,11 @@
     <Shape
       id={shape.id}
       shapePos={shape.pos}
-      boardPoints = {board.boardPoints}
-      boardSize = {board.boardSize}
-      {cursorPos}
+      boardPoints={board.boardPoints}
+      boardSize={board.boardSize}
       {blockSize}
-      shapeSkin = {shape.loadSkin()}
+      shapeSkin={shape.loadSkin()}
+      shape = {shape}
     />
   {/each}
 
@@ -106,6 +187,7 @@
     {/each}
   </svg>
 </div>
+<button type="button" on:click={handleClick}>test</button>
 
 <style>
   .board {
@@ -117,6 +199,10 @@
     border: 2px solid rgb(0, 0, 0);
 
     position: relative;
+  }
+
+  button {
+    font-size: 2rem;
   }
 
   svg {
