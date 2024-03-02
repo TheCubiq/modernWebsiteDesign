@@ -87,14 +87,16 @@
     return closestPoint.point;
   };
 
-  const updateSnapToGrid = (coords) => {
+  const updateSnapToGrid = (coords, update = false) => {
     const { x, y } = snapToGrid(coords.x, coords.y);
 
     localShapePos.set({
       x: (x / boardSize) * 100,
       y: (y / boardSize) * 100,
     });
-    shape.setPos({ x: x + .5, y: y + .5 });
+    if (update) {
+      shape.setPos({ x: x + .5, y: y + .5 });
+    }
   };
 
   const handleMouseUp = () => {
@@ -104,15 +106,8 @@
     updateSnapToGrid({
       x: ($localShapePos.x / 100) * boardSize,
       y: ($localShapePos.y / 100) * boardSize,
-    });
+    }, true);
   };
-
-  const path = [
-    { x: 0, y: 0 },
-    { x: 1, y: 0 },
-    { x: 1, y: 1 },
-    { x: 0, y: 1 },
-  ];
 
   const toSvgPath = (array) => {
     return (
