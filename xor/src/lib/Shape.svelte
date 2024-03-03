@@ -139,11 +139,9 @@
   on:touchend={handleMouseUp}
 />
 
-<!-- {style} -->
 <div
   style:--y={`${$localShapePos.y}%`}
   style:--x={`${$localShapePos.x}%`}
-  style:--board-size={boardSize}
   role="cell"
   tabindex="-1"
   on:mousedown|preventDefault={handleMouseDown}

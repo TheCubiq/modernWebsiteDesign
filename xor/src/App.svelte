@@ -26,12 +26,16 @@
     justify-content: center;
     align-items: center;  
 
+    flex-direction: column;
+
     padding: 2rem;
 
     filter:blur(1px) contrast(3) invert(var(--dark-mode));
     transition: filter 0.5s linear;
     isolation: isolate;
     background: white;
+
+    gap: 2rem;
 
   }
 </style>

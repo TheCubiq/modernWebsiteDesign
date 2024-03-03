@@ -20,7 +20,7 @@
         },
         {
           skin: "triangle",
-          pos: { x: 11, y: 8 },y
+          pos: { x: 11, y: 8 },
         },
       ],
       final: [
@@ -64,7 +64,7 @@
       this.boardSize = size || 15;
       this.boardShapes$ = writable([]);
       this.boardPoints = this.generateBoardSnapPoints(this.boardSize);
-      this.currentLevel = 1
+      this.currentLevel = 1;
     }
 
     addShape(pos, name) {
@@ -100,14 +100,17 @@
         y: diff.y / shapes.length,
       };
     }
-
-    distanceBetweenPoints(p1, p2) {
-      return Math.sqrt((p2.x - p1.x) ** 2 + (p2.y - p1.y) ** 2);
+    
+    relativeToCenter(p, center) {
+      return {
+        x: p.x - center.x,
+        y: p.y - center.y,
+      };
     }
 
     checkBoardState() {
       this.boardShapes$.update((shapes) => {
-        console.log(shapes);
+        // console.log(shapes);
         if (this.checkLevelCompletion(shapes)) {
           console.log("Level completed");
         } else console.log("Level not completed");
@@ -115,7 +118,11 @@
       });
     }
 
-    // checkLevelCompletion(shapeData) {
+    arePointsSame(p1, p2) {
+      return p1.x === p2.x && p1.y === p2.y;
+    }
+
+
     checkLevelCompletion(shapeData) {
       const final = levels[this.currentLevel - 1].final;
 
@@ -125,14 +132,17 @@
       const relativeFinalPoints = final.map((shape, _) => {
         return {
           skin: shape.skin,
-          dist: this.distanceBetweenPoints(shape.pos, finalCenter),
+          pos: this.relativeToCenter(shape.pos, finalCenter),
         };
       });
 
       return shapeData.every((shape, i) => {
-        const distance = this.distanceBetweenPoints(shape.pos, center);
+        const point = this.relativeToCenter(shape.pos, center);
         return relativeFinalPoints.some((f_shape, i) => {
-          if (f_shape.skin === shape.skin && distance === f_shape.dist) {
+          if (
+            f_shape.skin === shape.skin &&
+            this.arePointsSame(point, f_shape.pos)
+            ) {
             relativeFinalPoints.splice(i, 1);
             return true;
           }
@@ -143,6 +153,7 @@
 
     generateBoardSnapPoints(boardSize) {
       const isInCircle = (x, y, ratio) => {
+        // return true
         return Math.sqrt(x ** 2 + y ** 2) <= ratio;
       };
 
@@ -175,17 +186,32 @@
   onMount(() => {
     board.setupLevel(levels[0], 0);
   });
-
-  const handleClick = (e) => {
-    console.log(board.checkLevelCompletion($boardShapes));
-  }
-
 </script>
+
+
+<div 
+  class="preview"
+  style:--board-size={board.boardSize}
+>
+  {#each $boardShapes as shape (shape.id)}
+    <Shape
+      id={shape.id}
+      shapePos={shape.pos}
+      boardPoints={board.boardPoints}
+      boardSize={board.boardSize}
+      {blockSize}
+      shapeSkin={shape.loadSkin()}
+      {shape}
+    />
+  {/each}
+</div>
 
 <div
   transition:fade={{ duration: 500 }}
   class="board"
   bind:borderBoxSize={boardDimensions}
+  
+  style:--board-size={board.boardSize}
 >
   {#each $boardShapes as shape (shape.id)}
     <Shape
@@ -213,11 +239,12 @@
     {/each}
   </svg>
 </div>
-<button type="button" on:click={handleClick}>test</button>
+
+<!-- <button type="button" on:click={handleClick}>test</button> -->
 
 <style>
   .board {
-    flex: 1;
+    width: 100%;
     max-width: 36rem;
     aspect-ratio: 1;
 
@@ -225,6 +252,18 @@
     border: 2px solid rgb(0, 0, 0);
 
     position: relative;
+  }
+
+  .preview {
+    aspect-ratio: 1;
+    width: 100%;
+    max-width: 12rem;
+    /* background: red; */
+    
+    border-radius: 99em;
+    border: 2px solid rgb(0, 0, 0);
+
+    position: relative
   }
 
   button {
