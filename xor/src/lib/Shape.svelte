@@ -3,15 +3,18 @@
 <script>
   import { onMount } from "svelte";
   import { spring, tweened } from "svelte/motion";
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import skins from "./skins";
+
+  import { BOARD_SIZE } from "./constants";
+  import { cubicIn, cubicInOut, cubicOut } from "svelte/easing";
 
   export let id;
 
   export let shapeSkin;
 
   export let boardPoints = [];
-  export let boardSize;
+  // export let BOARD_SIZE;
 
   export let blockSize = 1;
 
@@ -91,11 +94,12 @@
     const { x, y } = snapToGrid(coords.x, coords.y);
 
     localShapePos.set({
-      x: (x / boardSize) * 100,
-      y: (y / boardSize) * 100,
+      x: (x / BOARD_SIZE) * 100,
+      y: (y / BOARD_SIZE) * 100,
     });
     if (update) {
       shape.setPos({ x: x + .5, y: y + .5 });
+      console.log("update", shape);
     }
   };
 
@@ -104,8 +108,8 @@
     isTouching = false;
 
     updateSnapToGrid({
-      x: ($localShapePos.x / 100) * boardSize,
-      y: ($localShapePos.y / 100) * boardSize,
+      x: ($localShapePos.x / 100) * BOARD_SIZE,
+      y: ($localShapePos.y / 100) * BOARD_SIZE,
     }, true);
   };
 
@@ -146,7 +150,8 @@
   tabindex="-1"
   on:mousedown|preventDefault={handleMouseDown}
   on:touchstart|preventDefault={handleMouseDown}
-  transition:fade|global={{ duration: 100, delay }}
+  in:fade|global={{ duration: 100, delay }}
+  out:fly|global={{ y: 300, duration: 2000, delay: 200 + id*100, easing: cubicInOut}}
 >
   <svg
     width="100%"

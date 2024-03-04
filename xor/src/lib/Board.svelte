@@ -5,9 +5,15 @@
   import { writable } from "svelte/store";
   import PocketBase from "pocketbase";
 
+  import BoardGrid from "./BoardGrid.svelte";
+  import ShapePreview from "./ShapePreview.svelte";
+
   import skins from "./skins.js";
+  import { BOARD_SIZE } from "./constants";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
+
+  let levelCompleted = false;
 
   class ShapeItem {
     constructor(board, id, pos, skin) {
@@ -19,7 +25,6 @@
 
     setPos(pos) {
       this.pos = pos;
-      // Board.prototype.checkBoardState.call(this);
       this.boardRef.checkBoardState();
     }
 
@@ -52,7 +57,9 @@
           (shape, i) => new ShapeItem(this, i, shape.pos, shape.skin)
         )
       );
-      this.final = level.final;
+      this.final = level.final.map((shape, i) => {
+        return new ShapeItem(null, i, shape.pos, shape.skin);
+      });
     }
 
     findCenterFromShapes(shapes) {
@@ -82,14 +89,12 @@
     checkBoardState() {
       this.boardShapes$.update((shapes) => {
         // console.log(shapes);
-        if (this.checkLevelCompletion(shapes)) {
-          console.log("Level completed");
-        } else console.log("Level not completed");
+        levelCompleted = this.checkLevelCompletion(shapes);
         return shapes;
       });
     }
 
-    arePointsSame(p1, p2) {
+    areCoordsSame(p1, p2) {
       return p1.x === p2.x && p1.y === p2.y;
     }
 
@@ -109,14 +114,10 @@
       return shapeData.every((shape, i) => {
         const point = this.relativeToCenter(shape.pos, center);
         return relativeFinalPoints.some((f_shape, i) => {
-          if (
+          return (
             f_shape.skin === shape.skin &&
-            this.arePointsSame(point, f_shape.pos)
-          ) {
-            relativeFinalPoints.splice(i, 1);
-            return true;
-          }
-          return false;
+            this.areCoordsSame(point, f_shape.pos)
+          )
         });
       });
     }
@@ -149,18 +150,24 @@
   let boardDimensions;
   $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
 
-  const board = new Board(15);
+  const board = new Board(BOARD_SIZE);
 
   $: boardShapes = board.boardShapes$;
+
+  let boardFinal = [];
 
   onMount(async () => {
     const levelId = 0;
 
     pb.collection("levels")
+      // .getList(1, 1)
       .getFirstListItem("levelId=" + levelId)
       .then((result) => {
-        // console.log(result);
+        console.log(result);
+        // board.setupLevel(result.items[levelId], levelId);
         board.setupLevel(result, levelId);
+
+        boardFinal = board.final;
       })
       .catch((e) => {
         console.error(e);
@@ -168,56 +175,45 @@
   });
 </script>
 
-
 <div 
   class="preview"
   style:--board-size={board.boardSize}
->
-  {#each $boardShapes as shape (shape.id)}
-    <Shape
-      id={shape.id}
+  class:completed={levelCompleted}
+  >
+  {#each boardFinal as shape, i (i)}
+    <ShapePreview
       shapePos={shape.pos}
-      boardPoints={board.boardPoints}
-      boardSize={board.boardSize}
-      {blockSize}
       shapeSkin={shape.loadSkin()}
-      {shape}
     />
   {/each}
 </div>
 
 <div
-  transition:fade={{ duration: 500 }}
+  in:fade|global={{ duration: 500 }}
   class="board"
   bind:borderBoxSize={boardDimensions}
+
+  class:completed={levelCompleted}
+
   style:--board-size={board.boardSize}
 >
+
+{#if !levelCompleted}
   {#each $boardShapes as shape (shape.id)}
     <Shape
       id={shape.id}
       shapePos={shape.pos}
       boardPoints={board.boardPoints}
-      boardSize={board.boardSize}
       {blockSize}
       shapeSkin={shape.loadSkin()}
       {shape}
     />
   {/each}
-
-  <svg
-    width="100%"
-    height="100%"
-    viewBox={`0 0 ${board.boardSize} ${board.boardSize}`}
-    xmlns="http://www.w3.org/2000/svg"
-    fill="black"
-  >
-    {#each board.boardPoints as boardCol}
-      {#each boardCol as point}
-        <circle r=".1" cx={point.x} cy={point.y} />
-      {/each}
-    {/each}
-  </svg>
+  
+  <BoardGrid {board} />
+  {/if}
 </div>
+
 
 <!-- <button type="button" on:click={handleClick}>test</button> -->
 
@@ -234,25 +230,44 @@
   }
 
   .preview {
+    -webkit-tap-highlight-color: transparent;
+    
+    user-select: none;
     aspect-ratio: 1;
-    width: 100%;
+    width: 35%;
     max-width: 12rem;
-    /* background: red; */
+    /* background: rgb(255, 255, 255); */
+    /* border-radius: 99em; */
+    /* border: 2px solid rgb(0, 0, 0);  */
 
-    border-radius: 99em;
-    border: 2px solid rgb(0, 0, 0);
+    position: relative;
 
-    position: relative
+    transition: 1.5s;
   }
+  .preview.completed {
+    background: black;
+    border-radius: 99em;
+    cursor: pointer;
+  }
+
+  .preview.completed:active {
+    transform: scale(1.1);
+    transition: .3s;
+  }
+
+  .board.completed {
+    /* transition: 2s 2s; */
+    transition-property: border, max-width;
+    transition-duration: 2s, 1s;
+    transition-delay: 0s, 1.5s;
+    border-color: transparent;
+    max-width: 0em;
+  }
+
 
   button {
     font-size: 2rem;
   }
 
-  svg {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.5;
-  }
+  
 </style>
