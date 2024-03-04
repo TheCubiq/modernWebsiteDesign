@@ -3,42 +3,11 @@
   import Shape from "./Shape.svelte";
   import { fade } from "svelte/transition";
   import { writable } from "svelte/store";
+  import PocketBase from "pocketbase";
 
   import skins from "./skins.js";
 
-  const levels = [
-    // 1
-    {
-      start: [
-        {
-          skin: "square",
-          pos: { x: 5, y: 8 },
-        },
-        {
-          skin: "square",
-          pos: { x: 8, y: 8 },
-        },
-        {
-          skin: "triangle",
-          pos: { x: 11, y: 8 },
-        },
-      ],
-      final: [
-        {
-          skin: "square",
-          pos: { x: 8, y: 8 },
-        },
-        {
-          skin: "square",
-          pos: { x: 7, y: 9 },
-        },
-        {
-          skin: "triangle",
-          pos: { x: 9, y: 7 },
-        },
-      ],
-    },
-  ];
+  const pb = new PocketBase("https://db.cubiq.dev/");
 
   class ShapeItem {
     constructor(board, id, pos, skin) {
@@ -65,6 +34,7 @@
       this.boardShapes$ = writable([]);
       this.boardPoints = this.generateBoardSnapPoints(this.boardSize);
       this.currentLevel = 1;
+      this.final = [];
     }
 
     addShape(pos, name) {
@@ -82,6 +52,7 @@
           (shape, i) => new ShapeItem(this, i, shape.pos, shape.skin)
         )
       );
+      this.final = level.final;
     }
 
     findCenterFromShapes(shapes) {
@@ -100,7 +71,7 @@
         y: diff.y / shapes.length,
       };
     }
-    
+
     relativeToCenter(p, center) {
       return {
         x: p.x - center.x,
@@ -122,9 +93,8 @@
       return p1.x === p2.x && p1.y === p2.y;
     }
 
-
     checkLevelCompletion(shapeData) {
-      const final = levels[this.currentLevel - 1].final;
+      const final = this.final;
 
       const center = this.findCenterFromShapes(shapeData);
       const finalCenter = this.findCenterFromShapes(final);
@@ -142,7 +112,7 @@
           if (
             f_shape.skin === shape.skin &&
             this.arePointsSame(point, f_shape.pos)
-            ) {
+          ) {
             relativeFinalPoints.splice(i, 1);
             return true;
           }
@@ -183,8 +153,18 @@
 
   $: boardShapes = board.boardShapes$;
 
-  onMount(() => {
-    board.setupLevel(levels[0], 0);
+  onMount(async () => {
+    const levelId = 0;
+
+    pb.collection("levels")
+      .getFirstListItem("levelId=" + levelId)
+      .then((result) => {
+        // console.log(result);
+        board.setupLevel(result, levelId);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
   });
 </script>
 
@@ -210,7 +190,6 @@
   transition:fade={{ duration: 500 }}
   class="board"
   bind:borderBoxSize={boardDimensions}
-  
   style:--board-size={board.boardSize}
 >
   {#each $boardShapes as shape (shape.id)}
@@ -259,7 +238,7 @@
     width: 100%;
     max-width: 12rem;
     /* background: red; */
-    
+
     border-radius: 99em;
     border: 2px solid rgb(0, 0, 0);
 
