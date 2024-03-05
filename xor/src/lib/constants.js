@@ -1,3 +1,2 @@
-const BOARD_SIZE = 15;
-
-export { BOARD_SIZE };
+export const BOARD_SIZE = 15;
+export const DEV = false

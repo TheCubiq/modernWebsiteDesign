@@ -9,11 +9,15 @@
   import ShapePreview from "./ShapePreview.svelte";
 
   import skins from "./skins.js";
-  import { BOARD_SIZE } from "./constants";
+  import { BOARD_SIZE, DEV } from "./constants";
+  import { ChevronRight, ChevronLeft, Download } from "lucide-svelte";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
 
   let levelCompleted = false;
+  let levelId = 0;
+
+  const roundNum = (n, m) => Math.round(n * 10 ** m) / 10 ** m;
 
   class ShapeItem {
     constructor(board, id, pos, skin) {
@@ -57,8 +61,21 @@
           (shape, i) => new ShapeItem(this, i, shape.pos, shape.skin)
         )
       );
+
+      this.finalCenter = this.findCenterFromShapes(level.final);
+
+      const finalCenteredAnchor = this.relativeToCenter(this.finalCenter, {
+        x: BOARD_SIZE / 2 + 0.5,
+        y: BOARD_SIZE / 2 + 0.5,
+      });
+
       this.final = level.final.map((shape, i) => {
-        return new ShapeItem(null, i, shape.pos, shape.skin);
+        return new ShapeItem(
+          null,
+          i,
+          this.relativeToCenter(shape.pos, finalCenteredAnchor),
+          shape.skin
+        );
       });
     }
 
@@ -81,15 +98,23 @@
 
     relativeToCenter(p, center) {
       return {
-        x: p.x - center.x,
-        y: p.y - center.y,
+        x: roundNum(p.x - center.x, 2),
+        y: roundNum(p.y - center.y, 2),
       };
     }
 
-    checkBoardState() {
+    getJSON(shapes) {
+      return JSON.stringify(
+        shapes
+          // filter out the boardRef
+          .map(({ boardRef, id, ...shape }) => shape)
+      );
+    }
+
+    checkBoardState(log = false) {
       this.boardShapes$.update((shapes) => {
-        // console.log(shapes);
-        levelCompleted = this.checkLevelCompletion(shapes);
+        if (log) console.log(this.getJSON(shapes));
+        else levelCompleted = this.checkLevelCompletion(shapes);
         return shapes;
       });
     }
@@ -104,21 +129,18 @@
       const center = this.findCenterFromShapes(shapeData);
       const finalCenter = this.findCenterFromShapes(final);
 
-      const relativeFinalPoints = final.map((shape, _) => {
-        return {
-          skin: shape.skin,
-          pos: this.relativeToCenter(shape.pos, finalCenter),
-        };
-      });
+      const relativeFinalPoints = final.map((shape) => ({
+        skin: shape.skin,
+        pos: this.relativeToCenter(shape.pos, finalCenter),
+      }));
 
       return shapeData.every((shape, i) => {
         const point = this.relativeToCenter(shape.pos, center);
-        return relativeFinalPoints.some((f_shape, i) => {
-          return (
+        return relativeFinalPoints.some(
+          (f_shape) =>
             f_shape.skin === shape.skin &&
             this.areCoordsSame(point, f_shape.pos)
-          )
-        });
+        );
       });
     }
 
@@ -156,66 +178,106 @@
 
   let boardFinal = [];
 
-  onMount(async () => {
-    const levelId = 0;
+  const getLevelCount = async () => {
+    const list = await pb
+      .collection("levels")
+      .getList(1, 1)
+      .catch((e) => console.error(e));
+    const { totalItems } = list || { totalItems: 0 };
+    return totalItems;
+  };
 
+  const loadLevel = async (levelId) => {
     pb.collection("levels")
-      // .getList(1, 1)
       .getFirstListItem("levelId=" + levelId)
       .then((result) => {
+        levelCompleted = false;
         console.log(result);
-        // board.setupLevel(result.items[levelId], levelId);
         board.setupLevel(result, levelId);
-
         boardFinal = board.final;
       })
       .catch((e) => {
         console.error(e);
       });
+  };
+
+  let totalLevels = 0;
+
+  const nextLevel = (next = 1) => {
+    // levelId += next;
+    levelId = (levelId + next + totalLevels) % totalLevels;
+    loadLevel(levelId);
+  };
+
+  onMount(async () => {
+    totalLevels = await getLevelCount();
+    levelId = 0;
+    loadLevel(levelId);
   });
 </script>
 
-<div 
+<span class:active={levelCompleted}>{levelId+1}/{totalLevels}</span>
+
+<div
   class="preview"
   style:--board-size={board.boardSize}
   class:completed={levelCompleted}
-  >
-  {#each boardFinal as shape, i (i)}
-    <ShapePreview
-      shapePos={shape.pos}
-      shapeSkin={shape.loadSkin()}
-    />
-  {/each}
+>
+  {#key levelId}
+    {#each boardFinal as shape, i (i)}
+      <ShapePreview shapePos={shape.pos} shapeSkin={shape.loadSkin()} />
+    {/each}
+  {/key}
 </div>
-
 <div
   in:fade|global={{ duration: 500 }}
   class="board"
   bind:borderBoxSize={boardDimensions}
-
   class:completed={levelCompleted}
-
   style:--board-size={board.boardSize}
 >
+  {#if !levelCompleted}
+    {#each $boardShapes as shape (shape.id)}
+      <Shape
+        id={shape.id}
+        shapePos={shape.pos}
+        boardPoints={board.boardPoints}
+        {blockSize}
+        shapeSkin={shape.loadSkin()}
+        {shape}
+      />
+    {/each}
 
-{#if !levelCompleted}
-  {#each $boardShapes as shape (shape.id)}
-    <Shape
-      id={shape.id}
-      shapePos={shape.pos}
-      boardPoints={board.boardPoints}
-      {blockSize}
-      shapeSkin={shape.loadSkin()}
-      {shape}
-    />
-  {/each}
-  
-  <BoardGrid {board} />
+    <BoardGrid {board} />
   {/if}
 </div>
 
+<nav>
+  <button
+    transition:fade
+    on:click={() => nextLevel(-1)}
+    class:active={levelCompleted}
+  >
+    <ChevronLeft color="black" size="1em" />
+  </button>
+  <button
+    transition:fade
+    on:click={() => nextLevel()}
+    class:active={levelCompleted}
+  >
+    <ChevronRight color="black" size="1em" />
+  </button>
 
-<!-- <button type="button" on:click={handleClick}>test</button> -->
+  {#if DEV}
+    <button
+      transition:fade
+      on:click={() => board.checkBoardState(true)}
+      class:active={true}
+    >
+      <Download color="black" size=".8em" />
+    </button>
+  {/if}
+</nav>
 
 <style>
   .board {
@@ -227,11 +289,13 @@
     border: 2px solid rgb(0, 0, 0);
 
     position: relative;
+    transition-property: border, max-width;
+    transition-duration: 2s, 1s;
   }
 
   .preview {
     -webkit-tap-highlight-color: transparent;
-    
+
     user-select: none;
     aspect-ratio: 1;
     width: 35%;
@@ -252,22 +316,54 @@
 
   .preview.completed:active {
     transform: scale(1.1);
-    transition: .3s;
+    transition: 0.3s;
   }
 
   .board.completed {
     /* transition: 2s 2s; */
-    transition-property: border, max-width;
     transition-duration: 2s, 1s;
     transition-delay: 0s, 1.5s;
     border-color: transparent;
     max-width: 0em;
   }
 
-
-  button {
-    font-size: 2rem;
+  nav {
+    display: flex;
+    align-items: center;
   }
 
-  
+  button {
+    display: flex;
+    /* position: absolute; */
+    pointer-events: none;
+
+    background: white;
+    border: none;
+    cursor: pointer;
+    /* color: white; */
+
+    font-size: 5rem;
+    opacity: 0;
+    transition: 1s;
+  }
+
+  span {
+    color: #000b;
+    font-size: 3rem;
+    position: fixed;
+    bottom: 1em;
+    opacity: 0;
+    transition: 1s;
+  }
+
+  span.active {
+    opacity: 1;
+    transition-delay: 1.5s;
+  }
+
+  button.active {
+    pointer-events: all;
+    opacity: 1;
+    transition-delay: 1.5s;
+  }
 </style>

@@ -35,7 +35,7 @@
     isolation: isolate;
     background: white;
 
-    gap: 2rem;
+    /* gap: 2rem; */
 
   }
 </style>

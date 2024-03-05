@@ -99,7 +99,7 @@
     });
     if (update) {
       shape.setPos({ x: x + .5, y: y + .5 });
-      console.log("update", shape);
+      // console.log("update", shape);
     }
   };
 
@@ -128,10 +128,16 @@
   };
 
   let delay = 100 * id + 500;
+  let snappingEnabled = false; 
+
+  $: if (snappingEnabled) {
+    updateSnapToGrid(shapePos);
+  }
+
 
   onMount(() => {
     setTimeout(() => {
-      updateSnapToGrid(shapePos);
+      snappingEnabled = true;
     }, delay);
   });
 </script>

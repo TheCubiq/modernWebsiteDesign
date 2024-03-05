@@ -9,8 +9,8 @@
   import { BOARD_SIZE } from "./constants";
   
   export let shapeSkin;
-  
-  
+
+    
   export let shapePos = { x: 0, y: 0 };
   
   let zoom = 2.5;
@@ -43,7 +43,7 @@
   style:--x={`${localPos.y}%`}
   role="cell"
   tabindex="-1"
-  transition:fade|global={{ duration: 100, delay }}
+  transition:fade|global={{ duration: 1000 }}
   style:--board-size={(BOARD_SIZE / zoom)}
 >
   <svg
