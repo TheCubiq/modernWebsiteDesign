@@ -8,166 +8,17 @@
   import BoardGrid from "./BoardGrid.svelte";
   import ShapePreview from "./ShapePreview.svelte";
 
-  import skins from "./skins.js";
   import { BOARD_SIZE, DEV } from "./constants";
-  import { ChevronRight, ChevronLeft, Download } from "lucide-svelte";
+  import { skins } from "./objects";
+  import { ChevronRight, ChevronLeft, Download, Waypoints } from "lucide-svelte";
+  import ShapeEditor from "./ShapeEditor.svelte";
+  import { Board } from "./objects";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
 
-  let levelCompleted = false;
   let levelId = 0;
 
-  const roundNum = (n, m) => Math.round(n * 10 ** m) / 10 ** m;
-
-  class ShapeItem {
-    constructor(board, id, pos, skin) {
-      this.id = id;
-      this.pos = pos || { x: 8, y: 8 };
-      this.skin = skin || "square";
-      this.boardRef = board;
-    }
-
-    setPos(pos) {
-      this.pos = pos;
-      this.boardRef.checkBoardState();
-    }
-
-    loadSkin() {
-      return skins[this.skin];
-    }
-  }
-
-  class Board {
-    constructor(size) {
-      this.boardSize = size || 15;
-      this.boardShapes$ = writable([]);
-      this.boardPoints = this.generateBoardSnapPoints(this.boardSize);
-      this.currentLevel = 1;
-      this.final = [];
-    }
-
-    addShape(pos, name) {
-      this.boardShapes$.update((shapes) => {
-        const newShape = new ShapeItem(this, shapes.length + 1, pos, name);
-
-        return [...shapes, newShape];
-      });
-    }
-
-    setupLevel(level, levelId) {
-      this.currentLevel = levelId + 1;
-      this.boardShapes$.set(
-        level.start.map(
-          (shape, i) => new ShapeItem(this, i, shape.pos, shape.skin)
-        )
-      );
-
-      this.finalCenter = this.findCenterFromShapes(level.final);
-
-      const finalCenteredAnchor = this.relativeToCenter(this.finalCenter, {
-        x: BOARD_SIZE / 2 + 0.5,
-        y: BOARD_SIZE / 2 + 0.5,
-      });
-
-      this.final = level.final.map((shape, i) => {
-        return new ShapeItem(
-          null,
-          i,
-          this.relativeToCenter(shape.pos, finalCenteredAnchor),
-          shape.skin
-        );
-      });
-    }
-
-    findCenterFromShapes(shapes) {
-      const diff = shapes.reduce(
-        (acc, shape) => {
-          return {
-            x: acc.x + shape.pos.x,
-            y: acc.y + shape.pos.y,
-          };
-        },
-        { x: 0, y: 0 }
-      );
-
-      return {
-        x: diff.x / shapes.length,
-        y: diff.y / shapes.length,
-      };
-    }
-
-    relativeToCenter(p, center) {
-      return {
-        x: roundNum(p.x - center.x, 2),
-        y: roundNum(p.y - center.y, 2),
-      };
-    }
-
-    getJSON(shapes) {
-      return JSON.stringify(
-        shapes
-          // filter out the boardRef
-          .map(({ boardRef, id, ...shape }) => shape)
-      );
-    }
-
-    checkBoardState(log = false) {
-      this.boardShapes$.update((shapes) => {
-        if (log) console.log(this.getJSON(shapes));
-        else levelCompleted = this.checkLevelCompletion(shapes);
-        return shapes;
-      });
-    }
-
-    areCoordsSame(p1, p2) {
-      return p1.x === p2.x && p1.y === p2.y;
-    }
-
-    checkLevelCompletion(shapeData) {
-      const final = this.final;
-
-      const center = this.findCenterFromShapes(shapeData);
-      const finalCenter = this.findCenterFromShapes(final);
-
-      const relativeFinalPoints = final.map((shape) => ({
-        skin: shape.skin,
-        pos: this.relativeToCenter(shape.pos, finalCenter),
-      }));
-
-      return shapeData.every((shape, i) => {
-        const point = this.relativeToCenter(shape.pos, center);
-        return relativeFinalPoints.some(
-          (f_shape) =>
-            f_shape.skin === shape.skin &&
-            this.areCoordsSame(point, f_shape.pos)
-        );
-      });
-    }
-
-    generateBoardSnapPoints(boardSize) {
-      const isInCircle = (x, y, ratio) => {
-        // return true
-        return Math.sqrt(x ** 2 + y ** 2) <= ratio;
-      };
-
-      return Array(boardSize)
-        .fill()
-        .map((_, i) =>
-          Array(boardSize)
-            .fill()
-            .map((_, j) => ({ x: i + 0.5, y: j + 0.5 }))
-
-            // remove points outside of circle
-            .filter((point, _) => {
-              return isInCircle(
-                point.x / boardSize - 0.5,
-                point.y / boardSize - 0.5,
-                0.5
-              );
-            })
-        );
-    }
-  }
+  let shapeEditor = false;
 
   let boardDimensions;
   $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
@@ -175,6 +26,7 @@
   const board = new Board(BOARD_SIZE);
 
   $: boardShapes = board.boardShapes$;
+  $: levelCompleted = board.levelCompleted$;
 
   let boardFinal = [];
 
@@ -191,14 +43,25 @@
     pb.collection("levels")
       .getFirstListItem("levelId=" + levelId)
       .then((result) => {
-        levelCompleted = false;
-        console.log(result);
+        $levelCompleted = false;
         board.setupLevel(result, levelId);
         boardFinal = board.final;
       })
       .catch((e) => {
         console.error(e);
       });
+  };
+
+  const loadSkins = async () => {
+    try {
+      const list = await pb.collection("skins").getFullList();
+      const items = list.map(({ skin, path, origin }) => ({
+        [skin]: { path, origin },
+      }));
+      $skins = Object.assign({}, ...items);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   let totalLevels = 0;
@@ -210,18 +73,19 @@
   };
 
   onMount(async () => {
+    loadSkins();
     totalLevels = await getLevelCount();
     levelId = 0;
     loadLevel(levelId);
   });
 </script>
 
-<span class:active={levelCompleted}>{levelId+1}/{totalLevels}</span>
+<span class:active={$levelCompleted}>{levelId + 1}/{totalLevels}</span>
 
 <div
   class="preview"
   style:--board-size={board.boardSize}
-  class:completed={levelCompleted}
+  class:completed={$levelCompleted}
 >
   {#key levelId}
     {#each boardFinal as shape, i (i)}
@@ -233,37 +97,46 @@
   in:fade|global={{ duration: 500 }}
   class="board"
   bind:borderBoxSize={boardDimensions}
-  class:completed={levelCompleted}
+  class:completed={$levelCompleted}
   style:--board-size={board.boardSize}
 >
-  {#if !levelCompleted}
-    {#each $boardShapes as shape (shape.id)}
-      <Shape
-        id={shape.id}
-        shapePos={shape.pos}
-        boardPoints={board.boardPoints}
-        {blockSize}
-        shapeSkin={shape.loadSkin()}
-        {shape}
-      />
-    {/each}
 
-    <BoardGrid {board} />
-  {/if}
+  
+    {#if !$levelCompleted}
+      {#each $boardShapes as shape (shape.id)}
+        <Shape
+          id={shape.id}
+          shapePos={shape.pos}
+          boardPoints={board.boardPoints}
+          {blockSize}
+          shapeSkin={shape.loadSkin()}
+          {shape}
+          hidden={shapeEditor}
+        />
+      {/each}
+      <BoardGrid {board}  />
+      
+      <ShapeEditor
+        {board}
+        isOpen = {shapeEditor}
+        {blockSize}
+      />
+    {/if}
+
 </div>
 
 <nav>
   <button
     transition:fade
     on:click={() => nextLevel(-1)}
-    class:active={levelCompleted}
+    class:active={$levelCompleted || DEV}
   >
     <ChevronLeft color="black" size="1em" />
   </button>
   <button
     transition:fade
     on:click={() => nextLevel()}
-    class:active={levelCompleted}
+    class:active={$levelCompleted || DEV}
   >
     <ChevronRight color="black" size="1em" />
   </button>
@@ -274,7 +147,14 @@
       on:click={() => board.checkBoardState(true)}
       class:active={true}
     >
-      <Download color="black" size=".8em" />
+      <Download color="black" size="1em" />
+    </button>
+    <button
+      transition:fade
+      on:click={() => shapeEditor = !shapeEditor}
+      class:active={true}
+    >
+      <Waypoints color="black" size="1em" />
     </button>
   {/if}
 </nav>
@@ -330,6 +210,8 @@
   nav {
     display: flex;
     align-items: center;
+    gap: 1em;
+    margin-block: 1em;
   }
 
   button {
@@ -342,7 +224,7 @@
     cursor: pointer;
     /* color: white; */
 
-    font-size: 5rem;
+    font-size: 4rem;
     opacity: 0;
     transition: 1s;
   }

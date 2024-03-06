@@ -2,16 +2,18 @@
 
 <script>
   import { onMount } from "svelte";
-  import { spring, tweened } from "svelte/motion";
+  import { spring } from "svelte/motion";
   import { fade, fly } from "svelte/transition";
   import skins from "./skins";
 
   import { BOARD_SIZE } from "./constants";
-  import { cubicIn, cubicInOut, cubicOut } from "svelte/easing";
+  import { cubicInOut } from "svelte/easing";
 
   export let id;
 
   export let shapeSkin;
+
+  export let hidden = false;
 
   export let boardPoints = [];
   // export let BOARD_SIZE;
@@ -23,7 +25,7 @@
   let startPos = { x: 0, y: 0 };
   export let shapePos = { x: 0, y: 0 };
 
-  export let shape
+  export let shape = null;
 
   const toRelative = (coord) => {
     return coord / blockSize;
@@ -98,7 +100,7 @@
       y: (y / BOARD_SIZE) * 100,
     });
     if (update) {
-      shape.setPos({ x: x + .5, y: y + .5 });
+      shape?.setPos({ x: x + .5, y: y + .5 });
       // console.log("update", shape);
     }
   };
@@ -150,6 +152,7 @@
 />
 
 <div
+  class:hidden
   style:--y={`${$localShapePos.y}%`}
   style:--x={`${$localShapePos.x}%`}
   role="cell"
@@ -185,6 +188,15 @@
     pointer-events: all;
   }
 
+  .hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hidden * {
+    pointer-events: none;
+  } 
+
   div {
     pointer-events: none;
     position: absolute;
@@ -203,6 +215,9 @@
     user-select: none;
     -webkit-user-select: none; /* disable selection/Copy of UIWebView */
     -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
+
+    opacity: 1;
+    transition: opacity 1s;
 
     /* transform: translate(-50%, -50%); */
   }

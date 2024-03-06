@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
   import { spring, tweened } from "svelte/motion";
   import { fade } from "svelte/transition";
-  import skins from "./skins";
 
   import { BOARD_SIZE } from "./constants";
   
@@ -89,7 +88,5 @@
     user-select: none;
     -webkit-user-select: none; /* disable selection/Copy of UIWebView */
     -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
-
-    /* transform: translate(-50%, -50%); */
   }
 </style>
