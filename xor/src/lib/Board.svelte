@@ -10,9 +10,15 @@
 
   import { BOARD_SIZE, DEV } from "./constants";
   import { skins } from "./objects";
-  import { ChevronRight, ChevronLeft, Download, Waypoints } from "lucide-svelte";
+  import {
+    ChevronRight,
+    ChevronLeft,
+    Download,
+    Waypoints,
+  } from "lucide-svelte";
   import ShapeEditor from "./ShapeEditor.svelte";
   import { Board } from "./objects";
+  import { flip } from "svelte/animate";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
 
@@ -72,6 +78,33 @@
     loadLevel(levelId);
   };
 
+  $: navButtons = [
+    {
+      icon: ChevronLeft,
+      action: () => nextLevel(-1),
+      cond: !shapeEditor,
+    },
+    {
+      icon: ChevronRight,
+      action: () => nextLevel(),
+      cond: !shapeEditor,
+    },
+    {
+      icon: Download,
+      action: () => board.checkBoardState(true),
+      cond: DEV && !shapeEditor,
+    },
+    {
+      icon: Waypoints,
+      action: () => (shapeEditor = !shapeEditor),
+      cond: DEV,
+    },
+
+    ...((DEV && shapeEditor && $editor?.actionButtons) || []),
+  ].filter((button) => button.cond === undefined || button.cond);
+
+  const editor = writable(null);
+
   onMount(async () => {
     loadSkins();
     totalLevels = await getLevelCount();
@@ -87,11 +120,13 @@
   style:--board-size={board.boardSize}
   class:completed={$levelCompleted}
 >
-  {#key levelId}
-    {#each boardFinal as shape, i (i)}
-      <ShapePreview shapePos={shape.pos} shapeSkin={shape.loadSkin()} />
-    {/each}
-  {/key}
+  {#if !shapeEditor}
+    {#key levelId}
+      {#each boardFinal as shape, i (i)}
+        <ShapePreview shapePos={shape.pos} shapeSkin={shape.loadSkin()} />
+      {/each}
+    {/key}
+  {/if}
 </div>
 <div
   in:fade|global={{ duration: 500 }}
@@ -100,63 +135,38 @@
   class:completed={$levelCompleted}
   style:--board-size={board.boardSize}
 >
-
-  
-    {#if !$levelCompleted}
-      {#each $boardShapes as shape (shape.id)}
-        <Shape
-          id={shape.id}
-          shapePos={shape.pos}
-          boardPoints={board.boardPoints}
-          {blockSize}
-          shapeSkin={shape.loadSkin()}
-          {shape}
-          hidden={shapeEditor}
-        />
-      {/each}
-      <BoardGrid {board}  />
-      
-      <ShapeEditor
-        {board}
-        isOpen = {shapeEditor}
+  {#if !$levelCompleted}
+    {#each $boardShapes as shape (shape.id)}
+      <Shape
+        id={shape.id}
+        shapePos={shape.pos}
+        boardPoints={board.boardPoints}
         {blockSize}
+        shapeSkin={shape.loadSkin()}
+        {shape}
+        hidden={shapeEditor}
       />
-    {/if}
+    {/each}
+    <BoardGrid {board} />
 
+    {#if DEV}
+      <ShapeEditor {board} isOpen={shapeEditor} {blockSize} {editor} />
+    {/if}
+  {/if}
 </div>
 
 <nav>
-  <button
-    transition:fade
-    on:click={() => nextLevel(-1)}
-    class:active={$levelCompleted || DEV}
-  >
-    <ChevronLeft color="black" size="1em" />
-  </button>
-  <button
-    transition:fade
-    on:click={() => nextLevel()}
-    class:active={$levelCompleted || DEV}
-  >
-    <ChevronRight color="black" size="1em" />
-  </button>
-
-  {#if DEV}
+  {#each navButtons as button (button.icon)}
     <button
       transition:fade
-      on:click={() => board.checkBoardState(true)}
-      class:active={true}
-    >
-      <Download color="black" size="1em" />
+      on:click={button.action}
+      class:dev={DEV}
+      class:active={$levelCompleted}
+      animate:flip
+      >
+      <svelte:component this={button.icon} color="black" size="1em" />
     </button>
-    <button
-      transition:fade
-      on:click={() => shapeEditor = !shapeEditor}
-      class:active={true}
-    >
-      <Waypoints color="black" size="1em" />
-    </button>
-  {/if}
+  {/each}
 </nav>
 
 <style>
@@ -216,15 +226,12 @@
 
   button {
     display: flex;
-    /* position: absolute; */
-    pointer-events: none;
-
     background: white;
     border: none;
     cursor: pointer;
-    /* color: white; */
-
     font-size: 4rem;
+
+    pointer-events: none;
     opacity: 0;
     transition: 1s;
   }
@@ -243,9 +250,22 @@
     transition-delay: 1.5s;
   }
 
-  button.active {
+  button.active,
+  button.dev {
     pointer-events: all;
     opacity: 1;
     transition-delay: 1.5s;
+  }
+
+  :global(main:has(.dev) button:hover) {
+    transform: scale(.8);
+    transition-duration: .15s;
+  }
+
+
+
+
+  .dev {
+    transition-delay: 0s  !important;
   }
 </style>

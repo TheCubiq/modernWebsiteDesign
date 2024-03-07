@@ -1,30 +1,91 @@
 import { writable } from "svelte/store";
 
-export let skins = writable({})
+export let skins = writable({});
 
 const roundNum = (n, m) => Math.round(n * 10 ** m) / 10 ** m;
 
+let skinsLocal = {};
 
-let skinsLocal = {}  
-
-const unsubscribe = skins.subscribe(value => {
+const unsubscribe = skins.subscribe((value) => {
   skinsLocal = value;
 });
 
 class ShapeEditorBoard {
   constructor() {
-    this.shapePoints = writable([]);
+    this.shapePoints$ = writable([]);
+    this.actionButtons = [];
+    this.removePoints = false;
+    this.originPoint = new ShapeItem(this, 0, { x: 8, y: 8 }, "origin");
+    this.startPoint = new ShapeItem(this, 0, { x: 7, y: 7 }, "start");
+    this.initPoints();
   }
 
-  addShape(pos, name) {
-    this.shapePoints.update((shapes) => {
-      const newShape = new ShapeItem(this, shapes.length + 1, pos, name);
+  initPoints() {
+    const points = [
+      { x: 8, y: 6 },
+      { x: 10, y: 9 },
+      { x: 6, y: 9 },
+    ];
+    points.forEach((point) => {
+      this.addPoint(point);
+    });
+  }
+
+  addPoint(coords, name = "edit") {
+    this.shapePoints$.update((shapes) => {
+      const newShape = new ShapeItem(this, shapes.length + 1, coords, name);
+
+      // return [...shapes, coords];
 
       return [...shapes, newShape];
     });
   }
 
-  checkBoardState() {
+  toggleRemoveMode = () => {
+    this.removePoints = !this.removePoints;
+    return this.removePoints;
+  };
+
+  processRemovePoints = () => {
+    this.shapePoints$.update((shapes) => {
+      return shapes.filter((shape) => !shape.markRemove);
+    });
+  };
+
+  addButton(btn) {
+    this.actionButtons.push({ ...btn });
+  }
+
+  checkBoardState(point) {
+    if (this.removePoints) {
+      console.log("remove mode", point);
+      point.markRemove = true;
+      this.processRemovePoints();
+      return;
+    }
+
+    this.shapePoints$.update((shapes) => {
+      return shapes;
+    });
+  }
+
+  getJSON(shapes) {
+    // relative to startPoint
+    const relativePoints = shapes.map((shape) => ({
+      x: shape.pos.x - this.startPoint.pos.x,
+      y: shape.pos.y - this.startPoint.pos.y,
+    }));
+
+    // origin is relative to startPoint
+    const origin = {
+      x: this.originPoint.pos.x - this.startPoint.pos.x,
+      y: this.originPoint.pos.y - this.startPoint.pos.y,
+    };
+
+    return JSON.stringify({
+      points: relativePoints,
+      origin,
+    });
   }
 }
 
@@ -34,15 +95,18 @@ class ShapeItem {
     this.pos = pos || { x: 8, y: 8 };
     this.skin = skin || "square";
     this.boardRef = board;
+    this.markRemove = false;
   }
 
   setPos(pos) {
     this.pos = pos;
-    this.boardRef.checkBoardState();
+    const ref = this.boardRef;
+    const me = ref instanceof ShapeEditorBoard ? this : null;
+    ref.checkBoardState(me);
   }
 
   loadSkin() {
-    return skinsLocal[this.skin]
+    return skinsLocal[this.skin];
   }
 }
 
@@ -117,13 +181,13 @@ class Board {
     return JSON.stringify(
       shapes
         // filter out the boardRef
-        .map(({ boardRef, id, ...shape }) => shape)
+        .map(({ pos, skin }) => ({ pos, skin }))
     );
   }
 
   checkBoardState(log = false) {
     this.boardShapes$.update((shapes) => {
-      if (log) console.log(this.getJSON(shapes));
+      if (log) console.log("ExportBoard: " + this.getJSON(shapes));
       else this.levelCompleted$.update(() => this.checkLevelCompletion(shapes));
       return shapes;
     });
@@ -148,8 +212,7 @@ class Board {
       const point = this.relativeToCenter(shape.pos, center);
       return relativeFinalPoints.some(
         (f_shape) =>
-          f_shape.skin === shape.skin &&
-          this.areCoordsSame(point, f_shape.pos)
+          f_shape.skin === shape.skin && this.areCoordsSame(point, f_shape.pos)
       );
     });
   }

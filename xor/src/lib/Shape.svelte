@@ -8,10 +8,13 @@
 
   import { BOARD_SIZE } from "./constants";
   import { cubicInOut } from "svelte/easing";
+  import { toSvgPath } from "./helperFunctions";
 
   export let id;
 
   export let shapeSkin;
+
+  export let shake = false;
 
   export let hidden = false;
 
@@ -54,7 +57,7 @@
 
   const handleMouseMove = (e) => {
     if (!isTouching) return;
-    // console.log(e);
+    if (shake) return
     const pos = getMousePos(e);
 
     if (isTouching) {
@@ -101,7 +104,6 @@
     });
     if (update) {
       shape?.setPos({ x: x + .5, y: y + .5 });
-      // console.log("update", shape);
     }
   };
 
@@ -115,21 +117,11 @@
     }, true);
   };
 
-  const toSvgPath = (array) => {
-    return (
-      array
-        .map((point, i) => {
-          return `${i === 0 ? "M" : "L"} ${point.x} ${point.y}`;
-        })
-        .join(" ") + " Z"
-    );
-  };
-
   const svgViewBox = (origin, size = { x: 1, y: 1 }) => {
     return `${origin.x} ${origin.y} ${size.x} ${size.y}`;
   };
 
-  let delay = 100 * id + 500;
+  let delay = id == -1 ? 0 : 100 * id + 500;
   let snappingEnabled = false; 
 
   $: if (snappingEnabled) {
@@ -140,6 +132,7 @@
   onMount(() => {
     setTimeout(() => {
       snappingEnabled = true;
+      updateSnapToGrid(shapePos, true)
     }, delay);
   });
 </script>
@@ -153,6 +146,7 @@
 
 <div
   class:hidden
+  class:shake
   style:--y={`${$localShapePos.y}%`}
   style:--x={`${$localShapePos.x}%`}
   role="cell"
@@ -221,4 +215,33 @@
 
     /* transform: translate(-50%, -50%); */
   }
+
+  .shake {
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
+    transform-origin: left top;
+  }
+
+  @keyframes shake {
+
+  0% { 
+        transform: rotate(5deg); 
+    } 
+  
+    25% { 
+        transform: rotate(-6deg); 
+    } 
+  
+    50% { 
+        transform: rotate(5deg); 
+    } 
+  
+    75% { 
+        transform: rotate(-6deg); 
+    } 
+  
+    100% { 
+        transform: rotate(5deg); 
+    } 
+}
+
 </style>

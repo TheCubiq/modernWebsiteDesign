@@ -6,23 +6,14 @@
   import { fade } from "svelte/transition";
 
   import { BOARD_SIZE } from "./constants";
+  import { toSvgPath } from "./helperFunctions";
   
   export let shapeSkin;
 
     
   export let shapePos = { x: 0, y: 0 };
   
-  let zoom = 2.5;
-  
-  const toSvgPath = (array) => {
-    return (
-      array
-        .map((point, i) => {
-          return `${i === 0 ? "M" : "L"} ${point.x} ${point.y}`;
-        })
-        .join(" ") + " Z"
-    );
-  };
+  export let zoom = 2.5;
 
   const svgViewBox = (origin, size = { x: 1, y: 1 }) => {
     return `${origin.x} ${origin.y} ${size.x} ${size.y}`;
@@ -65,10 +56,6 @@
   svg {
     shape-rendering: crispEdges;
     overflow: visible;
-  }
-
-  svg > * {
-    pointer-events: all;
   }
 
   div {
