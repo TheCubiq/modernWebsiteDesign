@@ -1,17 +1,13 @@
 <script>
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import Shape from "./Shape.svelte";
   import { ShapeEditorBoard } from "./objects";
-  import { DEV } from "./constants";
-  import {
-    Download,
-    Minus,
-    Plus,
-  } from "lucide-svelte";
+  import { Download, Minus, Plus } from "lucide-svelte";
   import { writable } from "svelte/store";
   import ShapePreview from "./ShapePreview.svelte";
   import { flip } from "svelte/animate";
   import { fade } from "svelte/transition";
+  import { editorSkins } from "./skins";
 
   export let isOpen = false;
 
@@ -21,98 +17,12 @@
 
   export let editor;
 
-  const editorCross = {
-    origin: { x: 0.5, y: 0.5 },
-    path: [
-      { x: 0.46, y: 0.21 },
-      { x: 0.54, y: 0.21 },
-      { x: 0.54, y: 0.46 },
-      { x: 0.79, y: 0.46 },
-      { x: 0.79, y: 0.54 },
-      { x: 0.54, y: 0.54 },
-      { x: 0.54, y: 0.79 },
-      { x: 0.46, y: 0.79 },
-      { x: 0.46, y: 0.54 },
-      { x: 0.21, y: 0.54 },
-      { x: 0.21, y: 0.46 },
-      { x: 0.46, y: 0.46 },
-    ],
-  };
-
-  const editorPoly = {
-    origin: { x: 0.5, y: 0.5 },
-    path: [
-      { x: 0.46, y: 0.21 },
-      { x: 0.54, y: 0.21 },
-      // { x: 0.54, y: 0.46 },
-      { x: 0.79, y: 0.46 },
-      { x: 0.79, y: 0.54 },
-      // { x: 0.54, y: 0.54 },
-      { x: 0.54, y: 0.79 },
-      { x: 0.46, y: 0.79 },
-      // { x: 0.46, y: 0.54 },
-      { x: 0.21, y: 0.54 },
-      { x: 0.21, y: 0.46 },
-      // { x: 0.46, y: 0.46 },
-    ],
-  };
-  const editorTriangle = {
-    origin: { x: 0.5, y: 0.5 },
-    path: [
-      { x: 0.46, y: 0.21 },
-      { x: 0.54, y: 0.21 },
-      // { x: 0.54, y: 0.46 },
-      // { x: 0.79, y: 0.46 },
-      // { x: 0.79, y: 0.54 },
-      { x: 0.54, y: 0.54 },
-      // { x: 0.54, y: 0.79 },
-      // { x: 0.46, y: 0.79 },
-      // { x: 0.46, y: 0.54 },
-      { x: 0.21, y: 0.54 },
-      { x: 0.21, y: 0.46 },
-      // { x: 0.46, y: 0.46 },
-    ],
-  };
-
   let editor$ = null;
-
-  $: points = editor$?.shapePoints$ || writable([]);
-
-  $: originPoint = editor$?.originPoint || null;
-  $: startPoint = editor$?.startPoint || null;
+  let points = writable([]);
+  let removeMode = false;
 
   const unsubscribe = editor.subscribe((value) => {
     editor$ = value;
-  });
-
-  // let removeMode = false;
-  const removeMode = writable(false);
-
-  $: editorButtons = [
-    {
-      icon: Minus,
-      action: () => {
-        $removeMode = editor$.toggleRemoveMode();
-      },
-    },
-    {
-      icon: Plus,
-      action: () => {
-        editor$.addPoint({ x: 8, y: 8 });
-      },
-      cond: !$removeMode,
-    },
-  ].filter((button) => button.cond === undefined || button.cond);
-
-  onMount(() => {
-    $editor = new ShapeEditorBoard();
-
-    editor$.addButton({
-      icon: Download,
-      action: () => {
-        console.log("ExportSkin: " + editor$.getJSON($points));
-      },
-    });
   });
 
   const createSkin = (points) => {
@@ -121,42 +31,76 @@
       path: points.map((point) => point.pos) || [],
     };
   };
+
+  $: editorButtons = [
+    {
+      icon: Minus,
+      action: () => {
+        removeMode = editor$.toggleRemoveMode();
+      },
+    },
+    {
+      icon: Plus,
+      action: () => {
+        editor$.addPoint({ x: 8, y: 8 });
+      },
+      cond: !removeMode,
+    },
+  ].filter((button) => button.cond === undefined || button.cond);
+
+  $: repetitiveProps = {
+    id: -1,
+    boardPoints: board.boardPoints,
+    blockSize,
+    hidden:!isOpen,
+  }
+
+  $: shapesToRender = [
+    {
+      points : $points,
+      skin: editorSkins.cross,
+      shake: removeMode,
+    },
+    {
+      points : [editor$?.originPoint],
+      skin: editorSkins.poly,
+    },
+    {
+      points : [editor$?.startPoint],
+      skin: editorSkins.triangle,
+    },
+  ]
+
+  onDestroy(() => {
+    unsubscribe();
+  });
+
+  
+  onMount(() => {
+    $editor = new ShapeEditorBoard();
+
+    editor$.addButton({
+      icon: Download,
+      action: () => {
+        console.log("ExportSkin: " + editor$.getJSON());
+      },
+    });
+
+    points = editor$.shapePoints$
+  });
+
 </script>
 
-{#each $points as point}
-  <Shape
-    id={-1}
-    shapePos={point.pos}
-    boardPoints={board.boardPoints}
-    {blockSize}
-    shapeSkin={editorCross}
-    shape={point}
-    hidden={!isOpen}
-    shake={$removeMode}
-  />
+{#each shapesToRender as shape}
+  {#each shape.points as point}
+    <Shape
+      {...repetitiveProps}
+      shapeSkin={shape.skin}
+      shape={point}
+      shake={shape.shake}
+    />
+  {/each}
 {/each}
-
-<!-- origin -->
-{#if originPoint}
-  <Shape
-    id={-1}
-    shapePos={originPoint.pos}
-    boardPoints={board.boardPoints}
-    {blockSize}
-    shapeSkin={editorPoly}
-    shape={originPoint}
-    hidden={!isOpen}
-  />
-  <Shape
-    id={-1}
-    shapePos={startPoint.pos}
-    boardPoints={board.boardPoints}
-    {blockSize}
-    shapeSkin={editorTriangle}
-    shape={startPoint}
-    hidden={!isOpen}
-  />
-{/if}
 
 {#if isOpen}
   <ShapePreview
@@ -168,7 +112,7 @@
   <nav>
     <!-- <button>test</button> -->
     {#each editorButtons as button (button.icon)}
-      <button animate:flip transition:fade on:click={button.action}>
+      <button animate:flip transition:fade|global on:click={button.action}>
         <svelte:component this={button.icon} color="black" size="1em" />
       </button>
     {/each}

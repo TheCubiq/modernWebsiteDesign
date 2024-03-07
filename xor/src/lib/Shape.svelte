@@ -4,7 +4,6 @@
   import { onMount } from "svelte";
   import { spring } from "svelte/motion";
   import { fade, fly } from "svelte/transition";
-  import skins from "./skins";
 
   import { BOARD_SIZE } from "./constants";
   import { cubicInOut } from "svelte/easing";
@@ -26,7 +25,6 @@
   let isTouching = false;
 
   let startPos = { x: 0, y: 0 };
-  export let shapePos = { x: 0, y: 0 };
 
   export let shape = null;
 
@@ -125,14 +123,14 @@
   let snappingEnabled = false; 
 
   $: if (snappingEnabled) {
-    updateSnapToGrid(shapePos);
+    updateSnapToGrid(shape.pos);
   }
 
 
   onMount(() => {
     setTimeout(() => {
       snappingEnabled = true;
-      updateSnapToGrid(shapePos, true)
+      updateSnapToGrid(shape.pos, true)
     }, delay);
   });
 </script>

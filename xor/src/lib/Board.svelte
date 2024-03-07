@@ -139,7 +139,6 @@
     {#each $boardShapes as shape (shape.id)}
       <Shape
         id={shape.id}
-        shapePos={shape.pos}
         boardPoints={board.boardPoints}
         {blockSize}
         shapeSkin={shape.loadSkin()}

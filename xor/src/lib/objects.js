@@ -31,6 +31,10 @@ class ShapeEditorBoard {
     });
   }
 
+  removeAllPoints() {
+    this.shapePoints$.set([]);
+  }
+
   addPoint(coords, name = "edit") {
     this.shapePoints$.update((shapes) => {
       const newShape = new ShapeItem(this, shapes.length + 1, coords, name);
@@ -70,6 +74,12 @@ class ShapeEditorBoard {
   }
 
   getJSON(shapes) {
+    if (!shapes) {
+      this.shapePoints$.update((s) => {
+        shapes = s;
+        return s;
+      });
+    }
     // relative to startPoint
     const relativePoints = shapes.map((shape) => ({
       x: shape.pos.x - this.startPoint.pos.x,
@@ -155,12 +165,10 @@ class Board {
 
   findCenterFromShapes(shapes) {
     const diff = shapes.reduce(
-      (acc, shape) => {
-        return {
-          x: acc.x + shape.pos.x,
-          y: acc.y + shape.pos.y,
-        };
-      },
+      (acc, shape) => ({
+        x: acc.x + shape.pos.x,
+        y: acc.y + shape.pos.y,
+      }),
       { x: 0, y: 0 }
     );
 
