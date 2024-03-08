@@ -9,7 +9,7 @@
   import { cubicInOut } from "svelte/easing";
   import { toSvgPath } from "./helperFunctions";
 
-  export let id;
+  export let introDelay = -1;
 
   export let shapeSkin;
 
@@ -119,7 +119,7 @@
     return `${origin.x} ${origin.y} ${size.x} ${size.y}`;
   };
 
-  let delay = id == -1 ? 0 : 100 * id + 500;
+  let delay = introDelay == -1 ? 0 : 100 * introDelay + 500;
   let snappingEnabled = false; 
 
   $: if (snappingEnabled) {
@@ -152,7 +152,7 @@
   on:mousedown|preventDefault={handleMouseDown}
   on:touchstart|preventDefault={handleMouseDown}
   in:fade|global={{ duration: 100, delay }}
-  out:fly|global={{ y: 300, duration: 2000, delay: 200 + id*100, easing: cubicInOut}}
+  out:fly|global={{ y: 300, duration: 2000, delay: 200 + introDelay*100, easing: cubicInOut}}
 >
   <svg
     width="100%"

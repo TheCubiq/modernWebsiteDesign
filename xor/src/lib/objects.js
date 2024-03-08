@@ -38,9 +38,6 @@ class ShapeEditorBoard {
   addPoint(coords, name = "edit") {
     this.shapePoints$.update((shapes) => {
       const newShape = new ShapeItem(this, shapes.length + 1, coords, name);
-
-      // return [...shapes, coords];
-
       return [...shapes, newShape];
     });
   }
@@ -62,7 +59,6 @@ class ShapeEditorBoard {
 
   checkBoardState(point) {
     if (this.removePoints) {
-      console.log("remove mode", point);
       point.markRemove = true;
       this.processRemovePoints();
       return;
@@ -111,11 +107,14 @@ class ShapeItem {
   setPos(pos) {
     this.pos = pos;
     const ref = this.boardRef;
-    const me = ref instanceof ShapeEditorBoard ? this : null;
-    ref.checkBoardState(me);
+    ref.checkBoardState(this);
   }
 
   loadSkin() {
+    if (!skinsLocal[this.skin]) {
+      console.log("Skin not found: ", this.skin)
+      this.skin = "square";
+    }
     return skinsLocal[this.skin];
   }
 }
@@ -128,11 +127,25 @@ class Board {
     this.currentLevel = 1;
     this.final = [];
     this.levelCompleted$ = writable(false);
+    this.removeShapes = false;
+    this.boardEditEnabled = false;
   }
 
-  addShape(pos, name) {
+  toggleRemoveMode = () => {
+    this.removeShapes = !this.removeShapes;
+    return this.removeShapes;
+  };
+
+  toggleEditBoard = () => {
+    this.boardEditEnabled = !this.boardEditEnabled;
+    return this.boardEditEnabled;
+  };
+
+  addShape(skin = "square", pos) {
+    // sadly not crossbrowser supported
+    // const skin = prompt("Enter the name of the shape", "square"); 
     this.boardShapes$.update((shapes) => {
-      const newShape = new ShapeItem(this, shapes.length + 1, pos, name);
+      const newShape = new ShapeItem(this, shapes.length + 1, pos, skin);
 
       return [...shapes, newShape];
     });
@@ -193,10 +206,23 @@ class Board {
     );
   }
 
-  checkBoardState(log = false) {
+  checkBoardState(ref, log = false) {
     this.boardShapes$.update((shapes) => {
+      
       if (log) console.log("ExportBoard: " + this.getJSON(shapes));
-      else this.levelCompleted$.update(() => this.checkLevelCompletion(shapes));
+
+
+      if (this.removeShapes) {
+        ref.markRemove = true;
+        shapes = shapes.filter((shape) => !shape.markRemove);
+      }
+
+      if (this.boardEditEnabled) {
+        return shapes;
+      }
+
+      this.levelCompleted$.update(() => this.checkLevelCompletion(shapes));
+      
       return shapes;
     });
   }

@@ -13,7 +13,7 @@
     
   export let shapePos = { x: 0, y: 0 };
   
-  export let zoom = 2.5;
+  export let zoom = 1.5;
 
   const svgViewBox = (origin, size = { x: 1, y: 1 }) => {
     return `${origin.x} ${origin.y} ${size.x} ${size.y}`;
@@ -43,7 +43,7 @@
     preserveAspectRatio="none"
     fill="currentColor"
   >
-    <path d={toSvgPath(shapeSkin.path)} />
+    <path d={toSvgPath(shapeSkin?.path)} />
   </svg>
 </div>
 

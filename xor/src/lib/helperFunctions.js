@@ -1,5 +1,5 @@
 const toSvgPath = (array) => {
-  if (array.length < 2) return "M 0 0 Z";
+  if (array?.length < 2) return "M 0 0 Z";
   return (
     array
       .map((point, i) => {

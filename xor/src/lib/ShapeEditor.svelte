@@ -84,7 +84,7 @@
       action: () => {
         console.log("ExportSkin: " + editor$.getJSON());
       },
-    });
+    });    
 
     points = editor$.shapePoints$
   });
@@ -110,7 +110,6 @@
   />
 
   <nav>
-    <!-- <button>test</button> -->
     {#each editorButtons as button (button.icon)}
       <button animate:flip transition:fade|global on:click={button.action}>
         <svelte:component this={button.icon} color="black" size="1em" />
@@ -123,7 +122,7 @@
   nav {
     position: fixed;
     inset: 2rem;
-    bottom: unset;
+    top: unset;
     display: flex;
     justify-content: center;
   }

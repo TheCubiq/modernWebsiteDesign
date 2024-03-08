@@ -8,23 +8,31 @@
   import BoardGrid from "./BoardGrid.svelte";
   import ShapePreview from "./ShapePreview.svelte";
 
-  import { BOARD_SIZE, DEV } from "./constants";
+  import { BOARD_SIZE, DEV, LEVELS_LOCAL } from "./constants";
   import { skins } from "./objects";
+  import { skins as localSkinStorage } from "./skins";
   import {
     ChevronRight,
     ChevronLeft,
     Download,
     Waypoints,
+    PenLine,
+    Plus,
+    Minus,
+    RefreshCw,
   } from "lucide-svelte";
   import ShapeEditor from "./ShapeEditor.svelte";
   import { Board } from "./objects";
   import { flip } from "svelte/animate";
+  import { levels } from "./levels";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
 
   let levelId = 0;
 
   let shapeEditor = false;
+
+  let boardEditor = false;
 
   let boardDimensions;
   $: blockSize = boardDimensions ? boardDimensions[0].blockSize : 0;
@@ -34,21 +42,25 @@
   $: boardShapes = board.boardShapes$;
   $: levelCompleted = board.levelCompleted$;
 
+  let removeMode = false;
+
   let boardFinal = [];
 
-  const getLevelCount = async () => {
+  const loadLevelCount = async () => {
     const list = await pb
       .collection("levels")
       .getList(1, 1)
       .catch((e) => console.error(e));
     const { totalItems } = list || { totalItems: 0 };
+    totalLevels = totalItems;
     return totalItems;
   };
 
-  const loadLevel = async (levelId) => {
+  const loadLevelFromDB = async (levelId) => {
     pb.collection("levels")
       .getFirstListItem("levelId=" + levelId)
-      .then((result) => {
+      .then((r) => {
+        const result = r;
         $levelCompleted = false;
         board.setupLevel(result, levelId);
         boardFinal = board.final;
@@ -57,23 +69,58 @@
         console.error(e);
       });
   };
+  
+  const loadLevel = (levelId) => {
+    if (LEVELS_LOCAL) {
+
+      const level = levels[levelId];
+      $levelCompleted = false;
+      board.setupLevel(level, levelId);
+      boardFinal = board.final;
+    } else {
+      loadLevelFromDB(levelId);
+    }
+  }
+
+  const nameSkins = (list) => {
+    const items = list.map(({ skin, path, origin }) => ({
+        [skin]: { path, origin },
+      }));
+      const s = Object.assign({}, ...items);
+      return s;
+  };
+
 
   const loadSkins = async () => {
     try {
       const list = await pb.collection("skins").getFullList();
-      const items = list.map(({ skin, path, origin }) => ({
-        [skin]: { path, origin },
-      }));
-      $skins = Object.assign({}, ...items);
+      const s = nameSkins(list);
+      $skins = s;
+      return s;
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const updateDb = async () => {
+    if (LEVELS_LOCAL) {
+      $skins = nameSkins(localSkinStorage);
+      totalLevels = levels.length;
+      console.log(totalLevels);
+      return;
+    }
+    await loadLevelCount();
+    await loadSkins();
+    if (DEV) {
+      console.log(
+        `Level = ${levelId + 1} / ${totalLevels} \nskins = ${Object.keys($skins).length}`
+      );
     }
   };
 
   let totalLevels = 0;
 
   const nextLevel = (next = 1) => {
-    // levelId += next;
     levelId = (levelId + next + totalLevels) % totalLevels;
     loadLevel(levelId);
   };
@@ -82,35 +129,60 @@
     {
       icon: ChevronLeft,
       action: () => nextLevel(-1),
-      cond: !shapeEditor,
+      cond: !(shapeEditor || boardEditor),
     },
     {
       icon: ChevronRight,
       action: () => nextLevel(),
-      cond: !shapeEditor,
+      cond: !(shapeEditor || boardEditor),
     },
     {
-      icon: Download,
-      action: () => board.checkBoardState(true),
-      cond: DEV && !shapeEditor,
+      icon: RefreshCw,
+      action: () => {
+        updateDb();
+        console.log("updated");
+      },
+      cond: DEV && !(shapeEditor || boardEditor),
     },
+    ...((DEV && shapeEditor && $editor?.actionButtons) || []),
     {
       icon: Waypoints,
       action: () => (shapeEditor = !shapeEditor),
-      cond: DEV,
+      cond: DEV && !boardEditor,
+    },
+    {
+      icon: Plus,
+      action: () => (skinInputShown = !skinInputShown),
+      cond: DEV && boardEditor && !removeMode,
     },
 
-    ...((DEV && shapeEditor && $editor?.actionButtons) || []),
+    {
+      icon: Minus,
+      action: () => (removeMode = board.toggleRemoveMode()),
+      cond: DEV && boardEditor,
+    },
+    {
+      icon: Download,
+      action: () => board.checkBoardState(null, true),
+      cond: DEV && boardEditor && !removeMode,
+    },
+    {
+      icon: PenLine,
+      action: () => (boardEditor = board.toggleEditBoard()),
+      cond: DEV && !shapeEditor && !removeMode,
+    },
   ].filter((button) => button.cond === undefined || button.cond);
 
   const editor = writable(null);
 
   onMount(async () => {
-    loadSkins();
-    totalLevels = await getLevelCount();
+    await updateDb();
     levelId = 0;
     loadLevel(levelId);
   });
+
+  let modalValue = "square";
+  let skinInputShown = false;
 </script>
 
 <span class:active={$levelCompleted}>{levelId + 1}/{totalLevels}</span>
@@ -120,7 +192,7 @@
   style:--board-size={board.boardSize}
   class:completed={$levelCompleted}
 >
-  {#if !shapeEditor}
+  {#if !(shapeEditor || boardEditor)}
     {#key levelId}
       {#each boardFinal as shape, i (i)}
         <ShapePreview shapePos={shape.pos} shapeSkin={shape.loadSkin()} />
@@ -138,12 +210,13 @@
   {#if !$levelCompleted}
     {#each $boardShapes as shape (shape.id)}
       <Shape
-        id={shape.id}
+        introDelay={boardEditor ? -1 : shape.id}
         boardPoints={board.boardPoints}
         {blockSize}
         shapeSkin={shape.loadSkin()}
         {shape}
         hidden={shapeEditor}
+        shake={removeMode}
       />
     {/each}
     <BoardGrid {board} />
@@ -155,6 +228,16 @@
 </div>
 
 <nav>
+  {#if skinInputShown}
+    <form
+      on:submit|preventDefault={() => {
+        board.addShape(modalValue);
+        skinInputShown = false;
+      }}
+    >
+      <input bind:value={modalValue} placeholder="shapeName" />
+    </form>
+  {/if}
   {#each navButtons as button (button.icon)}
     <button
       transition:fade
@@ -162,7 +245,7 @@
       class:dev={DEV}
       class:active={$levelCompleted}
       animate:flip
-      >
+    >
       <svelte:component this={button.icon} color="black" size="1em" />
     </button>
   {/each}
@@ -257,14 +340,28 @@
   }
 
   :global(main:has(.dev) button:hover) {
-    transform: scale(.8);
-    transition-duration: .15s;
+    transform: scale(0.8);
+    transition-duration: 0.15s;
   }
 
-
-
-
   .dev {
-    transition-delay: 0s  !important;
+    transition-delay: 0s !important;
+  }
+
+  form {
+    position: fixed;
+    inset: 2em;
+    top: unset;
+    display: flex;
+    justify-content: center;
+  }
+
+  form input {
+    font-size: 3rem;
+    filter: invert(var(--dark-mode));
+    text-align: center;
+    flex: 1;
+    min-width: 0;
+    max-width: 32rem;
   }
 </style>
