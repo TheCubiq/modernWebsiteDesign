@@ -10,6 +10,8 @@ const unsubscribe = skins.subscribe((value) => {
   skinsLocal = value;
 });
 
+const usedIds = {};
+
 class ShapeEditorBoard {
   constructor() {
     this.shapePoints$ = writable([]);
@@ -102,6 +104,16 @@ class ShapeItem {
     this.skin = skin || "square";
     this.boardRef = board;
     this.markRemove = false;
+    this.uniqueId = this.generateUniqueId();
+  }
+
+  generateUniqueId() {
+    let random = "0"
+    while (usedIds[random] || random === "0") {
+      random = Math.random().toString(36).substr(2, 9);
+    }
+    usedIds[random] = true;
+    return this.skin + "-" + this.id + "-" + random;
   }
 
   setPos(pos) {

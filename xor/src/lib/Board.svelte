@@ -25,6 +25,8 @@
   import { Board } from "./objects";
   import { flip } from "svelte/animate";
   import { levels } from "./levels";
+  import ShapePicker from "./ShapePicker.svelte";
+  import { nameSkins } from "./helperFunctions";
 
   const pb = new PocketBase("https://db.cubiq.dev/");
 
@@ -82,13 +84,7 @@
     }
   }
 
-  const nameSkins = (list) => {
-    const items = list.map(({ skin, path, origin }) => ({
-        [skin]: { path, origin },
-      }));
-      const s = Object.assign({}, ...items);
-      return s;
-  };
+  
 
 
   const loadSkins = async () => {
@@ -207,8 +203,15 @@
   class:completed={$levelCompleted}
   style:--board-size={board.boardSize}
 >
+
+  
+  {#if boardEditor}
+    <ShapePicker {board} {blockSize} skinsStorage={$skins} />
+  {/if}
+  
+
   {#if !$levelCompleted}
-    {#each $boardShapes as shape (shape.id)}
+    {#each $boardShapes as shape (shape.uniqueId)}
       <Shape
         introDelay={boardEditor ? -1 : shape.id}
         boardPoints={board.boardPoints}

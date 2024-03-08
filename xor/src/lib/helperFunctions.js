@@ -1,4 +1,4 @@
-const toSvgPath = (array) => {
+export const toSvgPath = (array) => {
   if (array?.length < 2) return "M 0 0 Z";
   return (
     array
@@ -9,4 +9,10 @@ const toSvgPath = (array) => {
   );
 };
 
-export { toSvgPath };
+export const nameSkins = (list) => {
+  const items = list.map(({ skin, path, origin }) => ({
+    [skin]: { path, origin },
+  }));
+  const s = Object.assign({}, ...items);
+  return s;
+};
