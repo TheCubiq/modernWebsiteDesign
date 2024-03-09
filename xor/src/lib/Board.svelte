@@ -3,13 +3,10 @@
   import Shape from "./Shape.svelte";
   import { fade } from "svelte/transition";
   import { writable } from "svelte/store";
-  import PocketBase from "pocketbase";
 
   import BoardGrid from "./BoardGrid.svelte";
-  import ShapePreview from "./ShapePreview.svelte";
 
-  import { BOARD_SIZE, DEV, LEVELS_LOCAL } from "./constants";
-  import { skins } from "./objects";
+  import { BOARD_SIZE, DEV, DB_LOCAL } from "./constants";
   import { skins as localSkinStorage } from "./skins";
   import {
     ChevronRight,
@@ -24,11 +21,12 @@
   import ShapeEditor from "./ShapeEditor.svelte";
   import { Board } from "./objects";
   import { flip } from "svelte/animate";
-  import { levels } from "./levels";
+  import { levels as localLevelStorage } from "./levels";
   import ShapePicker from "./ShapePicker.svelte";
-  import { nameSkins } from "./helperFunctions";
-
-  const pb = new PocketBase("https://db.cubiq.dev/");
+  import { loadLevelCount, loadLevelFromDB, loadSkins, nameSkins } from "./helperFunctions";
+  import LevelPicker from "./LevelPicker.svelte";
+  import { levels, skins } from "./stores";
+  import LevelPreview from "./LevelPreview.svelte";
 
   let levelId = 0;
 
@@ -48,68 +46,30 @@
 
   let boardFinal = [];
 
-  const loadLevelCount = async () => {
-    const list = await pb
-      .collection("levels")
-      .getList(1, 1)
-      .catch((e) => console.error(e));
-    const { totalItems } = list || { totalItems: 0 };
-    totalLevels = totalItems;
-    return totalItems;
-  };
-
-  const loadLevelFromDB = async (levelId) => {
-    pb.collection("levels")
-      .getFirstListItem("levelId=" + levelId)
-      .then((r) => {
-        const result = r;
-        $levelCompleted = false;
-        board.setupLevel(result, levelId);
-        boardFinal = board.final;
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  };
-  
-  const loadLevel = (levelId) => {
-    if (LEVELS_LOCAL) {
-
-      const level = levels[levelId];
+  const loadLevel = async (lid) => {
+      levelId = lid
+      const newLevel = await loadLevelFromDB(lid);
       $levelCompleted = false;
-      board.setupLevel(level, levelId);
+      board.setupLevel(newLevel, lid);
       boardFinal = board.final;
-    } else {
-      loadLevelFromDB(levelId);
-    }
-  }
-
-  
-
-
-  const loadSkins = async () => {
-    try {
-      const list = await pb.collection("skins").getFullList();
-      const s = nameSkins(list);
-      $skins = s;
-      return s;
-    } catch (e) {
-      console.error(e);
-    }
   };
 
   const updateDb = async () => {
-    if (LEVELS_LOCAL) {
+    // clear the local cache
+    $levels = {};
+
+    if (DB_LOCAL) {
       $skins = nameSkins(localSkinStorage);
-      totalLevels = levels.length;
-      console.log(totalLevels);
-      return;
+      totalLevels = localLevelStorage.length;
+    } else {
+      totalLevels = await loadLevelCount();
+      $skins = await loadSkins();
     }
-    await loadLevelCount();
-    await loadSkins();
     if (DEV) {
       console.log(
-        `Level = ${levelId + 1} / ${totalLevels} \nskins = ${Object.keys($skins).length}`
+        `Local levels: ${DB_LOCAL? "yes" : "no"}\n` +
+        `Level: ${levelId + 1} / ${totalLevels}\n`+
+        `Skins: ${Object.keys($skins).length}`
       );
     }
   };
@@ -117,8 +77,8 @@
   let totalLevels = 0;
 
   const nextLevel = (next = 1) => {
-    levelId = (levelId + next + totalLevels) % totalLevels;
-    loadLevel(levelId);
+    const lid = (levelId + next + totalLevels) % totalLevels;
+    loadLevel(lid);
   };
 
   $: navButtons = [
@@ -136,7 +96,6 @@
       icon: RefreshCw,
       action: () => {
         updateDb();
-        console.log("updated");
       },
       cond: DEV && !(shapeEditor || boardEditor),
     },
@@ -190,9 +149,7 @@
 >
   {#if !(shapeEditor || boardEditor)}
     {#key levelId}
-      {#each boardFinal as shape, i (i)}
-        <ShapePreview shapePos={shape.pos} shapeSkin={shape.loadSkin()} />
-      {/each}
+      <LevelPreview level={boardFinal} />
     {/key}
   {/if}
 </div>
@@ -203,12 +160,9 @@
   class:completed={$levelCompleted}
   style:--board-size={board.boardSize}
 >
-
-  
   {#if boardEditor}
-    <ShapePicker {board} {blockSize} skinsStorage={$skins} />
+    <ShapePicker {board} skinsStorage={$skins} />
   {/if}
-  
 
   {#if !$levelCompleted}
     {#each $boardShapes as shape (shape.uniqueId)}
@@ -229,6 +183,10 @@
     {/if}
   {/if}
 </div>
+
+{#if $levelCompleted || DEV}
+  <LevelPicker {loadLevel} />
+{/if}
 
 <nav>
   {#if skinInputShown}

@@ -1,8 +1,7 @@
 import { writable } from "svelte/store";
+import { areCoordsSame, findCenterFromShapes, relativeToCenter } from "./helperFunctions";
+import { skins } from "./stores";
 
-export let skins = writable({});
-
-const roundNum = (n, m) => Math.round(n * 10 ** m) / 10 ** m;
 
 let skinsLocal = {};
 
@@ -171,43 +170,7 @@ class Board {
       )
     );
 
-    this.finalCenter = this.findCenterFromShapes(level.final);
-
-    const finalCenteredAnchor = this.relativeToCenter(this.finalCenter, {
-      x: this.boardSize / 2 + 0.5,
-      y: this.boardSize / 2 + 0.5,
-    });
-
-    this.final = level.final.map((shape, i) => {
-      return new ShapeItem(
-        null,
-        i,
-        this.relativeToCenter(shape.pos, finalCenteredAnchor),
-        shape.skin
-      );
-    });
-  }
-
-  findCenterFromShapes(shapes) {
-    const diff = shapes.reduce(
-      (acc, shape) => ({
-        x: acc.x + shape.pos.x,
-        y: acc.y + shape.pos.y,
-      }),
-      { x: 0, y: 0 }
-    );
-
-    return {
-      x: diff.x / shapes.length,
-      y: diff.y / shapes.length,
-    };
-  }
-
-  relativeToCenter(p, center) {
-    return {
-      x: roundNum(p.x - center.x, 2),
-      y: roundNum(p.y - center.y, 2),
-    };
+    this.final = level.final
   }
 
   getJSON(shapes) {
@@ -239,26 +202,22 @@ class Board {
     });
   }
 
-  areCoordsSame(p1, p2) {
-    return p1.x === p2.x && p1.y === p2.y;
-  }
-
   checkLevelCompletion(shapeData) {
     const final = this.final;
 
-    const center = this.findCenterFromShapes(shapeData);
-    const finalCenter = this.findCenterFromShapes(final);
+    const center = findCenterFromShapes(shapeData);
+    const finalCenter = findCenterFromShapes(final);
 
     const relativeFinalPoints = final.map((shape) => ({
       skin: shape.skin,
-      pos: this.relativeToCenter(shape.pos, finalCenter),
+      pos: relativeToCenter(shape.pos, finalCenter),
     }));
 
     return shapeData.every((shape, i) => {
-      const point = this.relativeToCenter(shape.pos, center);
+      const point = relativeToCenter(shape.pos, center);
       return relativeFinalPoints.some(
         (f_shape) =>
-          f_shape.skin === shape.skin && this.areCoordsSame(point, f_shape.pos)
+          f_shape.skin === shape.skin && areCoordsSame(point, f_shape.pos)
       );
     });
   }
