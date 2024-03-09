@@ -90,7 +90,7 @@ class ShapeEditorBoard {
     };
 
     return JSON.stringify({
-      points: relativePoints,
+      path: relativePoints,
       origin,
     });
   }

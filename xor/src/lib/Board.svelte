@@ -85,7 +85,7 @@
     {
       icon: ChevronLeft,
       action: () => nextLevel(-1),
-      cond: !(shapeEditor || boardEditor),
+      cond: !(shapeEditor || boardEditor) && (DEV || levelId > 0),
     },
     {
       icon: ChevronRight,
@@ -201,7 +201,7 @@
   {/if}
   {#each navButtons as button (button.icon)}
     <button
-      transition:fade
+      transition:fade={{ delay: 500 }}
       on:click={button.action}
       class:dev={DEV}
       class:active={$levelCompleted}

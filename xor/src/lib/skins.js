@@ -150,6 +150,112 @@ const skins = [
     ],
     skin: "triangle3_b",
   },
+  {
+    origin: { x: 1, y: 1 },
+    path: [
+      { x: 0, y: 0 },
+      { x: 3, y: 0 },
+      { x: 0, y: 3 },
+    ],
+    skin: "triangled2",
+  },
+
+  {
+    origin: { x: 1, y: 2 },
+    path: [
+      { x: 0, y: 2 },
+      { x: 2, y: 0 },
+      { x: 2, y: 3 },
+      { x: 0, y: 5 },
+    ],
+    skin: "rhomboid2_end",
+  },
+  {
+    path: [
+      { x: 0, y: 0 },
+      { x: 0, y: 3 },
+      { x: 2, y: 5 },
+      { x: 2, y: 2 },
+    ],
+    origin: { x: 1, y: 3 },
+    skin: "rhomboid2_start",
+  },
+  {
+    path: [
+      { x: 0, y: 0 },
+      { x: 4, y: -4 },
+      { x: 4, y: 0 },
+      { x: 2, y: 2 },
+    ],
+    origin: { x: 2, y: 0 },
+    skin: "trapezoid4_tr",
+  },
+  {
+    path: [
+      { x: 2, y: 0 },
+      { x: 4, y: 2 },
+      { x: 0, y: 6 },
+      { x: 0, y: 2 },
+    ],
+    origin: { x: 2, y: 2 },
+    skin: "trapezoid4_bl",
+  },
+  {
+    path: [
+      { x: 2, y: 0 },
+      { x: 4, y: 2 },
+      { x: 4, y: 6 },
+      { x: 0, y: 2 },
+    ],
+    origin: { x: 2, y: 2 },
+    skin: "trapezoid4_br",
+  },
+  {
+    path: [
+      { x: 0, y: 0 },
+      { x: 4, y: 4 },
+      { x: 2, y: 6 },
+      { x: 0, y: 4 },
+    ],
+    origin: { x: 2, y: 4 },
+    skin: "trapezoid4_tl",
+  },
+  {
+    path: [
+      { x: 2, y: 2 },
+      { x: 4, y: 0 },
+      { x: 0, y: 0 },
+    ],
+    origin: { x: 2, y: 1 },
+    skin: "down4",
+  },
+  {
+    path: [
+      { x: 2, y: 0 },
+      { x: 4, y: 2 },
+      { x: 0, y: 2 },
+    ],
+    origin: { x: 2, y: 2 },
+    skin: "up4",
+  },
+  {
+    path: [
+      { x: 0, y: 2 },
+      { x: 2, y: 0 },
+      { x: 2, y: 4 },
+    ],
+    origin: { x: 2, y: 2 },
+    skin: "left2",
+  },
+  {
+    path: [
+      { x: 0, y: 0 },
+      { x: 2, y: 2 },
+      { x: 0, y: 4 },
+    ],
+    origin: { x: 0, y: 2 },
+    skin: "right2",
+  },
 ];
 const editorSkins = {
   cross: {

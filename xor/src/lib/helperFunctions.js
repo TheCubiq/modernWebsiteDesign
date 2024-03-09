@@ -4,7 +4,6 @@ import { levels as localLevels } from "./levels.js";
 
 const pb = new PocketBase("https://db.cubiq.dev/");
 
-
 export const toSvgPath = (array) => {
   if (array?.length < 2) return "M 0 0 Z";
   return (
@@ -51,7 +50,7 @@ export const loadLevelCount = async () => {
 };
 
 import { levels } from "./stores.js";
-import { DB_LOCAL } from "./constants.js";
+import { DB_LOCAL, DEV } from "./constants.js";
 
 // $: levelsStorage = $levels;
 let levelsCache = {};
@@ -69,21 +68,24 @@ const unsubscribe = levels.subscribe((value) => {
 export const loadLevelFromDB = async (levelId) => {
   const prefix = "lid_" + levelId;
   if (levelsCache[prefix]) {
-    console.log("Level loaded from cache: " + prefix);
+    // console.log("Level loaded from cache: " + prefix);
     return levelsCache[prefix];
   }
 
   if (DB_LOCAL) {
-    console.log("local, loading the full db (" + localLevels.length + ")" );
     levels.update((ls) => {
-      return localLevels.reduce((acc, l) => {
-        acc["lid_" + l.levelId] = l;
-        return acc;
-      }, ls);
-      // return localLevels.forEach((l) => {
-      //   ls["lid_" + l.levelId] = l;
-      // });
+      if (DEV) {
+        console.log("local, dev loading the full db (" + localLevels.length + ")");
+        return localLevels.reduce((acc, l) => {
+          acc["lid_" + l.levelId] = l;
+          return acc;
+        }, ls);
+      }
+
+      ls[prefix] = localLevels.find((l) => l.levelId === levelId);
+      return ls;
     });
+
     return levelsCache[prefix];
   }
 
