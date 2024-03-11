@@ -6,13 +6,13 @@ Decided ill try to recreate some behance/dribbble designs of modern websites and
 
 ## Projects (released so far)
 
-1. [Ai Assistant][l-ai-ass] | [Repo][r-ai-ass]
-2. [XOR][l-xor] | [Repo][r-xor]
-3. [Family Tree][l-tree] | [Repo][r-tree]
-4. [Scroll][l-scroll] | [Repo][r-scroll]
-5. [Emoji][l-emoji] | [Repo][r-emoji]
-6. [Tokyo Festival][l-tokyo] | [Repo][r-tokyo]
-7. [Section Preview Effect][l-threejs] | [Repo][r-threejs]
+1. [Ai Assistant][l-ai-ass] \| [Repo][r-ai-ass]
+2. [XOR][l-xor] \| [Repo][r-xor]
+3. [Family Tree][l-tree] \| [Repo][r-tree]
+4. [Scroll][l-scroll] \| [Repo][r-scroll]
+5. [Emoji][l-emoji] \| [Repo][r-emoji]
+6. [Tokyo Festival][l-tokyo] \| [Repo][r-tokyo]
+7. [Section Preview Effect][l-threejs] \| [Repo][r-threejs]
 
 ---
 
