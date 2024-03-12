@@ -12,23 +12,21 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --clr-bg: #dbe2df;
-  --clr-text: #000;
-  --clr-primary: #4d9ba2;
-  --clr-secondary: #d1d9d6;
+  --clr-bg: #030303;
+  --clr-text: #ececec;
+  --clr-primary: #fcecd3;
+  --clr-secondary: #65654b;
 }
 
 
 body {
   margin: 0;
-  display: grid;
-  place-items: center;
   min-width: 320px;
   height: 100svh;
-
+  
   background: var(--clr-bg);
   color: var(--clr-text);
-
+  
 }
 
 * {
@@ -45,6 +43,10 @@ body {
   /* scrollbar fix */
   width: calc(100svw - (100svw - 100%));
   display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding-block: 8rem;
 }
 
 
