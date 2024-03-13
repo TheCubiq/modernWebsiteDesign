@@ -34,8 +34,24 @@
       <use xlink:href="#badge" stroke="white" fill="none" stroke-width="0.01" />
       <use xlink:href="#overlay" fill="white" />
     </mask>
-  </defs></svg
->
+
+    <filter id="fractal-glass">
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.35 0.35"
+        numOctaves="1"
+        result="warp"
+      />
+      <feDisplacementMap
+        xChannelSelector="R"
+        yChannelSelector="G"
+        scale="30"
+        in="SourceGraphic"
+        in2="warp"
+      />
+    </filter>
+  </defs>
+</svg>
 
 <style>
   svg {

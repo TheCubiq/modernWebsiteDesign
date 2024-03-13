@@ -16,6 +16,7 @@
   --clr-text: #ececec;
   --clr-primary: #fcecd3;
   --clr-secondary: #65654b;
+  --clr-accent: #fffbe2;
 }
 
 
@@ -23,6 +24,7 @@ body {
   margin: 0;
   min-width: 320px;
   height: 100svh;
+  
   
   background: var(--clr-bg);
   color: var(--clr-text);

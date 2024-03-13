@@ -1,13 +1,13 @@
 {
-  "name": "proj-svelte-empty",
+  "name": "proj-angels",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "prebuild": "vite build --base=/svelte-empty",
+    "prebuild": "vite build --base=/angels",
     "preview": "vite preview",
-    "deploy": "npx gh-pages -d dist -b build --dest ./svelte-empty"
+    "deploy": "npx gh-pages -d dist -b build --dest ./angels"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
