@@ -4,7 +4,10 @@
 
 <main>
   <div class="col">
-    <section id="angels" class="i-corners i-c-bottom"></section>
+    <section id="angels" class="i-corners i-c-bottom">
+      <span>69</span>
+      <img src="https://picsum.photos/300/200" alt="">
+    </section>
     <section id="title"></section>
   </div>
   <div class="col">
@@ -56,6 +59,9 @@
   }
 
   section {
+    display: flex;
+    flex-direction: column;
+
     flex: 1;
     --_clr-cell: var(--clr-primary);
     background: var(--_clr-cell);
@@ -98,7 +104,7 @@
 
     width: 100%;
     aspect-ratio: 1;
-    flex: 1.2;
+    flex: 1.3;
   }
   #women {
   }
@@ -107,6 +113,43 @@
     --_rad: 17em;
     border-bottom-right-radius: var(--_rad);
   }
+
+
+
+  #angels {
+    padding: 1em;
+    padding-inline-end: 2.5em;
+  }
+
+  #angels span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    color: var(--clr-secondary);
+    z-index: 1;
+    background-color: var(--clr-primary);
+    aspect-ratio: 1;
+    max-width: 3rem;
+  }
+  
+  #angels img {
+    width: 100%;
+
+    /* height: 100%; */
+    aspect-ratio: 2/1;
+
+    object-fit: cover;
+    mask: url("#butterfly-mask");
+  }
+
+
+
+
+
+
+
+
 
   /* inverted corners */
 
@@ -142,6 +185,19 @@
       radial-gradient(circle at right top, var(--_corner));
     background-position-y: 100%;
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @keyframes rotate {
     0% {
