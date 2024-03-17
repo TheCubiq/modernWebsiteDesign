@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import MaskedImage from "./lib/MaskedImage.svelte";
   import SvgDefines from "./lib/SvgDefines.svelte";
   import Data from "./lib/Tabs/Data.svelte";
@@ -6,9 +7,20 @@
   import Navigation from "./lib/Tabs/Header.svelte";
   import Hero from "./lib/Tabs/Hero.svelte";
   import Others from "./lib/Tabs/Others.svelte";
+
+  let isVisible = false;
+
+  onMount(() => {
+    setTimeout(() => {
+      isVisible = true;
+    }, 1000);
+  });
+
 </script>
 
-<Navigation />
+{#if isVisible}
+  <Navigation />
+{/if}
 <main>
   <Hero />
   <Data />
