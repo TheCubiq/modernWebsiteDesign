@@ -1,25 +1,44 @@
 <script>
   import SvgDefines from "./lib/svgDefines.svelte";
+
+  import womanAngelFlowers from "./assets/woman-angel-flowers.webp";
+  import redAngels from "./assets/3-red-angels.webp";
+  import childAngels from "./assets/child-angels.webp";
 </script>
 
 <main>
   <div class="col">
     <section id="angels" class="i-corners i-c-bottom">
       <span>69</span>
-      <img src="https://picsum.photos/300/200" alt="">
+      <img src={childAngels} alt="" />
     </section>
-    <section id="title"></section>
+    <section id="title">
+      <article>
+        <h1>Angels</h1>
+      </article>
+    </section>
   </div>
   <div class="col">
     <section id="fountain"></section>
-    <section id="women" class="i-corners i-c-top"></section>
+    <section id="women" class="i-corners i-c-top">
+      <img src={redAngels} alt="" />
+    </section>
   </div>
   <div class="col">
-    <section id="saints"></section>
+    <section id="saints">
+      <figure>
+        <img src={womanAngelFlowers} alt="" />
+        <figcaption>
+          <h2><span>portrait of</span> young woman</h2>
+          <aside />
+          <h2><span>clara</span> anguissola</h2>
+        </figcaption>
+      </figure>
+    </section>
     <section id="quote"></section>
   </div>
 
-  <aside></aside>
+  <aside class="badge" />
 
   <SvgDefines />
 </main>
@@ -66,7 +85,14 @@
     --_clr-cell: var(--clr-primary);
     background: var(--_clr-cell);
     position: relative;
+  }  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
+
+  /* #region column layout */
 
   .col:nth-child(odd) section:nth-child(odd),
   .col:nth-child(even) section:nth-child(even) {
@@ -106,52 +132,170 @@
     aspect-ratio: 1;
     flex: 1.3;
   }
-  #women {
-  }
 
   #quote {
     --_rad: 17em;
     border-bottom-right-radius: var(--_rad);
   }
 
+  /* #endregion */
 
-
+  /* #region angels */
   #angels {
     padding: 1em;
     padding-inline-end: 2.5em;
+    gap: 1.8em;
   }
 
   #angels span {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 5rem;
     color: var(--clr-secondary);
     z-index: 1;
     background-color: var(--clr-primary);
     aspect-ratio: 1;
-    max-width: 3rem;
+    font-size: 3.8rem;
+    max-width: 1.55em;
+    font-weight: 500;
+    letter-spacing: -3.6px;
+    padding: 0.16em;
+    mask: url(#b2-fill);
+    line-height: 1.25;
   }
-  
+
   #angels img {
     width: 100%;
 
-    /* height: 100%; */
+    height: auto;
     aspect-ratio: 2/1;
 
     object-fit: cover;
     mask: url("#butterfly-mask");
+
+    object-position: center 10%;
   }
 
+  /* #endregion */
 
 
+  /* #region title */
 
+  #title {
+    padding-inline: 1em;
+    justify-content: center;
+    align-items: center;
+  }
 
+  #title article {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+    justify-content: center;
+    background: var(--clr-secondary);
+    aspect-ratio: 1;
 
+    margin-inline-start: 1.5em;
+    border-top-left-radius: 99em;
+    border-top-right-radius: 99em;
 
+  }
 
+  #title h1 {
+    font-size: 3.5rem;
+    line-height: 1.25;
+    text-align: center;
+    /* padding: 0.5em; */
+    padding-inline: .25em; 
+    color: var(--clr-primary);
+    /* border: 1px solid var(--clr-accent); */
+    border-radius: 99em;
+    margin-block: 0.5em;
 
-  /* inverted corners */
+    font-family: 'Bodoni Moda';
+    text-transform: uppercase;
+
+  }
+
+  /* #endregion */
+
+  /* #region women */
+
+  #women {
+    padding-inline: 1em;
+    justify-content: center;
+    position: relative;
+  }
+  #women img {
+    mask: url("#ellipses-fill");
+    height: calc(100% - 4em);
+  }
+
+  /* #endregion */
+
+  /* #region saints */
+  #saints {
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  #saints figure {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    padding: 1em;
+    justify-content: flex-end;
+    flex: 1;
+    text-transform: uppercase;
+  }
+
+  #saints figcaption {
+    display: flex;
+    gap: 1em;
+    justify-content: space-between;
+    position: relative;
+    align-items: center;
+
+    padding: 0.7em;
+    padding-inline: 1em;
+    /* background: red; */
+    margin-block-end: 0.4em;
+    border: 1px solid var(--clr-accent);
+  }
+
+  #saints figcaption h2 {
+    font-size: 1rem;
+    line-height: 1;
+  }
+
+  #saints figcaption h2 span {
+    font-weight: 200;
+    /* line-height: 1.25; */
+    display: block;
+  }
+
+  #saints figcaption h2:last-child {
+    text-align: end;
+  }
+
+  #saints img {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  #saints figcaption aside {
+    height: 3.1rem;
+    aspect-ratio: 1;
+    border-radius: 99em;
+    border: solid var(--clr-accent) 1px;
+    margin-block: 0.2em;
+    position: absolute;
+    margin-inline: auto;
+    inset-inline: 0;
+  }
+
+  /* #endregion */
+
+  /* #region inverted corners */
 
   .i-corners {
     --_width: calc(var(--_rad) + var(--gap));
@@ -186,18 +330,9 @@
     background-position-y: 100%;
   }
 
+  /* #endregion */
 
-
-
-
-
-
-
-
-
-
-
-
+  /* #region badge */
 
   @keyframes rotate {
     0% {
@@ -207,8 +342,7 @@
       transform: rotate(360deg);
     }
   }
-
-  aside {
+  .badge {
     position: absolute;
     font-size: 14rem;
     right: 0;
@@ -226,19 +360,19 @@
     animation: rotate 30s linear infinite;
   }
 
-  aside::before,
-  aside::after {
+  .badge::before,
+  .badge::after {
     content: "";
     position: absolute;
     inset: 0;
   }
 
-  aside::after {
+  .badge::after {
     background-color: var(--clr-accent);
     mask: url("#b-strok");
   }
 
-  aside::before {
+  .badge::before {
     background: repeating-radial-gradient(
       circle at 50%50%,
       rgb(255 255 255/0),
@@ -258,4 +392,6 @@
     mask: url("#b-fill");
     mask-size: 100% 100%;
   }
+
+  /* #endregion */
 </style>
