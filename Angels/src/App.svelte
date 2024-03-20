@@ -2,15 +2,17 @@
   import SvgDefines from "./lib/svgDefines.svelte";
 
   import womanAngelFlowers from "./assets/woman-angel-flowers.webp";
-  import redAngels from "./assets/3-red-angels.webp";
+  import butterflyAngels from "./assets/2angels2.jpeg";
+  import Maria from "./assets/2male.jpeg";
   import childAngels from "./assets/child-angels.webp";
+  import fountainPath from "./assets/fountainPath.svg";
 </script>
 
 <main>
   <div class="col">
     <section id="angels" class="i-corners i-c-bottom">
       <span>69</span>
-      <img src={childAngels} alt="" />
+      <img src={Maria} alt="" />
     </section>
     <section id="title">
       <article>
@@ -19,9 +21,14 @@
     </section>
   </div>
   <div class="col">
-    <section id="fountain"></section>
+    <section id="fountain">
+      <img src={fountainPath} alt="" />
+      <!-- <svg>
+        <use href="#fountain-mask" fill="white" />
+      </svg> -->
+    </section>
     <section id="women" class="i-corners i-c-top">
-      <img src={redAngels} alt="" />
+      <img src={butterflyAngels} alt="" />
     </section>
   </div>
   <div class="col">
