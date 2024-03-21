@@ -5,7 +5,7 @@
   import butterflyAngels from "./assets/2angels2.jpeg";
   import Maria from "./assets/2male.jpeg";
   import childAngels from "./assets/child-angels.webp";
-  import fountainPath from "./assets/fountainPath.svg";
+  import fountainPath from "./assets/svg/fountain-stroke.svg";
 </script>
 
 <main>
@@ -16,16 +16,24 @@
     </section>
     <section id="title">
       <article>
+        <aside></aside>
         <h1>Angels</h1>
       </article>
     </section>
   </div>
   <div class="col">
     <section id="fountain">
-      <img src={fountainPath} alt="" />
-      <!-- <svg>
-        <use href="#fountain-mask" fill="white" />
-      </svg> -->
+      <svg class="svg-fountain"> <use href="#f-stroke-full" /> </svg>
+      <svg class="svg-star"> <use href="#star1" /> </svg>
+      <blockquote cite="https://cubiq.dev">
+        <p>
+          ANGELS ARE ALL AROUND US 
+        </p>
+        <p>
+          ALL THE TIME. IN THE VERY AIR WE BREATHE
+        </p>
+      </blockquote>
+      <svg class="svg-star"> <use href="#fnt-line" /> </svg>
     </section>
     <section id="women" class="i-corners i-c-top">
       <img src={butterflyAngels} alt="" />
@@ -42,7 +50,16 @@
         </figcaption>
       </figure>
     </section>
-    <section id="quote"></section>
+    <section id="quote">
+      <blockquote cite="https://cubiq.dev">
+        <p>while i thought that i was learning how to live, i have been learning how to die</p>
+      </blockquote>
+      <!-- <svg class="svg-arrow"> <use href="#deco-arrow1" /> </svg> -->
+      <svg class="svg-arrow"> <use href="#quote-graphics"  /> </svg>
+      <p>
+        Dont expect everything to go<br/>exactly as you planned.
+      </p>
+    </section>
   </div>
 
   <aside class="badge" />
@@ -92,7 +109,7 @@
     --_clr-cell: var(--clr-primary);
     background: var(--_clr-cell);
     position: relative;
-  }  
+  }
   img {
     width: 100%;
     height: 100%;
@@ -143,6 +160,29 @@
   #quote {
     --_rad: 17em;
     border-bottom-right-radius: var(--_rad);
+    color: var(--clr-secondary);
+
+    padding-inline: 2em;
+    justify-content: space-between;
+    padding-block: 2.7em;
+    flex: .1;
+    text-align: center;
+
+  }
+
+  #quote blockquote {
+    text-transform: uppercase;
+  }
+
+  #quote .svg-arrow {
+    height: 10rem;
+    /* align-self: flex-end; */
+    width: 83%;
+    width: 100%;
+
+    padding-inline-end: 4rem;
+    /* margin-top: 6.8rem; */
+    height: 5rem;
   }
 
   /* #endregion */
@@ -182,6 +222,42 @@
 
   /* #endregion */
 
+  /* #region fountain */
+
+  /* #fountain {
+    padding: 1em;
+    padding-inline-end: 2.5em;
+    gap: 1.8em;
+    position: relative;
+  } */
+
+  #fountain {
+    align-items: center;
+    gap: .5em;
+    color: var(--clr-secondary);
+  }
+
+  #fountain .svg-fountain {
+    width: 100%;
+    height: 13.2rem;
+    margin-block-start: 3.9rem;
+  }
+
+  #fountain .svg-star {
+    height: 1.7rem;
+  }
+
+  #fountain blockquote {
+    color: var(--clr-secondary);
+
+    line-height: 1.1;
+
+    text-align: center;
+    font-size: 0.6rem;
+    max-width: 40ch;
+  }
+
+  /* #endregion */
 
   /* #region title */
 
@@ -198,28 +274,91 @@
     align-items: center;
     justify-content: center;
     background: var(--clr-secondary);
-    aspect-ratio: 1;
-
+    aspect-ratio: 1/0.95;
     margin-inline-start: 1.5em;
     border-top-left-radius: 99em;
     border-top-right-radius: 99em;
+    z-index: 0;
 
+    position: relative;
   }
+
+  #title article::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: inherit;
+    bottom: 50%;
+    border-top-left-radius: 99em;
+    border-top-right-radius: 99em;
+  }
+
+  #title aside {
+    /* filter: brightness(.5); */
+    position: absolute;
+    inset: 0;
+    transform: rotate(15deg) rotateX(60deg);
+    z-index: -1;
+    filter: brightness(0.85);
+  
+  }
+
+  #title aside::before
+  {
+    content: "";
+    position: absolute;
+    inset: -5em;
+    aspect-ratio: 1;
+    /* border-radius: 50%; */
+    /* background: transparent; */
+
+    --_stroke-width: .1em;
+    --_stroke-clr: var(--clr-secondary);
+    --_circ-rad: .7rem;
+    --_circ-grad: 
+      var(--_stroke-clr) 95%,
+      transparent;
+
+    background: radial-gradient(
+      40% 40% at center,
+      transparent calc(100% - var(--_stroke-width) - 1px),
+      var(--_stroke-clr) calc(100% - var(--_stroke-width)),
+      var(--_stroke-clr) calc(100% - 1px),
+      transparent
+    ),
+    radial-gradient(
+      var(--_circ-rad) var(--_circ-rad) at 90% 50%,
+      var(--_circ-grad)
+    ),
+    radial-gradient(
+      var(--_circ-rad) var(--_circ-rad) at 10% 50%,
+      var(--_circ-grad)
+    )
+    ;
+    /* border: 1px solid var(--clr-secondary); */
+
+    animation: rotate 15s linear infinite;
+
+  } 
+
+
 
   #title h1 {
     font-size: 3.5rem;
     line-height: 1.25;
     text-align: center;
     /* padding: 0.5em; */
-    padding-inline: .25em; 
+    padding-inline: 0.25em;
     color: var(--clr-primary);
     /* border: 1px solid var(--clr-accent); */
     border-radius: 99em;
     margin-block: 0.5em;
+    z-index: 1;
 
-    font-family: 'Bodoni Moda';
+    font-family: "Bodoni Moda";
     text-transform: uppercase;
-
+    font-weight: 100;
+    letter-spacing: 1.1px;
   }
 
   /* #endregion */
@@ -302,6 +441,12 @@
 
   /* #endregion */
 
+  #quote { 
+    box-shadow:
+      inset var(--clr-primary) 0px 0px 0 9px, 
+      inset var(--clr-secondary) 0px 0px 0px 10px;
+  }
+
   /* #region inverted corners */
 
   .i-corners {
@@ -313,11 +458,13 @@
     content: "";
     position: absolute;
     inset-inline: 0;
+    pointer-events: none;
 
     height: var(--_rad);
     background-repeat: no-repeat;
     background-size: var(--_width) var(--_width);
     background-position-x: calc(100% + var(--gap)), calc(0% - var(--gap));
+
   }
 
   .i-c-bottom::before {
