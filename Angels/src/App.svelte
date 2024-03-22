@@ -17,7 +17,9 @@
     <section id="title">
       <article>
         <aside></aside>
+        <svg class="svg-star"> <use href="#circle-star2" /> </svg>
         <h1>Angels</h1>
+        <p>Have no philosophy but love</p>
       </article>
     </section>
   </div>
@@ -45,20 +47,24 @@
         <img src={womanAngelFlowers} alt="" />
         <figcaption>
           <h2><span>portrait of</span> young woman</h2>
-          <aside />
+          <!-- <aside /> -->
+          <svg class="svg-star"> <use href="#circle-star3" /> </svg>
           <h2><span>clara</span> anguissola</h2>
         </figcaption>
       </figure>
     </section>
     <section id="quote">
       <blockquote cite="https://cubiq.dev">
-        <p>while i thought that i was learning how to live, i have been learning how to die</p>
+        <p>while I thought that I was learning how to live, I have been learning how to die.</p>
       </blockquote>
       <!-- <svg class="svg-arrow"> <use href="#deco-arrow1" /> </svg> -->
       <svg class="svg-arrow"> <use href="#quote-graphics"  /> </svg>
       <p>
-        Dont expect everything to go<br/>exactly as you planned.
+        Don't expect everything to go<br/>exactly as you planned.
       </p>
+      
+      <svg class="svg"> <use href="#circle-star"  /> </svg>
+
     </section>
   </div>
 
@@ -164,25 +170,53 @@
 
     padding-inline: 2em;
     justify-content: space-between;
-    padding-block: 2.7em;
-    flex: .1;
+    padding-block: 1.8em;
+    padding-block-end: 1.2em;
+    /* flex: .1; */
+    flex: 0.83;
+
     text-align: center;
+
+    padding-inline: 33px;
+    padding-right: 52.2px;
+    /* gap: 0.7em; */
+    /* padding-block: 1.55em; */
+
 
   }
 
   #quote blockquote {
     text-transform: uppercase;
+
+    font-size: 1.2rem;
+    line-height: 1.2;
+    letter-spacing: -1.1px;
+    text-align: justify;
   }
 
   #quote .svg-arrow {
     height: 10rem;
     /* align-self: flex-end; */
-    width: 83%;
-    width: 100%;
+    width: 87%;
+    /* width: 100%; */
 
-    padding-inline-end: 4rem;
+    /* padding-inline-end: 4rem; */
     /* margin-top: 6.8rem; */
     height: 5rem;
+  }
+
+  #quote .svg {
+    height: 1.2em;
+    width: 83%;
+    aspect-ratio: 1;
+  }
+
+  #quote > p {
+    width: 18.8rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    line-height: 1.2;
+    letter-spacing: 0.3px;
   }
 
   /* #endregion */
@@ -270,10 +304,11 @@
   #title article {
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    /* gap: 1em; */
     align-items: center;
     justify-content: center;
     background: var(--clr-secondary);
+    color: var(--clr-primary);
     aspect-ratio: 1/0.95;
     margin-inline-start: 1.5em;
     border-top-left-radius: 99em;
@@ -294,13 +329,11 @@
   }
 
   #title aside {
-    /* filter: brightness(.5); */
     position: absolute;
     inset: 0;
-    transform: rotate(15deg) rotateX(60deg);
+    transform: rotate(17deg) rotateX(65deg);
     z-index: -1;
     filter: brightness(0.85);
-  
   }
 
   #title aside::before
@@ -341,6 +374,12 @@
 
   } 
 
+  #title .svg-star {
+    z-index: 1;
+    height: 3.5rem;
+    aspect-ratio: 1;
+  }
+
 
 
   #title h1 {
@@ -349,16 +388,22 @@
     text-align: center;
     /* padding: 0.5em; */
     padding-inline: 0.25em;
-    color: var(--clr-primary);
     /* border: 1px solid var(--clr-accent); */
     border-radius: 99em;
-    margin-block: 0.5em;
+    /* margin-block: 0.5em; */
     z-index: 1;
 
     font-family: "Bodoni Moda";
     text-transform: uppercase;
     font-weight: 100;
     letter-spacing: 1.1px;
+  }
+  
+  #title p {
+    font-size: 0.6rem;
+    /* font-weight: 500; */
+    letter-spacing: 3.5px;
+    /* margin-inline-start: 1em; */
   }
 
   /* #endregion */
@@ -427,12 +472,10 @@
     inset: 0;
     z-index: -1;
   }
-
-  #saints figcaption aside {
+  #saints figcaption .svg-star {
     height: 3.1rem;
     aspect-ratio: 1;
     border-radius: 99em;
-    border: solid var(--clr-accent) 1px;
     margin-block: 0.2em;
     position: absolute;
     margin-inline: auto;
