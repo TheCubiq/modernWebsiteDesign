@@ -2,23 +2,29 @@
   import { Application } from "@splinetool/runtime";
   import { onMount } from "svelte";
 
-  import scene from "./lib/spline/iphoneXor.spline?url";
+  import scene from "./lib/spline/iphoneScreen.spline?url";
 
   let canvas;
 
   let click;
 
+  let sceneNo = 0;
+
   const loadScene = () => {
     const app = new Application(canvas);
     // app.load('https://prod.spline.design/Bq2oeyVUmqdzWQ0F/scene.splinecode')
-    app.load(scene).then(() => {
-      const cube = app.findObjectByName("Group");
-      click = () => {
-        if (cube) {
-          cube.rotation.y += -0.5;
-        }
-      };
-    });
+    app.load(scene)
+    // .then(() => {
+    //   const cube = app.findObjectByName("Group");
+    //   click = () => {
+    //     if (cube) {
+    //       // cube.rotation.y += -0.5;
+    //     }
+    //   };
+    // });
+    click = () => {
+      app.setVariable('previewId', (++sceneNo % 3));
+    };
   };
 
   onMount(() => {
@@ -29,7 +35,7 @@
 <main>
   <!-- ur project here -->
   <canvas bind:this={canvas} id="canvas3d"></canvas>
-  <!-- <button on:click={click}>Click me</button> -->
+  <button on:click={click}>Next</button>
 </main>
 
 <style>
