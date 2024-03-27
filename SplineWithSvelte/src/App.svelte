@@ -19,12 +19,11 @@
 
   const loadScene = () => {
     const app = new Application(canvas);
-    app
-      // .load("https://prod.spline.design/Bq2oeyVUmqdzWQ0F/scene.splinecode")
-      app.load(scene)
-      .then(() => {
+    // app.load("https://prod.spline.design/Bq2oeyVUmqdzWQ0F/scene.splinecode")
+      app.load(scene).then(() => {
         showScene = true;
         app.setVariable("previewId", sceneNo);
+        app.setBackgroundColor("transparent");
       });
     click = () => {
       app.setVariable("previewId", ++sceneNo % 3);
@@ -33,9 +32,8 @@
     switchScene = (id) => {
       console.log("switching scene", id);
       app.setVariable("previewId", id);
-    }
+    };
   };
-
 
   onMount(() => {
     loadScene();
@@ -116,6 +114,16 @@
   }
   canvas.visible {
     opacity: 1;
+  }
+
+  /* vignette */
+  :global(#app::before) {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(transparent, #000c 80%);
+    z-index: 1;
+    pointer-events: none;
   }
 
   [alt="demoScreen"] {
