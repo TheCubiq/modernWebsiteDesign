@@ -12,10 +12,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --clr-bg: #dbe2df;
-  --clr-text: #000;
-  --clr-primary: #4d9ba2;
-  --clr-secondary: #d1d9d6;
+  --clr-bg: #040404;
+  --clr-text: #9E9E9E;
+  --clr-accent: white;
 }
 
 
@@ -45,6 +44,9 @@ body {
   /* scrollbar fix */
   width: calc(100svw - (100svw - 100%));
   display: flex;
+  justify-content: center;
+  overflow: auto;
+
 }
 
 
