@@ -3,6 +3,10 @@
 
   export let name = "nothing";
   export let id = 0;
+  export let url = "#";
+
+  // export let data = {};
+
   export let switchScene = null;
 
   const switchMe = () => {
@@ -12,9 +16,10 @@
   };
 </script>
 
-<button 
-  type="button" 
-  id="camera-2" 
+<!-- type="button"  -->
+<a 
+  href={url}
+  target="_blank"
   class="work-pill"
   on:mouseover={switchMe}
   on:focus={switchMe}
@@ -24,7 +29,7 @@
     <span class="work-pill-text">{name}</span>
     <ArrowUpRight aria-hidden="true" />
   </span>
-</button>
+</a>
 
 <style>
   @property --gradient-angle {
@@ -45,6 +50,7 @@
 
   .work-pill {
     /* remove all button styles */
+    text-decoration: none;
     background: none;
     border: none;
     padding: 0;

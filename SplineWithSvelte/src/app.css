@@ -15,8 +15,14 @@
   --clr-bg: #040404;
   --clr-text: #9E9E9E;
   --clr-accent: white;
+
+  
+  background: var(--clr-bg);
 }
 
+html {
+  background: var(--clr-bg);
+}
 
 body {
   margin: 0;
@@ -25,7 +31,7 @@ body {
   min-width: 320px;
   height: 100svh;
 
-  background: var(--clr-bg);
+  /* background: var(--clr-bg); */
   color: var(--clr-text);
   overflow: hidden;
 }
@@ -46,6 +52,7 @@ body {
   display: flex;
   justify-content: center;
   overflow: auto;
+  overflow-x: hidden;
 
 }
 
