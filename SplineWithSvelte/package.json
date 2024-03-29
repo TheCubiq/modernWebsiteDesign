@@ -18,7 +18,7 @@
   },
   "packageManager": "pnpm@8.15.1+sha256.245fe901f8e7fa8782d7f17d32b6a83995e2ae03984cb5b62b8949bfdc27c7b5",
   "dependencies": {
-    "@splinetool/runtime": "1.0.68",
+    "@splinetool/runtime": "1.0.91",
     "lucide-svelte": "^0.330.0"
   }
 }

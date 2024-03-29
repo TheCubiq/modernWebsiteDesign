@@ -4,14 +4,15 @@
   export let name = "nothing";
   export let id = 0;
   export let url = "#";
-
   // export let data = {};
 
   export let switchScene = null;
 
-  const switchMe = () => {
+  const switchMe = (e) => {
+    console.log(e)
+    
     if (switchScene) {
-      switchScene(id);
+      switchScene(id, e.type);
     }
   };
 </script>
@@ -23,7 +24,8 @@
   class="work-pill"
   on:mouseover={switchMe}
   on:focus={switchMe}
->
+  on:click|preventDefault={switchMe}
+  >
   <span class="inset-span">
     <Eye aria-hidden="true" />
     <span class="work-pill-text">{name}</span>

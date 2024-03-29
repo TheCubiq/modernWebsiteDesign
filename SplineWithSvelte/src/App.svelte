@@ -7,17 +7,24 @@
   import scene from "./assets/spline/iphoneScreen.spline?url";
   import WorkPill from "./lib/workPill.svelte";
   import demoScreen from "./assets/demoScreen.png";
-  import { fade } from "svelte/transition";
+  import { fade, fly } from "svelte/transition";
   import Timeline from "./lib/Timeline.svelte";
+  import { ArrowUpRight, X } from "lucide-svelte";
+  import Linkable from "./lib/Linkable.svelte";
 
   let canvas;
 
-  let click;
   let switchScene;
 
   let sceneNo = 1;
 
-  let showScene = false;
+  let sceneLoaded = false;
+
+  let width;
+
+  let mobilePopup = false;
+
+  let currentPreview = {};
 
   const previews = {
     nothing: {
@@ -79,41 +86,61 @@
     ],
   };
 
+  $: isMobile = width < 800;
+
   const loadScene = () => {
     const app = new Application(canvas);
     // app.load("https://prod.spline.design/Bq2oeyVUmqdzWQ0F/scene.splinecode")
     app.load(scene).then(() => {
-      showScene = true;
+      sceneLoaded = true;
       app.setVariable("previewId", sceneNo);
       app.setBackgroundColor("transparent");
-    });
-    // click = () => {
-    //   app.setVariable("previewId", ++sceneNo % 3);
-    // };
 
-    switchScene = (id) => {
-      console.log("switching scene", id);
-      app.setVariable("previewId", id);
-    };
+      switchScene = (id, type) => {
+        currentPreview = Object.values(previews).find((p) => p.id === id);
+        app.setVariable("previewId", id);
+
+        if (!isMobile) {
+          if (type === "click") {
+            window.open(currentPreview.url, "_blank");
+          }
+          return;
+        }
+
+        if (type === "click") {
+          mobilePopup = true;
+        }
+      };
+    });
   };
 
+  // $: if (pauseScene) {
+  //   pauseScene(isMobile);
+  // }
+
   onMount(() => {
-    // setTimeout(loadScene, 500);
+    // if (isMobile) {
+    //   showScene = true;
+    //   return;
+    // }
+
     loadScene();
   });
 </script>
 
-<!-- <img src={demoScreen} alt="demoScreen"> -->
-<canvas bind:this={canvas} id="canvas3d" class:visible={showScene}></canvas>
+<svelte:window bind:innerWidth={width} />
 
-{#if !showScene}
+<!-- <img src={demoScreen} alt="demoScreen"> -->
+<canvas bind:this={canvas} id="canvas3d" class:visible={sceneLoaded}></canvas>
+
+{#if !sceneLoaded}
   <main class="loading">
     <h1>Loading</h1>
     <span>cubiq's portfolio</span>
     <div class="loader" />
   </main>
 {:else}
-  <main in:fade>
+  <main in:fade class:mobilePopup>
     <header>
       {@html CubiqLogo}
     </header>
@@ -172,11 +199,25 @@
       <span>
         built with {@html SvelteLogo} by Cubiq
       </span>
-      <span>
-        ©2024
-      </span>
+      <span> ©2024 </span>
     </footer>
   </main>
+
+  {#if mobilePopup}
+    <nav transition:fly={{ y: 100, duration: 300 }} class="mobilePopup">
+      <!-- <WorkPill {...previews.xor} {switchScene} /> -->
+      <button
+        class="popupClose"
+        transition:fly={{ y: -100, duration: 300, delay: 100 }}
+        on:click={() => (mobilePopup = false)}><X size="1em" /></button
+      >
+      <a href={currentPreview.url} target="_blank">
+        <Linkable text={currentPreview.name}>
+          <ArrowUpRight size="1em" />
+        </Linkable>
+      </a>
+    </nav>
+  {/if}
 {/if}
 
 <style>
@@ -200,9 +241,9 @@
     display: flex;
     justify-content: space-between;
     font-size: small;
-    opacity: .3;
+    opacity: 0.3;
   }
-  
+
   :global(footer svg) {
     height: 1em;
   }
@@ -276,8 +317,6 @@
     }
   }
 
-  
-
   /* #endregion */
 
   /* #region global */
@@ -345,6 +384,52 @@
     color: var(--color-text-secondary);
   }
 
+  /* #endregion */
+
+  /* #region mobilePopup */
+  
+  main.mobilePopup {
+    pointer-events: none;
+    opacity: 0 !important;
+    visibility: hidden;
+  }
+
+  nav.mobilePopup {
+    position: fixed;
+    inset: 0;
+    padding: 1em;
+    z-index: 2;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.25em;
+    font-size: 3rem;
+    flex-direction: column;
+    pointer-events: none;
+  }
+
+  nav.mobilePopup > * {
+    pointer-events: auto;
+  }
+
+  nav.mobilePopup a {
+    color: var(--clr-accent);
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  nav.mobilePopup button {
+    font-size: inherit;
+    background: none;
+    border: none;
+    /* margin: 0; */
+    padding: 0;
+    line-height: inherit;
+    display: flex;
+    color: var(--clr-accent);
+    align-self: flex-end;
+    cursor: pointer;
+  }
   /* #endregion */
 
   /* #region peek */

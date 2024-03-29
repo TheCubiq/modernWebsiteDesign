@@ -7,7 +7,7 @@ import Linkable from "./Linkable.svelte";
 </script>
 
 <section id={title}>
-  <h3>{title}</h3>
+  <h2>{title}</h2>
   <ul>
     {#each section as { name, url, date }}
       <li>
@@ -61,7 +61,7 @@ import Linkable from "./Linkable.svelte";
     opacity: 0.2;
   }
 
-  h3 {
+  h2 {
     font-size: 0.7rem;
     color: var(--clr-accent);
     font-weight: lighter;
@@ -70,7 +70,7 @@ import Linkable from "./Linkable.svelte";
   }
 
   
-  h3:before {
+  h2:before {
     content: "0" counter(sections) " ";
   }
 

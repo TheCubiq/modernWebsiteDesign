@@ -6,6 +6,7 @@
   <div class="link">
     <span aria-label={text} />
   </div>
+  <slot />
 </div>
 
 <style>
@@ -25,7 +26,10 @@
     position: relative;
     color: transparent;
 
-    max-height: calc(1lh + var(--padding));
+    --offset: 1lh;
+    --offset: 1.5em;
+
+    max-height: calc(var(--offset) + var(--padding));
 
     max-width: min-content;
 
@@ -64,14 +68,14 @@
   }
 
   .wrapper:hover span {
-    transform: translateY(-1lh);
+    transform: translateY(calc(-1 * var(--offset)));
   }
 
-  .wrapper:active:hover span {
+  /* .wrapper:active:hover span {
     opacity: 1;
-    /* translate: 0.2em 0; */
-    letter-spacing: 0.1em;
-  }
+     translate: 0.2em 0; 
+     letter-spacing: 0.1em; 
+  } */
 
   .link > span::after,
   .wrapper:hover span::before {
