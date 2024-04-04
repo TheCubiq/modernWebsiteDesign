@@ -13,12 +13,17 @@
   -moz-osx-font-smoothing: grayscale;
 
   --clr-bg: #040404;
-  --clr-text: #9E9E9E;
-  --clr-accent: white;
+  --clr-text: #999;
+  --clr-accent: #fff;
 
   
   background: var(--clr-bg);
 }
+
+::selection {
+  color: #fff;
+  background: #f0f3;
+} 
 
 html {
   background: var(--clr-bg);

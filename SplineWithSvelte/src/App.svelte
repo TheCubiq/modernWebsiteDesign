@@ -148,41 +148,51 @@
       <h1>
         <span>Hi, I’m Kuba</span>
         <span class="desc"
-          >A Blablabla designer, wannabe engineer, and sometimes chicken living
-          in the Czechia</span
+          >young frontend dev, wannabe reverse engineer and sometimes content
+          creator living in the Czechia</span
         >
       </h1>
       <!-- <p class="space"> -->
       <p>
-        I'm afraid I just blue myself. It's called 'taking advantage.' It's what
-        gets you ahead in life. No… but I'd like to be asked! We just call it a
-        sausage. There's only one man I've ever called a coward, and that's
-        Brian
+        I'm a recent graduate with a passion for technology, seeking job
+        opportunities to apply my skills, and learn new ones on my professional
+        journey. One standout among my various projects is
+        <WorkPill {...previews.aquad} {switchScene} />, a cross-platform React
+        Native game that I developed in my free time and holds a special place
+        as my favorite endeavor.
+        <!-- , that I worked on in my free time has to be my fav one. -->
+
+        <!-- I’m a new graduate passionate about everything technology, eagerly
+        looking for ways to apply my skills in the real world, which means I’m
+        open to job opportunities! I’m always looking to learn and do new
+        things, so I often experiment.
+        Among my various projects, my cross-platform React Native game,
         <WorkPill {...previews.aquad} {switchScene} />
-        Brian is my guy
+        , that I worked on in my free time has to be my favorite one. -->
       </p>
       <p>
-        That's why you always leave a note! I hear the jury's still out on
-        science. First place chick is hot, but has an attitude, doesn't date
-        magicians. I'm a monster. Well, what
-        <WorkPill {...previews.xor} {switchScene} />
-        , more stuff lol
+        Speaking of favorite things, Svelte has been an absolute joy for me.
+        Over the past three years, I've immersed myself in its simplicity and
+        efficiency, and it has seriously become an indispensable tool in my 
+        toolkit. One project that really showcases my journey with Svelte is
+        <WorkPill {...previews.xor} {switchScene} />, a captivating
+        black-and-white minimal puzzle game.
       </p>
-      <p>
+      <p contenteditable>
         We just call it a sausage. There's only one man I've ever called a
         coward,
         <WorkPill {...previews.nothing} {switchScene} />
         , a high-interest savings
       </p>
       <p>
-        Weaseling out of things is important to learn. It's what separates us
-        from the animals…except the weasel. Remember the time he ate my
-        goldfish? And you lied and said I never had goldfish. Then why did I
-        have the bowl, Bart? *Why did I have the bowl?* Lisa, vampires are
-        make-believe, like elves, gremlins, and Eskimos. I didn't get rich by
-        signing checks. I've done everything the Bible says — even the stuff
-        that contradicts the other stuff! What good is money if it can't inspire
-        terror in your fellow man? Homer no function beer well without.
+        As a frontend dev, I’m driven by the hands-on, technical aspects
+        of my work, like coding interactive elements and optimizing for
+        different screen sizes. I believe in being versatile and ready to tackle
+        various challenges. Exploring new industries excites me, as it brings
+        fresh perspectives to my projects. I’m currently fascinated by the
+        intersection of technology and human cognition, particularly in areas
+        like machine learning and user experience. I value working in small, focused teams
+        that move quickly and prioritize the quality of their craft.
       </p>
       <p>
         They only come out in the night. Or in this case, the day. And here I am
@@ -387,7 +397,7 @@
   /* #endregion */
 
   /* #region mobilePopup */
-  
+
   main.mobilePopup {
     pointer-events: none;
     opacity: 0 !important;
@@ -464,7 +474,7 @@
   }
   main h1,
   main::before,
-  p:not(:is(:hover, :focus-within)) {
+  p:not(:hover) {
     opacity: var(--opacity, 1);
   }
 
