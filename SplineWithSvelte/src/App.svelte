@@ -27,9 +27,9 @@
   let currentPreview = {};
 
   const previews = {
-    nothing: {
-      name: "Nothing",
-      url: "#",
+    vizzy: {
+      name: "Vizzy.io",
+      url: "https://vizzy.io",
       id: 0,
     },
 
@@ -51,18 +51,33 @@
     work: [
       {
         name: "Svelte Projects",
-        url: "https://github.com/TheCubiq/modernWebsiteDesign",
+        url: "https://svelte.cubiq.dev/",
         date: "2024-present",
       },
       {
-        name: "Whatchu",
-        url: "#",
-        date: "2022-present",
+        name: "Avee RE Project",
+        url: "https://github.com/TheCubiq/avee-re",
+        date: "2022-2023",
       },
       {
-        name: "Duin",
-        url: "#",
-        date: "2022-2024",
+        name: "VR/XR Portals",
+        url: "https://lab.cubiq.dev/VR-XR-Portals-Graduation-Project.pdf",
+        date: "2022-2023",
+      },
+      {
+        name: "FlatOut Game Modding",
+        url: "https://github.com/TheCubiq/FlatOut2-Modding-Cubiq",
+        date: "2021-2023",
+      },
+      {
+        name: "Vizzard",
+        url: "https://github.com/TheCubiq/vizzard",
+        date: "2021-2022",
+      },
+      {
+        name: "Donilena",
+        url: "https://donilena.eu",
+        date: "2019",
       },
     ],
 
@@ -73,11 +88,11 @@
       },
       {
         name: "Instagram",
-        url: "https://instagram.com/CubiqNation",
+        url: "https://www.instagram.com/tennajivniblazenztgm/",
       },
       {
         name: "LinkedIn",
-        url: "#",
+        url: "https://www.linkedin.com/in/jakub-lajsek/",
       },
       {
         name: "Email",
@@ -173,33 +188,27 @@
       <p>
         Speaking of favorite things, Svelte has been an absolute joy for me.
         Over the past three years, I've immersed myself in its simplicity and
-        efficiency, and it has seriously become an indispensable tool in my 
+        efficiency, and it has seriously become an indispensable tool in my
         toolkit. One project that really showcases my journey with Svelte is
         <WorkPill {...previews.xor} {switchScene} />, a captivating
         black-and-white minimal puzzle game.
       </p>
-      <p contenteditable>
-        We just call it a sausage. There's only one man I've ever called a
-        coward,
-        <WorkPill {...previews.nothing} {switchScene} />
-        , a high-interest savings
+      <p>
+        I’m also part of the team at
+        <WorkPill {...previews.vizzy} {switchScene} />, a free online video
+        editor letting musicians create much more intimate and visual
+        experience to go along with their songs, shaping the future of music
+        visuals.
       </p>
       <p>
-        As a frontend dev, I’m driven by the hands-on, technical aspects
-        of my work, like coding interactive elements and optimizing for
-        different screen sizes. I believe in being versatile and ready to tackle
-        various challenges. Exploring new industries excites me, as it brings
-        fresh perspectives to my projects. I’m currently fascinated by the
-        intersection of technology and human cognition, particularly in areas
-        like machine learning and user experience. I value working in small, focused teams
-        that move quickly and prioritize the quality of their craft.
-      </p>
-      <p>
-        They only come out in the night. Or in this case, the day. And here I am
-        using my own lungs like a sucker. I didn't get rich by signing checks.
-        …And the fluffy kitten played with
-        <WorkPill name="Svelte" />
-        My favorite framework srsly
+        As a frontend dev, I’m driven by the hands-on, technical aspects of my
+        work, like coding interactive elements and making things responsive. I
+        believe in being versatile and ready to tackle various challenges.
+        Exploring new industries excites me, as it brings fresh perspectives to
+        my projects. I’m currently fascinated by the intersection of technology
+        and human cognition, particularly in areas like machine learning and
+        user experience. I value working in small, focused teams that move
+        quickly and prioritize the quality of their craft.
       </p>
     </section>
     <Timeline title="Projects" section={sections.work} />
@@ -240,7 +249,7 @@
   }
 
   #intro {
-    margin-bottom: 6rem;
+    margin-bottom: 3rem;
   }
 
   main {
@@ -378,7 +387,7 @@
 
   h1 {
     font-weight: 300;
-    font-size: 2.6rem;
+    font-size: clamp(1.8rem, 2vw + 1rem, 2.6rem);
     color: var(--clr-accent);
   }
   h1 .desc {
